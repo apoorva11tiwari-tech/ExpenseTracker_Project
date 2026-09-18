@@ -1217,9 +1217,7 @@ function Landing() {
                   Sign Up
                 </Link>
 
-                <Link to="/admin/login">
-                  Admin
-                </Link>
+                
 
               </div>
 

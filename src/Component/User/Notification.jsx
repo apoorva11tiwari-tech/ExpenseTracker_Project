@@ -5,63 +5,63 @@ import "./Notification.css"
 const notificationsData = [
   {
     id: 1,
-    type: "red",
-    emoji: "🔴",
-    title: "Budget Alert: Food",
-    message:
-      "You've used 98% of your food budget. Only ₹150 left for the rest of the month.",
-    time: "2 hours ago",
-    read: false,
+    // type: "red",
+    // emoji: "🔴",
+    // title: "Budget Alert: Food",
+    // message:
+    //   "You've used 98% of your food budget. Only ₹150 left for the rest of the month.",
+    // time: "2 hours ago",
+    // read: false,
   },
   {
     id: 2,
-    type: "green",
-    emoji: "🎉",
-    title: "Savings Milestone!",
-    message:
-      "Congratulations! You've reached an important savings milestone.",
-    time: "5 hours ago",
-    read: false,
+    // type: "green",
+    // emoji: "🎉",
+    // title: "Savings Milestone!",
+    // message:
+    //   "Congratulations! You've reached an important savings milestone.",
+    // time: "5 hours ago",
+    // read: false,
   },
   {
     id: 3,
-    type: "blue",
-    emoji: "📊",
-    title: "Monthly Report Ready",
-    message:
-      "Your monthly expense report is ready to view.",
-    time: "1 day ago",
-    read: false,
+    // type: "blue",
+    // emoji: "📊",
+    // title: "Monthly Report Ready",
+    // message:
+    //   "Your monthly expense report is ready to view.",
+    // time: "1 day ago",
+    // read: false,
   },
   {
     id: 4,
-    type: "yellow",
-    emoji: "📈",
-    title: "Expense Trend Alert",
-    message:
-      "Your spending has increased compared to last month.",
-    time: "2 days ago",
-    read: true,
+    // type: "yellow",
+    // emoji: "📈",
+    // title: "Expense Trend Alert",
+    // message:
+    //   "Your spending has increased compared to last month.",
+    // time: "2 days ago",
+    // read: true,
   },
   {
     id: 5,
-    type: "yellow",
-    emoji: "🔔",
-    title: "Bill Reminder",
-    message:
-      "Your upcoming bill is due soon. Don't forget to make the payment.",
-    time: "3 days ago",
-    read: true,
-  },
+//     type: "yellow",
+//     emoji: "🔔",
+//     title: "Bill Reminder",
+//     message:
+//       "Your upcoming bill is due soon. Don't forget to make the payment.",
+//     time: "3 days ago",
+//     read: true,
+   },
   {
     id: 6,
-    type: "green",
-    emoji: "✅",
-    title: "Goal Progress",
-    message:
-      "You have made progress towards your savings goal.",
-    time: "5 days ago",
-    read: true,
+    // type: "green",
+    // emoji: "✅",
+    // title: "Goal Progress",
+    // message:
+    //   "You have made progress towards your savings goal.",
+    // time: "5 days ago",
+    // read: true,
   },
 ];
 
@@ -122,9 +122,9 @@ function Notifications() {
           </h1>
 
           <p className="notifications-subtitle">
-            {unreadCount > 0
+            {/* {unreadCount > 0
               ? `${unreadCount} unread notifications`
-              : "All caught up! 🎉"}
+              : "All caught up! 🎉"} */}
           </p>
         </div>
 
@@ -150,11 +150,11 @@ function Notifications() {
             >
               Unread
 
-              {unreadCount > 0 && (
+              {/* {unreadCount > 0 && (
                 <span className="unread-count">
                   {unreadCount}
                 </span>
-              )}
+              )} */}
             </button>
 
           </div>

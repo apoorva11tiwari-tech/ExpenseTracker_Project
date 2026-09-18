@@ -11,18 +11,29 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
 } from "recharts";
 
 
 
 
 import {
-  ArrowUpRight,
-  ArrowDownRight
+  LayoutDashboard,
+  Receipt,
+  PlusCircle,
+  WalletCards,
+  BarChart3,
+  Target,
+  Bell,
+  LogOut,
+  BellRing,
+  User,
+  Menu,
 } from "lucide-react";
 
+import { Link } from "react-router-dom";
 
+<<<<<<< HEAD
 // Empty data for now.
 // Later you can get this data from Firebase/MongoDB/API.
 
@@ -98,9 +109,19 @@ function StatCard({ title, value, subtitle, icon, trend, className }) {
 // ================= DASHBOARD =================
 
 export default function Dashboard() {
+=======
+function Dashboard() {
+  // Empty data for now
+  const trendData = [];
+  const categoryData = [];
+  const transactions = [];
+  const budgets = [];
+  const goals = [];
+>>>>>>> 69a19593a8b32b84428127c7cea8d68ce57b6c9c
 
 const navigate = useNavigate();
   return (
+<<<<<<< HEAD
     <>
 
     <div>
@@ -111,19 +132,122 @@ const navigate = useNavigate();
   + Add Expense
 </button>
     </div>
+=======
+    <div className="app-layout">
+>>>>>>> 69a19593a8b32b84428127c7cea8d68ce57b6c9c
 
-    <div className="dashboard-page">
+      {/* ================= SIDEBAR ================= */}
+      <aside className="sidebar">
 
-      <div className="container-fluid">
-
-        {/* ================= HEADER ================= */}
-
-        <div className="dashboard-header">
+        {/* Logo */}
+        <div className="sidebar-logo">
+          <div className="logo-icon">💳</div>
 
           <div>
+            <h4>CashMate</h4>
+            <small>Secure Finance</small>
+          </div>
+        </div>
+
+        {/* Menu */}
+        <nav className="sidebar-menu">
+
+          <Link to="/app/dashboard" className="sidebar-link active">
+            <LayoutDashboard size={20} />
+            <span>Dashboard</span>
+          </Link>
+
+          <Link to="/app/transactions" className="sidebar-link">
+            <Receipt size={20} />
+            <span>Expenses</span>
+          </Link>
+
+          <Link to="/app/add-expense" className="sidebar-link">
+            <PlusCircle size={20} />
+            <span>Add Expense</span>
+          </Link>
+
+          <Link to="/app/budget" className="sidebar-link">
+            <WalletCards size={20} />
+            <span>Budget</span>
+          </Link>
+
+          <Link to="/app/analytics" className="sidebar-link">
+            <BarChart3 size={20} />
+            <span>Analytics</span>
+          </Link>
+
+          <Link to="/app/goals" className="sidebar-link">
+            <Target size={20} />
+            <span>Goals</span>
+          </Link>
+
+          <Link to="/app/notification" className="sidebar-link">
+            <Bell size={20} />
+            <span>Reminders</span>
+          </Link>
+
+        </nav>
+
+        {/* User section */}
+        <div className="sidebar-bottom">
+
+          <div className="sidebar-user">
+            <div className="user-icon">
+              <User size={20} />
+            </div>
+
+            <div>
+              <strong>User</strong>
+              <small>My Account</small>
+            </div>
+          </div>
+
+          <button className="logout-btn">
+            <LogOut size={18} />
+            Logout
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      {/* ================= MAIN AREA ================= */}
+      <main className="main-area">
+
+        {/* Top Navbar */}
+        <header className="top-navbar">
+
+          <button className="mobile-menu-btn">
+            <Menu size={22} />
+          </button>
+
+          <div></div>
+
+          <div className="top-actions">
+
+            <Link to="/app/notification" className="top-icon">
+              <BellRing size={21} />
+            </Link>
+
+            <Link to="/app/profile" className="profile-icon">
+              <User size={20} />
+            </Link>
+
+          </div>
+
+        </header>
+
+
+        {/* Dashboard Content */}
+        <div className="dashboard-page">
+
+          {/* Heading */}
+          <div className="dashboard-header">
 
             <h1 className="dashboard-title">
-              Dashboard
+              Dashboard 👋
             </h1>
 
             <p className="dashboard-subtitle">
@@ -132,352 +256,345 @@ const navigate = useNavigate();
 
           </div>
 
-        </div>
 
+          {/* Welcome Message */}
+          <div className="dashboard-message">
 
-        {/* ================= STATUS MESSAGE ================= */}
+            <div className="message-icon">
+              ✨
+            </div>
 
-        <div className="dashboard-message">
+            <div>
+              <strong>Welcome to CashMate!</strong>
 
-          <span className="message-icon">
-            ✨
-          </span>
-
-          <div>
-
-            <strong>
-              Welcome to CashMate!
-            </strong>
-
-            <p>
-              Start adding your income and expenses to see
-              your financial summary here.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        {/* ================= STAT CARDS ================= */}
-
-        <div className="row g-4 mb-4">
-
-          <div className="col-12 col-sm-6 col-lg-3">
-
-            <StatCard
-              title="Total Balance"
-              value="₹0"
-              subtitle="Available balance"
-              icon="💰"
-              className="balance-card"
-            />
-
-          </div>
-
-
-          <div className="col-12 col-sm-6 col-lg-3">
-
-            <StatCard
-              title="Monthly Income"
-              value="₹0"
-              subtitle="This month"
-              icon="📈"
-              className="income-card"
-            />
-
-          </div>
-
-
-          <div className="col-12 col-sm-6 col-lg-3">
-
-            <StatCard
-              title="Total Expenses"
-              value="₹0"
-              subtitle="This month"
-              icon="📉"
-              className="expense-card"
-            />
-
-          </div>
-
-
-          <div className="col-12 col-sm-6 col-lg-3">
-
-            <StatCard
-              title="Budget Remaining"
-              value="₹0"
-              subtitle="Set your budget"
-              icon="🎯"
-              className="budget-card"
-            />
-
-          </div>
-
-        </div>
-
-
-        {/* ================= CHARTS ================= */}
-
-        <div className="row g-4 mb-4">
-
-          {/* Income vs Expense */}
-
-          <div className="col-12 col-lg-8">
-
-            <div className="dashboard-card chart-card">
-
-              <div className="card-heading">
-
-                <div>
-
-                  <h2>
-                    Income vs Expenses
-                  </h2>
-
-                  <p>
-                    Your financial activity
-                  </p>
-
-                </div>
-
-                <span className="card-emoji">
-                  📊
-                </span>
-
-              </div>
-
-
-              {trendData.length === 0 ? (
-
-                <div className="empty-chart">
-
-                  <div className="empty-icon">
-                    📊
-                  </div>
-
-                  <h5>
-                    No financial data yet
-                  </h5>
-
-                  <p>
-                    Add income and expenses to view your chart.
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <ResponsiveContainer width="100%" height={280}>
-
-                  <AreaChart data={trendData}>
-
-                    <defs>
-
-                      <linearGradient
-                        id="incomeGradient"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-
-                        <stop
-                          offset="5%"
-                          stopColor="#6FCF97"
-                          stopOpacity={0.3}
-                        />
-
-                        <stop
-                          offset="95%"
-                          stopColor="#6FCF97"
-                          stopOpacity={0}
-                        />
-
-                      </linearGradient>
-
-
-                      <linearGradient
-                        id="expenseGradient"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-
-                        <stop
-                          offset="5%"
-                          stopColor="#E85D2E"
-                          stopOpacity={0.3}
-                        />
-
-                        <stop
-                          offset="95%"
-                          stopColor="#E85D2E"
-                          stopOpacity={0}
-                        />
-
-                      </linearGradient>
-
-                    </defs>
-
-
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                    />
-
-                    <XAxis dataKey="month" />
-
-                    <YAxis />
-
-                    <Tooltip />
-
-                    <Legend />
-
-
-                    <Area
-                      type="monotone"
-                      dataKey="income"
-                      stroke="#6FCF97"
-                      fill="url(#incomeGradient)"
-                      strokeWidth={2}
-                      name="Income"
-                    />
-
-
-                    <Area
-                      type="monotone"
-                      dataKey="expense"
-                      stroke="#E85D2E"
-                      fill="url(#expenseGradient)"
-                      strokeWidth={2}
-                      name="Expenses"
-                    />
-
-                  </AreaChart>
-
-                </ResponsiveContainer>
-
-              )}
-
+              <p>
+                Start adding your income and expenses to see your
+                financial summary here.
+              </p>
             </div>
 
           </div>
 
 
-          {/* Categories */}
+          {/* Statistics */}
+          <div className="row g-4 mt-1">
 
-          <div className="col-12 col-lg-4">
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="dashboard-card stat-card balance-card">
 
-            <div className="dashboard-card chart-card">
-
-              <div className="card-heading">
-
-                <div>
-
-                  <h2>
-                    Categories
-                  </h2>
-
-                  <p>
-                    Expense distribution
-                  </p>
-
+                <div className="stat-icon">
+                  💰
                 </div>
 
-                <span className="card-emoji">
-                  🥧
-                </span>
+                <div className="stat-value">
+                  ₹0
+                </div>
+
+                <div className="stat-title">
+                  Total Balance
+                </div>
+
+                <div className="stat-subtitle">
+                  Available balance
+                </div>
+
+              </div>
+            </div>
+
+
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="dashboard-card stat-card income-card">
+
+                <div className="stat-icon">
+                  📈
+                </div>
+
+                <div className="stat-value">
+                  ₹0
+                </div>
+
+                <div className="stat-title">
+                  Monthly Income
+                </div>
+
+                <div className="stat-subtitle">
+                  This month
+                </div>
+
+              </div>
+            </div>
+
+
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="dashboard-card stat-card expense-card">
+
+                <div className="stat-icon">
+                  📉
+                </div>
+
+                <div className="stat-value">
+                  ₹0
+                </div>
+
+                <div className="stat-title">
+                  Total Expenses
+                </div>
+
+                <div className="stat-subtitle">
+                  This month
+                </div>
+
+              </div>
+            </div>
+
+
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="dashboard-card stat-card budget-card">
+
+                <div className="stat-icon">
+                  🎯
+                </div>
+
+                <div className="stat-value">
+                  ₹0
+                </div>
+
+                <div className="stat-title">
+                  Budget Remaining
+                </div>
+
+                <div className="stat-subtitle">
+                  Set your budget
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+
+          {/* Charts */}
+          <div className="row g-4 mt-1">
+
+            {/* Income vs Expenses */}
+            <div className="col-12 col-lg-8">
+
+              <div className="dashboard-card chart-card">
+
+                <h5 className="card-heading">
+                  Income vs Expenses
+                </h5>
+
+                <p className="dashboard-subtitle">
+                  Your financial activity
+                </p>
+
+                {trendData.length === 0 ? (
+
+                  <div className="empty-chart">
+                    <div className="empty-icon">
+                      📊
+                    </div>
+
+                    <h5>No financial data yet</h5>
+
+                    <p>
+                      Add income and expenses to see your chart.
+                    </p>
+                  </div>
+
+                ) : (
+
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={trendData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+
+                      <Area
+                        type="monotone"
+                        dataKey="income"
+                        fill="var(--mint)"
+                        stroke="var(--mint)"
+                      />
+
+                      <Area
+                        type="monotone"
+                        dataKey="expense"
+                        fill="var(--coral)"
+                        stroke="var(--coral)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+
+                )}
 
               </div>
 
+            </div>
 
-              {categoryData.length === 0 ? (
 
-                <div className="empty-chart">
+            {/* Categories */}
+            <div className="col-12 col-lg-4">
 
-                  <div className="empty-icon">
-                    🥧
+              <div className="dashboard-card chart-card">
+
+                <h5 className="card-heading">
+                  Categories
+                </h5>
+
+                <p className="dashboard-subtitle">
+                  Expense distribution
+                </p>
+
+                {categoryData.length === 0 ? (
+
+                  <div className="empty-chart">
+
+                    <div className="empty-icon">
+                      🥧
+                    </div>
+
+                    <h5>
+                      No categories yet
+                    </h5>
+
+                    <p>
+                      Add an expense to see categories.
+                    </p>
+
                   </div>
 
-                  <h5>
-                    No categories yet
-                  </h5>
+                ) : (
 
-                  <p>
-                    Add an expense to see category details.
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <>
-
-                  <ResponsiveContainer
-                    width="100%"
-                    height={200}
-                  >
-
+                  <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
-
                       <Pie
                         data={categoryData}
                         dataKey="value"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={75}
+                        nameKey="name"
+                        outerRadius={100}
                       >
-
                         {categoryData.map((entry, index) => (
-
-                          <Cell
-                            key={index}
-                            fill={
-                              chartColors[
-                                index % chartColors.length
-                              ]
-                            }
-                          />
-
+                          <Cell key={index} />
                         ))}
-
                       </Pie>
 
                       <Tooltip />
-
+                      <Legend />
                     </PieChart>
-
                   </ResponsiveContainer>
 
+                )}
 
-                  <div className="category-list">
+              </div>
 
-                    {categoryData.map((category) => (
+            </div>
 
-                      <div
-                        key={category.name}
-                        className="category-item"
-                      >
+          </div>
 
-                        <span>
-                          {category.name}
-                        </span>
 
-                        <strong>
-                          ₹{category.value}
-                        </strong>
+          {/* Transactions */}
+          <div className="dashboard-card mt-4">
 
-                      </div>
+            <h5 className="card-heading">
+              Recent Transactions
+            </h5>
 
-                    ))}
+            {transactions.length === 0 ? (
+
+              <div className="empty-section">
+
+                <div className="empty-icon">
+                  💳
+                </div>
+
+                <h5>
+                  No transactions yet
+                </h5>
+
+                <p>
+                  Your recent transactions will appear here.
+                </p>
+
+              </div>
+
+            ) : (
+
+              transactions.map((transaction) => (
+                <div key={transaction.id}>
+                  {transaction.title}
+                </div>
+              ))
+
+            )}
+
+          </div>
+
+
+          {/* Budgets and Goals */}
+          <div className="row g-4 mt-1">
+
+            <div className="col-12 col-lg-6">
+
+              <div className="dashboard-card">
+
+                <h5 className="card-heading">
+                  Budgets
+                </h5>
+
+                {budgets.length === 0 && (
+                  <div className="empty-section">
+
+                    <div className="empty-icon">
+                      💰
+                    </div>
+
+                    <h5>
+                      No budgets yet
+                    </h5>
+
+                    <p>
+                      Create a budget to start tracking your spending.
+                    </p>
 
                   </div>
+                )}
 
-                </>
+              </div>
 
-              )}
+            </div>
+
+
+            <div className="col-12 col-lg-6">
+
+              <div className="dashboard-card">
+
+                <h5 className="card-heading">
+                  Savings Goals
+                </h5>
+
+                {goals.length === 0 && (
+                  <div className="empty-section">
+
+                    <div className="empty-icon">
+                      🎯
+                    </div>
+
+                    <h5>
+                      No goals yet
+                    </h5>
+
+                    <p>
+                      Create a savings goal to track your progress.
+                    </p>
+
+                  </div>
+                )}
+
+              </div>
 
             </div>
 
@@ -485,313 +602,14 @@ const navigate = useNavigate();
 
         </div>
 
-
-        {/* ================= BOTTOM SECTION ================= */}
-
-        <div className="row g-4">
-
-          {/* Recent Transactions */}
-
-          <div className="col-12 col-lg-8">
-
-            <div className="dashboard-card">
-
-              <div className="card-heading">
-
-                <div>
-
-                  <h2>
-                    Recent Transactions
-                  </h2>
-
-                  <p>
-                    Your latest income and expenses
-                  </p>
-
-                </div>
-
-                <a
-                  href="/app/transactions"
-                  className="view-link"
-                >
-                  View all →
-                </a>
-
-              </div>
-
-
-              {transactions.length === 0 ? (
-
-                <div className="empty-section">
-
-                  <div className="empty-icon">
-                    💳
-                  </div>
-
-                  <h5>
-                    No transactions yet
-                  </h5>
-
-                  <p>
-                    Your recent transactions will appear here.
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <div>
-
-                  {transactions.map((transaction) => (
-
-                    <div
-                      key={transaction.id}
-                      className="transaction-item"
-                    >
-
-                      <div className="transaction-icon">
-                        {transaction.icon}
-                      </div>
-
-
-                      <div className="transaction-info">
-
-                        <h6>
-                          {transaction.name}
-                        </h6>
-
-                        <p>
-                          {transaction.category}
-                        </p>
-
-                      </div>
-
-
-                      <strong
-                        className={
-                          transaction.amount > 0
-                            ? "income-text"
-                            : "expense-text"
-                        }
-                      >
-
-                        {transaction.amount > 0
-                          ? "+"
-                          : "-"}₹
-                        {Math.abs(
-                          transaction.amount
-                        ).toLocaleString()}
-
-                      </strong>
-
-                    </div>
-
-                  ))}
-
-                </div>
-
-              )}
-
-            </div>
-
-          </div>
-
-
-          {/* Budget */}
-
-          <div className="col-12 col-lg-4">
-
-            <div className="dashboard-card">
-
-              <div className="card-heading">
-
-                <div>
-
-                  <h2>
-                    Budget Progress
-                  </h2>
-
-                  <p>
-                    Track your spending limits
-                  </p>
-
-                </div>
-
-                <span className="card-emoji">
-                  🎯
-                </span>
-
-              </div>
-
-
-              {budgets.length === 0 ? (
-
-                <div className="empty-section">
-
-                  <div className="empty-icon">
-                    🎯
-                  </div>
-
-                  <h5>
-                    No budget set
-                  </h5>
-
-                  <p>
-                    Create a budget to start tracking your spending.
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <div>
-
-                  {budgets.map((budget) => {
-
-                    const percentage =
-                      Math.round(
-                        (budget.used / budget.total) * 100
-                      );
-
-                    return (
-
-                      <div
-                        key={budget.category}
-                        className="budget-item"
-                      >
-
-                        <div className="budget-top">
-
-                          <span>
-                            {budget.category}
-                          </span>
-
-                          <strong>
-                            {percentage}%
-                          </strong>
-
-                        </div>
-
-
-                        <div className="progress">
-
-                          <div
-                            className="progress-bar"
-                            style={{
-                              width: `${percentage}%`
-                            }}
-                          ></div>
-
-                        </div>
-
-                      </div>
-
-                    );
-
-                  })}
-
-                </div>
-
-              )}
-
-            </div>
-
-
-            {/* Financial Goals */}
-
-            <div className="dashboard-card mt-4">
-
-              <div className="card-heading">
-
-                <div>
-
-                  <h2>
-                    Financial Goals
-                  </h2>
-
-                  <p>
-                    Save towards your goals
-                  </p>
-
-                </div>
-
-                <span className="card-emoji">
-                  🏆
-                </span>
-
-              </div>
-
-
-              {goals.length === 0 ? (
-
-                <div className="empty-section">
-
-                  <div className="empty-icon">
-                    🏆
-                  </div>
-
-                  <h5>
-                    No goals yet
-                  </h5>
-
-                  <p>
-                    Create a financial goal to track your savings.
-                  </p>
-
-                </div>
-
-              ) : (
-
-                <div>
-
-                  {goals.map((goal) => (
-
-                    <div
-                      key={goal.name}
-                      className="goal-item"
-                    >
-
-                      <div className="budget-top">
-
-                        <span>
-                          {goal.name}
-                        </span>
-
-                        <span>
-                          ₹{goal.saved} / ₹{goal.target}
-                        </span>
-
-                      </div>
-
-
-                      <div className="progress">
-
-                        <div
-                          className="progress-bar goal-progress"
-                          style={{
-                            width: `${goal.percentage}%`
-                          }}
-                        ></div>
-
-                      </div>
-
-                    </div>
-
-                  ))}
-
-                </div>
-
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
+      </main>
 
     </div>
+<<<<<<< HEAD
 </>
+=======
+>>>>>>> 69a19593a8b32b84428127c7cea8d68ce57b6c9c
   );
 }
+
+export default Dashboard;

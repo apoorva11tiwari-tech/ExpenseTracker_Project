@@ -2330,3 +2330,1642 @@ a {
   }
 
 }
+
+/* =====================================================
+   SIGNUP PAGE
+===================================================== */
+
+.signup-page {
+  min-height: 100vh;
+  background: var(--bg);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 50px 20px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* =====================================================
+   ANIMATED BACKGROUND BLOBS
+===================================================== */
+
+.signup-blob {
+  position: absolute;
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+.signup-blob-one {
+  width: 300px;
+  height: 300px;
+
+  top: -100px;
+  left: -80px;
+
+  background: var(--peach);
+  opacity: 0.15;
+
+  animation: signupBlobOne 8s infinite ease-in-out;
+}
+
+
+.signup-blob-two {
+  width: 260px;
+  height: 260px;
+
+  right: -80px;
+  bottom: -80px;
+
+  background: var(--coral);
+  opacity: 0.12;
+
+  animation: signupBlobTwo 10s infinite ease-in-out;
+}
+
+
+.signup-blob-three {
+  width: 180px;
+  height: 180px;
+
+  bottom: 25%;
+  left: 30%;
+
+  background: var(--mint);
+  opacity: 0.12;
+
+  animation: signupBlobThree 12s infinite ease-in-out;
+}
+
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.signup-container {
+  position: relative;
+  z-index: 2;
+
+  max-width: 520px;
+
+  animation: signupContainer 0.8s ease-out;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.signup-header {
+  margin-bottom: 25px;
+
+  animation: signupHeader 0.7s ease-out;
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.signup-brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-decoration: none;
+}
+
+
+.signup-logo {
+  width: 68px;
+  height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 30px;
+
+  border-radius: 22px;
+
+  background: linear-gradient(
+    135deg,
+    var(--coral),
+    var(--lavender)
+  );
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+  animation: signupLogoFloat 3s ease-in-out infinite;
+
+  transition: transform 0.3s ease;
+}
+
+
+.signup-logo:hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
+
+.signup-brand-name {
+  margin-top: 10px;
+  margin-bottom: 0;
+
+  font-size: 27px;
+  font-weight: 800;
+
+  color: var(--text);
+}
+
+
+/* =====================================================
+   SECURITY BADGE
+===================================================== */
+
+.signup-page .trust-badge {
+  display: inline-block;
+
+  margin-top: 12px;
+  margin-bottom: 12px;
+
+  padding: 7px 15px;
+
+  border-radius: 50px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  color: var(--text);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+
+  animation: signupBadge 0.9s ease-out;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.signup-title {
+  color: var(--text);
+
+  font-size: 29px;
+  font-weight: 700;
+
+  margin-bottom: 6px;
+}
+
+
+.signup-subtitle {
+  color: var(--text-2);
+
+  font-size: 14px;
+
+  margin-bottom: 0;
+}
+
+
+/* =====================================================
+   SIGNUP CARD
+===================================================== */
+
+.signup-card {
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 26px;
+
+  padding: 35px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+
+  animation: signupCard 0.9s ease-out;
+
+  transition: box-shadow 0.3s ease;
+}
+
+
+.signup-card:hover {
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =====================================================
+   GOOGLE BUTTON
+===================================================== */
+
+.google-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 12px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 13px;
+
+  background: var(--bg-alt);
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+
+.google-button:hover {
+  transform: translateY(-2px);
+
+  border-color: var(--coral);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+.google-icon {
+  width: 19px;
+  height: 19px;
+}
+
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+.signup-divider {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 24px 0;
+}
+
+
+.signup-divider span {
+  flex: 1;
+
+  height: 1px;
+
+  background: var(--border);
+}
+
+
+.signup-divider p {
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 12px;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   LABEL
+===================================================== */
+
+.signup-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+.signup-input {
+  width: 100%;
+
+  padding: 11px 14px;
+
+  background: var(--bg-alt);
+
+  border: 1.5px solid var(--border);
+
+  border-radius: 12px;
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+}
+
+
+.signup-input::placeholder {
+  color: var(--muted);
+}
+
+
+.signup-input:focus {
+  border-color: var(--coral);
+
+  box-shadow:
+    0 0 0 4px rgba(232, 93, 46, 0.10);
+
+  outline: none;
+}
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+.password-container {
+  position: relative;
+}
+
+
+.password-input {
+  padding-right: 45px;
+}
+
+
+.password-toggle {
+  position: absolute;
+
+  right: 9px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  cursor: pointer;
+
+  border-radius: 8px;
+
+  transition: all 0.2s ease;
+}
+
+
+.password-toggle:hover {
+  color: var(--coral);
+
+  background: rgba(232, 93, 46, 0.08);
+}
+
+
+/* =====================================================
+   CREATE ACCOUNT BUTTON
+===================================================== */
+
+.signup-button {
+  width: 100%;
+
+  padding: 13px 20px;
+
+  margin-top: 5px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    var(--coral),
+    var(--lavender)
+  );
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 22px rgba(232, 93, 46, 0.30);
+
+  transition: all 0.3s ease;
+}
+
+
+.signup-button:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 28px rgba(232, 93, 46, 0.38);
+}
+
+
+.signup-button:active {
+  transform: scale(0.98);
+}
+
+
+/* =====================================================
+   LOGIN LINK
+===================================================== */
+
+.login-link-text {
+  margin-top: 22px;
+  margin-bottom: 0;
+
+  text-align: center;
+
+  color: var(--text-2);
+
+  font-size: 13px;
+}
+
+
+.login-link {
+  color: var(--coral);
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition: opacity 0.2s ease;
+}
+
+
+.login-link:hover {
+  opacity: 0.7;
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes signupContainer {
+
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes signupHeader {
+
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes signupCard {
+
+  from {
+    opacity: 0;
+    transform: translateY(35px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+
+@keyframes signupBadge {
+
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+}
+
+
+@keyframes signupLogoFloat {
+
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes signupBlobOne {
+
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(30px, 25px) scale(1.08);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+}
+
+
+@keyframes signupBlobTwo {
+
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(-30px, -25px) scale(1.08);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+}
+
+
+@keyframes signupBlobThree {
+
+  0% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(30px, -20px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 576px) {
+
+  .signup-page {
+    padding: 30px 15px;
+  }
+
+  .signup-card {
+    padding: 25px 18px;
+
+    border-radius: 20px;
+  }
+
+  .signup-title {
+    font-size: 24px;
+  }
+
+  .signup-brand-name {
+    font-size: 24px;
+  }
+
+  .signup-logo {
+    width: 60px;
+    height: 60px;
+
+    font-size: 27px;
+  }
+
+  .signup-blob {
+    display: none;
+  }
+
+}
+
+/* =====================================================
+   DASHBOARD PAGE
+===================================================== */
+
+.dashboard-page {
+  min-height: 100vh;
+  padding: 30px 20px;
+
+  background: var(--bg);
+
+  animation: dashboardFadeIn 0.7s ease;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+
+  animation: dashboardSlideDown 0.6s ease;
+}
+
+
+.dashboard-title {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 30px;
+  font-weight: 800;
+}
+
+
+.dashboard-subtitle {
+  margin: 6px 0 0;
+
+  color: var(--text-2);
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   WELCOME MESSAGE
+===================================================== */
+
+.dashboard-message {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 16px 20px;
+
+  margin-bottom: 25px;
+
+  border: 1px solid rgba(232, 93, 46, 0.15);
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(232, 93, 46, 0.08),
+    rgba(244, 162, 97, 0.08)
+  );
+
+  animation: dashboardSlideDown 0.8s ease;
+}
+
+
+.message-icon {
+  font-size: 25px;
+
+  animation: messageFloat 2.5s ease-in-out infinite;
+}
+
+
+.dashboard-message strong {
+  color: var(--coral);
+
+  font-size: 14px;
+}
+
+
+.dashboard-message p {
+  margin: 3px 0 0;
+
+  color: var(--text-2);
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   DASHBOARD CARD
+===================================================== */
+
+.dashboard-card {
+  height: 100%;
+
+  padding: 22px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.06);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  animation: dashboardCardEnter 0.7s ease;
+}
+
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.10);
+}
+
+
+/* =====================================================
+   STAT CARDS
+===================================================== */
+
+.stat-card {
+  min-height: 175px;
+}
+
+
+.stat-top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+
+.stat-icon {
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: var(--bg-alt);
+
+  font-size: 21px;
+
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+
+.stat-trend {
+  display: flex;
+
+  align-items: center;
+
+  gap: 3px;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  background: rgba(111, 207, 151, 0.12);
+
+  color: var(--mint);
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+.stat-value {
+  margin: 0 0 5px;
+
+  color: var(--text);
+
+  font-size: 25px;
+
+  font-weight: 800;
+}
+
+
+.stat-title {
+  margin: 0;
+
+  color: var(--text-2);
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+.stat-subtitle {
+  margin: 5px 0 0;
+
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+
+/* Different card borders */
+
+.balance-card {
+  border-top: 3px solid var(--mint);
+}
+
+
+.income-card {
+  border-top: 3px solid var(--mint);
+}
+
+
+.expense-card {
+  border-top: 3px solid var(--coral);
+}
+
+
+.budget-card {
+  border-top: 3px solid var(--lavender);
+}
+
+
+/* =====================================================
+   CARD HEADING
+===================================================== */
+
+.card-heading {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
+}
+
+
+.card-heading h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 17px;
+
+  font-weight: 700;
+}
+
+
+.card-heading p {
+  margin: 5px 0 0;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+.card-emoji {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: var(--bg-alt);
+
+  font-size: 17px;
+}
+
+
+/* =====================================================
+   EMPTY STATES
+===================================================== */
+
+.empty-chart {
+  min-height: 230px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  animation: emptyFadeIn 1s ease;
+}
+
+
+.empty-section {
+  min-height: 150px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 20px 10px;
+
+  animation: emptyFadeIn 1s ease;
+}
+
+
+.empty-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 10px;
+
+  border-radius: 18px;
+
+  background: var(--bg-alt);
+
+  font-size: 25px;
+
+  animation: emptyIconFloat 3s ease-in-out infinite;
+}
+
+
+.empty-chart h5,
+.empty-section h5 {
+  margin: 5px 0;
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.empty-chart p,
+.empty-section p {
+  margin: 0;
+
+  max-width: 280px;
+
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   TRANSACTIONS
+===================================================== */
+
+.transaction-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px;
+
+  margin-bottom: 5px;
+
+  border-radius: 15px;
+
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease;
+}
+
+
+.transaction-item:hover {
+  background: var(--bg-alt);
+
+  transform: translateX(4px);
+}
+
+
+.transaction-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: var(--bg-alt);
+
+  font-size: 19px;
+}
+
+
+.transaction-info {
+  flex: 1;
+}
+
+
+.transaction-info h6 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+.transaction-info p {
+  margin: 4px 0 0;
+
+  color: var(--muted);
+
+  font-size: 11px;
+}
+
+
+.income-text {
+  color: var(--mint);
+}
+
+
+.expense-text {
+  color: var(--text);
+}
+
+
+/* =====================================================
+   VIEW ALL
+===================================================== */
+
+.view-link {
+  color: var(--coral);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition: opacity 0.2s ease;
+}
+
+
+.view-link:hover {
+  opacity: 0.65;
+}
+
+
+/* =====================================================
+   CATEGORY LIST
+===================================================== */
+
+.category-list {
+  margin-top: 10px;
+}
+
+
+.category-item {
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: 7px 0;
+
+  color: var(--text-2);
+
+  font-size: 12px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+
+.category-item strong {
+  color: var(--text);
+
+  font-size: 12px;
+}
+
+
+/* =====================================================
+   BUDGET
+===================================================== */
+
+.budget-item,
+.goal-item {
+  margin-bottom: 18px;
+}
+
+
+.budget-top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+
+  color: var(--text-2);
+
+  font-size: 12px;
+}
+
+
+.budget-top strong {
+  color: var(--text);
+
+  font-size: 12px;
+}
+
+
+.progress {
+  height: 8px;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: var(--border);
+}
+
+
+.progress-bar {
+  height: 100%;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    90deg,
+    var(--coral),
+    var(--peach)
+  );
+
+  animation: progressAnimation 1.2s ease;
+}
+
+
+.goal-progress {
+  background: linear-gradient(
+    90deg,
+    var(--coral),
+    var(--lavender)
+  );
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes dashboardFadeIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes dashboardSlideDown {
+
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes dashboardCardEnter {
+
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes messageFloat {
+
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes iconFloat {
+
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes emptyIconFloat {
+
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
+
+@keyframes emptyFadeIn {
+
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+}
+
+
+@keyframes progressAnimation {
+
+  from {
+    width: 0;
+  }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .dashboard-page {
+    padding: 20px 12px;
+  }
+
+
+  .dashboard-title {
+    font-size: 24px;
+  }
+
+
+  .dashboard-message {
+    align-items: flex-start;
+
+    padding: 14px;
+  }
+
+
+  .dashboard-card {
+    padding: 18px;
+
+    border-radius: 18px;
+  }
+
+
+  .stat-card {
+    min-height: 155px;
+  }
+
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+}
+
+
+@media (max-width: 576px) {
+
+  .dashboard-header {
+    margin-bottom: 18px;
+  }
+
+
+  .dashboard-title {
+    font-size: 22px;
+  }
+
+
+  .dashboard-subtitle {
+    font-size: 12px;
+  }
+
+
+  .dashboard-message {
+    gap: 10px;
+  }
+
+
+  .dashboard-message p {
+    font-size: 11px;
+  }
+
+
+  .stat-card {
+    min-height: 145px;
+  }
+
+}
+
+/* ==============================
+   CASHMATE APP LAYOUT
+============================== */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Sidebar */
+
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background: #10182b;
+  color: white;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px 25px;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  background: #4f46e5;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.sidebar-logo h4 {
+  margin: 0;
+  font-weight: 800;
+}
+
+.sidebar-logo small {
+  color: #8d99b5;
+}
+
+/* Menu */
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  color: #aeb8cd;
+  text-decoration: none;
+  border-radius: 14px;
+  transition: 0.3s;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: #172442;
+  color: white;
+}
+
+.sidebar-link.active {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Bottom */
+
+.sidebar-bottom {
+  margin-top: auto;
+  border-top: 1px solid #26314a;
+  padding-top: 18px;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  background: #2563eb;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-user strong,
+.sidebar-user small {
+  display: block;
+}
+
+.sidebar-user small {
+  color: #8994aa;
+}
+
+.logout-btn {
+  border: none;
+  background: transparent;
+  color: #aeb8cd;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+}
+
+/* Main */
+
+.main-area {
+  width: calc(100% - 250px);
+  margin-left: 250px;
+}
+
+/* Top Navbar */
+
+.top-navbar {
+  height: 65px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.top-icon,
+.profile-icon {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.profile-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--bg-alt);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-btn {
+  display: none;
+  border: none;
+  background: transparent;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .main-area {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+
+}

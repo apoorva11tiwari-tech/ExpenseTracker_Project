@@ -5,6 +5,9 @@ import Login from "./Login";
 import Signup from "./SignUp";
 import Dashboard from "./Component/User/Dashboard";
 import Notification from "./Component/User/Notification";
+import Analytics from "./Component/User/Analytics";
+
+
 
 function App() {
   return (
@@ -25,6 +28,9 @@ function App() {
 
         {/* Notification */}
         <Route path="/app/notification" element={<Notification/>}/>
+
+        {/* Analytics */}
+        <Route path="/app/analytics" element={<Analytics/>}/>
 
       </Routes>
     </BrowserRouter>

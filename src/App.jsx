@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Landing from "./LandingPage";
 import Login from "./Login";
+import Signup from "./SignUp";
+import Dashboard from "./Component/User/Dashboard";
+import Notification from "./Component/User/Notification";
 
 function App() {
   return (
@@ -13,6 +16,15 @@ function App() {
 
         {/* Login Page */}
         <Route path="/login" element={<Login />} />
+
+        {/* Sign Up page */}
+        <Route path = "/signup" element ={<Signup/>} />
+
+        {/* User Dashboard */}
+        <Route path="/app/dashboard" element={<Dashboard/>}/>
+
+        {/* Notification */}
+        <Route path="/app/notification" element={<Notification/>}/>
 
       </Routes>
     </BrowserRouter>

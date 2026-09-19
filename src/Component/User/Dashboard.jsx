@@ -37,13 +37,9 @@ import {
 // =====================================================
 
 const trendData = [];
-
 const categoryData = [];
-
 const transactions = [];
-
 const budgets = [];
-
 const goals = [];
 
 
@@ -69,6 +65,7 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
+  // Animated statistics
   const balance = useCountUp(0);
   const income = useCountUp(0);
   const expenses = useCountUp(0);
@@ -77,9 +74,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard-layout">
 
-      {/* =================================================
-          SIDEBAR
-      ================================================= */}
+      {/* SIDEBAR */}
 
       <aside className="sidebar">
 
@@ -174,6 +169,7 @@ export default function Dashboard() {
 
 
         {/* User Section */}
+
         <div className="sidebar-bottom">
 
           <div className="sidebar-user">
@@ -191,6 +187,7 @@ export default function Dashboard() {
 
 
           {/* Logout */}
+
           <button
             className="logout-btn"
             type="button"
@@ -204,20 +201,17 @@ export default function Dashboard() {
       </aside>
 
 
-      {/* =================================================
-          MAIN AREA
-      ================================================= */}
+      {/* MAIN AREA */}
 
       <main className="main-area">
 
 
-        {/* =================================================
-            TOP NAVBAR
-        ================================================= */}
+        {/* TOP NAVBAR */}
 
         <header className="top-navbar">
 
           {/* Mobile Menu */}
+
           <button
             className="mobile-menu-btn"
             type="button"
@@ -230,9 +224,11 @@ export default function Dashboard() {
 
 
           {/* Top Actions */}
+
           <div className="top-actions">
 
             {/* Notifications */}
+
             <Link
               to="/app/reminders"
               className="top-icon"
@@ -242,6 +238,7 @@ export default function Dashboard() {
 
 
             {/* Profile */}
+
             <Link
               to="/app/profile"
               className="profile-icon"
@@ -254,16 +251,12 @@ export default function Dashboard() {
         </header>
 
 
-        {/* =================================================
-            DASHBOARD CONTENT
-        ================================================= */}
+        {/* DASHBOARD CONTENT */}
 
         <div className="dashboard-page">
 
 
-          {/* =================================================
-              DASHBOARD HEADER
-          ================================================= */}
+          {/* DASHBOARD HEADER */}
 
           <div className="dashboard-header">
 
@@ -281,6 +274,7 @@ export default function Dashboard() {
 
 
             {/* Add Expense Button */}
+
             <button
               type="button"
               className="btn btn-primary add-expense-btn"
@@ -295,9 +289,7 @@ export default function Dashboard() {
           </div>
 
 
-          {/* =================================================
-              WELCOME MESSAGE
-          ================================================= */}
+          {/* WELCOME MESSAGE */}
 
           <div className="dashboard-message">
 
@@ -321,14 +313,13 @@ export default function Dashboard() {
           </div>
 
 
-          {/* =================================================
-              STATISTICS
-          ================================================= */}
+          {/* STATISTICS */}
 
           <div className="row g-4 mt-1">
 
 
             {/* Total Balance */}
+
             <div className="col-12 col-sm-6 col-lg-3">
 
               <div className="dashboard-card stat-card balance-card">
@@ -355,6 +346,7 @@ export default function Dashboard() {
 
 
             {/* Monthly Income */}
+
             <div className="col-12 col-sm-6 col-lg-3">
 
               <div className="dashboard-card stat-card income-card">
@@ -364,7 +356,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="stat-value">
-                   ₹{income.toLocaleString("en-IN")}
+                  ₹{income.toLocaleString("en-IN")}
                 </div>
 
                 <div className="stat-title">
@@ -381,6 +373,7 @@ export default function Dashboard() {
 
 
             {/* Total Expenses */}
+
             <div className="col-12 col-sm-6 col-lg-3">
 
               <div className="dashboard-card stat-card expense-card">
@@ -407,6 +400,7 @@ export default function Dashboard() {
 
 
             {/* Budget Remaining */}
+
             <div className="col-12 col-sm-6 col-lg-3">
 
               <div className="dashboard-card stat-card budget-card">
@@ -434,14 +428,13 @@ export default function Dashboard() {
           </div>
 
 
-          {/* =================================================
-              CHARTS
-          ================================================= */}
+          {/* CHARTS */}
 
           <div className="row g-4 mt-1">
 
 
             {/* Income vs Expenses */}
+
             <div className="col-12 col-lg-8">
 
               <div className="dashboard-card chart-card">
@@ -525,6 +518,7 @@ export default function Dashboard() {
 
 
             {/* Categories */}
+
             <div className="col-12 col-lg-4">
 
               <div className="dashboard-card chart-card">
@@ -580,8 +574,7 @@ export default function Dashboard() {
                               key={index}
                               fill={
                                 chartColors[
-                                  index %
-                                  chartColors.length
+                                  index % chartColors.length
                                 ]
                               }
                             />
@@ -608,9 +601,7 @@ export default function Dashboard() {
           </div>
 
 
-          {/* =================================================
-              RECENT TRANSACTIONS
-          ================================================= */}
+          {/* RECENT TRANSACTIONS */}
 
           <div className="dashboard-card mt-4">
 
@@ -658,14 +649,13 @@ export default function Dashboard() {
           </div>
 
 
-          {/* =================================================
-              BUDGETS AND GOALS
-          ================================================= */}
+          {/* BUDGETS AND GOALS */}
 
           <div className="row g-4 mt-1">
 
 
             {/* Budgets */}
+
             <div className="col-12 col-lg-6">
 
               <div className="dashboard-card">
@@ -702,6 +692,7 @@ export default function Dashboard() {
 
 
             {/* Savings Goals */}
+
             <div className="col-12 col-lg-6">
 
               <div className="dashboard-card">

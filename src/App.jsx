@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Landing from "./LandingPage";
 import Login from "./Login";
 import Signup from "./SignUp";
+
 import Dashboard from "./Component/User/Dashboard";
 import Notification from "./Component/User/Notification";
 import Analytics from "./Component/User/Analytics";
@@ -24,22 +25,35 @@ function App() {
         {/* Signup */}
         <Route path="/signup" element={<Signup />} />
 
-        {/* User Dashboard */}
+        {/* Dashboard */}
         <Route
-          path="/app/dashboard" element={<Dashboard />}/>
+          path="/app/dashboard"
+          element={<Dashboard />}
+        />
 
         {/* Notifications */}
-        <Route path="/app/notification" element={<Notification />} />
+        <Route
+          path="/app/notification"
+          element={<Notification />}
+        />
 
         {/* Analytics */}
-        <Route path="/app/analytics"  element={<Analytics />} />
+        <Route
+          path="/app/analytics"
+          element={<Analytics />}
+        />
 
-        {/* Remainders */}
-        <Route path="/app/reminders" element={<Reminders/>}/>
+        {/* Reminders */}
+        <Route
+          path="/app/reminders"
+          element={<Reminders />}
+        />
 
         {/* Expenses */}
-          <Route path="/app/expenses" element={<Expenses/>}/>
-
+        <Route
+          path="/app/expenses"
+          element={<Expenses />}
+        />
 
       </Routes>
     </BrowserRouter>

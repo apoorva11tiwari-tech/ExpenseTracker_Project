@@ -1,0 +1,123 @@
+/* Layout container */
+.goals-layout-container {
+  min-height: 100vh;
+  background-color: #f4f6fc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Sidebar styling */
+.sidebar-container {
+  width: 260px;
+  background-color: #0b132b;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-logo-box {
+  font-size: 1.25rem;
+  background-color: #1c2541;
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.brand-subtext {
+  font-size: 0.75rem;
+  color: #8d99ae;
+}
+
+.side-link {
+  color: #a0aec0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.side-link:hover {
+  background-color: #1c2541;
+  color: #ffffff;
+}
+
+.side-link.active {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.micro-text {
+  font-size: 0.725rem;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+/* Main Content Area */
+.main-content-container {
+  background-color: #f4f6fc;
+}
+
+.page-title {
+  color: #1e293b;
+  font-size: 1.75rem;
+}
+
+.sub-heading {
+  font-size: 0.9rem;
+}
+
+.primary-btn {
+  background-color: #2563eb;
+  border: none;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.primary-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Cards & Progress Styling */
+.summary-card {
+  border-radius: 16px !important;
+}
+
+.metric-value {
+  color: #2563eb !important;
+  font-size: 1.5rem;
+}
+
+.goal-card {
+  border-radius: 16px !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.goal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+.goal-progress {
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.custom-bar {
+  background-color: #2563eb;
+  border-radius: 10px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.action-link {
+  font-size: 0.9rem;
+}

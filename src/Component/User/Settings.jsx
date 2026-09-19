@@ -1,356 +1,409 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import React, { useState } from "react";
 
-/* =====================================================================
-   CashMate – Settings (Tailwind CSS, single file)
-   Place at: src/Component/User/Settings.jsx
-   Needs: react-router-dom, lucide-react (already used in Dashboard.jsx)
-   Tailwind: no config changes needed (only arbitrary-value classes).
-   ===================================================================== */
+import "./Settings.css";
 
-/* ---------- Options ---------- */
-
-const SECTIONS = [
-  { id: "appearance", label: "Appearance", icon: "🎨" },
-  { id: "font", label: "Font", icon: "✍️" },
-  { id: "notifications", label: "Notifications", icon: "🔔" },
-  { id: "profile", label: "Profile", icon: "👤" },
-  { id: "security", label: "Security", icon: "🔒" },
+const fonts = [
+  "Plus Jakarta Sans",
+  "Inter",
+  "Poppins",
+  "DM Sans",
+  "Space Grotesk",
+  "Manrope",
 ];
 
-const MODES = [
-  { id: "light", label: "Light", icon: "☀️" },
-  { id: "dark", label: "Dark", icon: "🌙" },
-  { id: "system", label: "System", icon: "💻" },
-];
-
-const COLORS = [
-  { id: "terracotta", label: "Terracotta", dot: "linear-gradient(135deg,#fb923c,#ea580c)" },
-  { id: "sunset", label: "Sunset", dot: "linear-gradient(135deg,#f87171,#dc2626)" },
-  { id: "berry", label: "Berry", dot: "linear-gradient(135deg,#c084fc,#9333ea)" },
-  { id: "ocean", label: "Ocean", dot: "linear-gradient(135deg,#38bdf8,#0369a1)" },
-  { id: "forest", label: "Forest", dot: "linear-gradient(135deg,#4ade80,#166534)" },
-];
-
-const MOTIONS = [
-  { id: "full", label: "Full", icon: "✨" },
-  { id: "reduced", label: "Reduced", icon: "⚡" },
-  { id: "off", label: "Off", icon: "🔇" },
-];
-
-/* ---------- Colors (applied as CSS variables on the page wrapper) ---------- */
-
-const BASE = {
-  light: {
-    primary: "#2563eb", page: "#eef4ff", card: "#ffffff", border: "#e3eaf7",
-    text: "#16213e", muted: "#4a5878", opt: "#e3edff", optBorder: "#d3e0f5",
-  },
-  dark: {
-    primary: "#6d9bff", page: "#0f1526", card: "#182038", border: "#26314f",
-    text: "#eaf0ff", muted: "#a3b1d1", opt: "#212b48", optBorder: "#303c60",
-  },
+const fontPreviews = {
+  "Plus Jakarta Sans": "The quick brown fox",
+  Inter: "The quick brown fox",
+  Poppins: "The quick brown fox",
+  "DM Sans": "The quick brown fox",
+  "Space Grotesk": "The quick brown fox",
+  Manrope: "The quick brown fox",
 };
 
-// [softBackground, border] for each color theme
-const ACCENT = {
-  terracotta: { light: ["#fff4f0", "#f0c4b4"], dark: ["#3a2620", "#7a4a3a"] },
-  sunset: { light: ["#fff1f1", "#f4b5b5"], dark: ["#3a2124", "#7a3a40"] },
-  berry: { light: ["#f7f0ff", "#d9bdf7"], dark: ["#2e2140", "#62438a"] },
-  ocean: { light: ["#ecf8ff", "#a9dcf5"], dark: ["#1b3244", "#33627f"] },
-  forest: { light: ["#eefaf1", "#afdcbb"], dark: ["#1e3628", "#3c7452"] },
-};
-
-/* ---------- Storage + applying to the page ---------- */
-
-const STORAGE_KEY = "cashmate:appearance";
-const DEFAULTS = { mode: "light", color: "terracotta", motion: "full" };
-
-function loadAppearance() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return {
-      mode: MODES.some((m) => m.id === saved?.mode) ? saved.mode : DEFAULTS.mode,
-      color: COLORS.some((c) => c.id === saved?.color) ? saved.color : DEFAULTS.color,
-      motion: MOTIONS.some((m) => m.id === saved?.motion) ? saved.motion : DEFAULTS.motion,
-    };
-  } catch {
-    return { ...DEFAULTS };
-  }
-}
-
-function saveAppearance(value) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-  } catch {
-    /* storage blocked – ignore */
-  }
-}
-
-const isDark = (mode, prefersDark) => mode === "dark" || (mode === "system" && prefersDark);
-
-// Sets attributes/classes on <html> so the whole app can react to the settings
-function applyAppearance({ mode, color, motion }, prefersDark) {
-  const root = document.documentElement;
-  const dark = isDark(mode, prefersDark);
-
-  root.setAttribute("data-cm-theme", dark ? "dark" : "light");
-  root.setAttribute("data-cm-color", color);
-  root.setAttribute("data-cm-motion", motion);
-  root.classList.toggle("dark", dark); // works with Tailwind's `dark:` (class strategy)
-
-  // Animation level for the whole app
-  let style = document.getElementById("cm-motion-style");
-  if (motion === "full") {
-    style?.remove();
-  } else {
-    if (!style) {
-      style = document.createElement("style");
-      style.id = "cm-motion-style";
-      document.head.appendChild(style);
-    }
-    style.textContent =
-      motion === "off"
-        ? "*,*::before,*::after{animation:none!important;transition:none!important}"
-        : "*,*::before,*::after{animation-duration:.1s!important;transition-duration:.1s!important}";
-  }
-}
-
-/**
- * OPTIONAL: call once in main.jsx / index.js so the saved theme is applied
- * on every page (not only after opening Settings):
- *   import { initAppearance } from "./Component/User/Settings";
- *   initAppearance();
- */
-export function initAppearance() {
-  const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  const run = () => applyAppearance(loadAppearance(), mq.matches);
-  run();
-  mq.addEventListener("change", run);
-}
-
-/* ---------- Small pieces ---------- */
-
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cm-primary)]";
-
-function OptionCard({ icon, label, selected, onClick, motion }) {
-  const anim =
-    motion === "full"
-      ? "transition-all duration-200 hover:-translate-y-0.5"
-      : motion === "reduced"
-      ? "transition-colors duration-75"
-      : "";
-
+const warmThemes = [
+  { name: "Terracotta", coral: "#E85D2E", peach: "#F4A261" },
+  { name: "Sunset", coral: "#E63946", peach: "#F4845F" },
+  { name: "Berry", coral: "#9B5DE5", peach: "#C77DFF" },
+  { name: "Ocean", coral: "#0077B6", peach: "#48CAE4" },
+  { name: "Forest", coral: "#2D6A4F", peach: "#74C69D" },
+];
+function Toggle({ checked, onChange }) {
   return (
     <button
       type="button"
-      onClick={onClick}
-      aria-pressed={selected}
-      className={`flex h-28 flex-col items-center justify-center gap-3 rounded-[22px] border-2 text-[15px] font-bold sm:h-[138px] sm:text-lg ${anim} ${focusRing} ${
-        selected
-          ? "border-[color:var(--cm-primary)] bg-[color:var(--cm-accent-soft)] text-[color:var(--cm-primary)]"
-          : "border-[color:var(--cm-opt-border)] bg-[color:var(--cm-opt)] text-[color:var(--cm-muted)]"
-      }`}
+      onClick={() => onChange(!checked)}
+      className={`custom-switch-btn ${checked ? "active" : ""}`}
+      style={{
+        backgroundColor: checked ? "var(--coral)" : "var(--border-color)",
+      }}
     >
-      <span className="text-3xl leading-none sm:text-4xl" aria-hidden="true">{icon}</span>
-      <span>{label}</span>
+      <div className="custom-switch-thumb" />
     </button>
   );
 }
+export default function Settings() {
+  const [font, setFont] = useState("Plus Jakarta Sans");
+  const [themeMode, setThemeMode] = useState("light");
+  const [animation, setAnimation] = useState("full");
+  const [activeTheme, setActiveTheme] = useState("Terracotta");
+  const [activeSection, setActiveSection] = useState("appearance");
 
-function AppearancePanel({ appearance, update }) {
-  const groupLabel = "mb-4 text-lg font-semibold text-[color:var(--cm-muted)] sm:text-[21px]";
+  const [notifs, setNotifs] = useState({
+    budgetAlert: true,
+    expenseReminder: true,
+    bills: true,
+    weeklyReport: false,
+    unusualSpending: true,
+  });
+
+  const handleThemeChange = (theme) => {
+    setActiveTheme(theme.name);
+    document.documentElement.style.setProperty("--coral", theme.coral);
+    document.documentElement.style.setProperty("--peach", theme.peach);
+  };
+
+  const sections = [
+    { id: "appearance", label: "Appearance", emoji: "🎨" },
+    { id: "font", label: "Font", emoji: "✍️" },
+    { id: "notifications", label: "Notifications", emoji: "🔔" },
+    { id: "profile", label: "Profile", emoji: "👤" },
+    { id: "security", label: "Security", emoji: "🔐" },
+  ];
 
   return (
-    <>
-      <h2 className="mb-7 flex items-center gap-3 text-2xl font-extrabold text-[color:var(--cm-text)] sm:text-[32px]">
-        <span aria-hidden="true">🎨</span> Appearance
-      </h2>
+    <div className="container py-4 max-w-lg">
+      {/* Page Title */}
+      <div className="mb-4">
+        <h1 className="fw-bold h2 mb-1" style={{ color: "var(--text-main)" }}>
+          Settings ⚙️
+        </h1>
+        <p className="text-muted small">Customize your CashMate experience</p>
+      </div>
 
-      {/* Theme mode */}
-      <section>
-        <h3 className={groupLabel}>Theme Mode</h3>
-        <div className="grid grid-cols-3 gap-2.5 sm:gap-[18px]">
-          {MODES.map((m) => (
-            <OptionCard
-              key={m.id}
-              icon={m.icon}
-              label={m.label}
-              motion={appearance.motion}
-              selected={appearance.mode === m.id}
-              onClick={() => update({ mode: m.id })}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Color theme */}
-      <section className="mt-8">
-        <h3 className={groupLabel}>Color Theme</h3>
-        <div className="flex flex-wrap gap-2.5 sm:gap-[18px]">
-          {COLORS.map((c) => {
-            const selected = appearance.color === c.id;
-            return (
+      <div className="row g-4">
+        {/* Sidebar */}
+        <div className="col-12 col-md-3">
+          <div className="settings-card p-2 d-flex flex-column gap-1">
+            {sections.map((s) => (
               <button
-                key={c.id}
-                type="button"
-                onClick={() => update({ color: c.id })}
-                aria-pressed={selected}
-                className={`inline-flex items-center gap-3 rounded-full border-2 px-4 py-2.5 text-base font-semibold transition-colors sm:px-6 sm:py-3.5 sm:text-xl ${focusRing} ${
-                  selected
-                    ? "border-[color:var(--cm-primary)] bg-[color:var(--cm-accent-soft)] text-[color:var(--cm-primary)]"
-                    : "border-[color:var(--cm-opt-border)] bg-[color:var(--cm-opt)] text-[color:var(--cm-muted)]"
+                key={s.id}
+                onClick={() => setActiveSection(s.id)}
+                className={`btn text-start sidebar-btn fw-bold text-nowrap ${
+                  activeSection === s.id ? "active" : ""
                 }`}
               >
-                <span
-                  className="h-5 w-5 rounded-full shadow-[inset_0_-2px_4px_rgba(0,0,0,0.15)] sm:h-[26px] sm:w-[26px]"
-                  style={{ background: c.dot }}
-                />
-                {c.label}
+                <span className="me-2">{s.emoji}</span> {s.label}
               </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Animation level */}
-      <section className="mt-8">
-        <h3 className={groupLabel}>Animation Level</h3>
-        <div className="grid grid-cols-3 gap-2.5 sm:gap-[18px]">
-          {MOTIONS.map((a) => (
-            <OptionCard
-              key={a.id}
-              icon={a.icon}
-              label={a.label}
-              motion={appearance.motion}
-              selected={appearance.motion === a.id}
-              onClick={() => update({ motion: a.id })}
-            />
-          ))}
-        </div>
-      </section>
-    </>
-  );
-}
-
-/* ---------- Page ---------- */
-
-/**
- * Props (all optional):
- *   onLogout  function -> called on Logout click (default: go to "/login")
- *   panels    object   -> plug other members' panels: { font: <FontPanel />, profile: <ProfilePanel /> }
- */
-export default function Settings({ onLogout, panels = {} }) {
-  const navigate = useNavigate();
-  const [active, setActive] = useState("appearance");
-  const [appearance, setAppearance] = useState(loadAppearance);
-  const [prefersDark, setPrefersDark] = useState(
-    () => window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-
-  // Follow the OS theme when mode = "system"
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e) => setPrefersDark(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  // Apply + save whenever something changes
-  useEffect(() => {
-    applyAppearance(appearance, prefersDark);
-    saveAppearance(appearance);
-  }, [appearance, prefersDark]);
-
-  const update = (patch) => setAppearance((prev) => ({ ...prev, ...patch }));
-
-  const dark = isDark(appearance.mode, prefersDark);
-  const t = BASE[dark ? "dark" : "light"];
-  const [accentSoft, accentBorder] = ACCENT[appearance.color][dark ? "dark" : "light"];
-
-  // CSS variables used by the Tailwind classes above
-  const vars = {
-    "--cm-primary": t.primary,
-    "--cm-page": t.page,
-    "--cm-card": t.card,
-    "--cm-border": t.border,
-    "--cm-text": t.text,
-    "--cm-muted": t.muted,
-    "--cm-opt": t.opt,
-    "--cm-opt-border": t.optBorder,
-    "--cm-accent-soft": accentSoft,
-    "--cm-accent-border": accentBorder,
-  };
-
-  const handleLogout = () => {
-    if (onLogout) onLogout();
-    else navigate("/login"); // change to your login route if different
-  };
-
-  const activeSection = SECTIONS.find((s) => s.id === active);
-
-  return (
-    <div
-      style={vars}
-      className="min-h-screen bg-[color:var(--cm-page)] px-4 py-6 text-[color:var(--cm-text)] transition-colors sm:px-8 lg:px-12 lg:py-10"
-    >
-      {/* Header */}
-      <header>
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[44px]">
-          Settings <span aria-hidden="true">⚙️</span>
-        </h1>
-        <p className="mt-1.5 text-base text-[color:var(--cm-muted)] sm:text-xl">
-          Customize your CashMate experience
-        </p>
-      </header>
-
-      <div className="mt-8 grid gap-5 lg:mt-9 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start lg:gap-8">
-        {/* Sidebar */}
-        <nav
-          aria-label="Settings sections"
-          className="flex gap-1 overflow-x-auto rounded-3xl border border-[color:var(--cm-border)] bg-[color:var(--cm-card)] p-3 lg:flex-col lg:rounded-[32px]"
-        >
-          {SECTIONS.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => setActive(s.id)}
-              aria-current={active === s.id ? "page" : undefined}
-              className={`flex shrink-0 items-center gap-3 whitespace-nowrap rounded-[20px] border px-4 py-3 text-left text-base font-semibold transition-colors lg:gap-4 lg:px-5 lg:py-4 lg:text-xl ${focusRing} ${
-                active === s.id
-                  ? "border-[color:var(--cm-accent-border)] bg-[color:var(--cm-accent-soft)] text-[color:var(--cm-primary)]"
-                  : "border-transparent text-[color:var(--cm-muted)] hover:bg-[color:var(--cm-opt)]"
-              }`}
-            >
-              <span aria-hidden="true">{s.icon}</span>
-              {s.label}
-            </button>
-          ))}
-        </nav>
-
-        {/* Content */}
-        <div>
-          <div className="rounded-[32px] border border-[color:var(--cm-border)] bg-[color:var(--cm-card)] p-5 sm:p-9">
-            {active === "appearance" ? (
-              <AppearancePanel appearance={appearance} update={update} />
-            ) : panels[active] ? (
-              panels[active]
-            ) : (
-              <>
-                <h2 className="mb-4 text-2xl font-extrabold sm:text-[32px]">{activeSection.label}</h2>
-                <p className="text-[color:var(--cm-muted)]">This section is coming soon.</p>
-              </>
-            )}
+            ))}
           </div>
+        </div>
 
+        {/* Main Content Area */}
+        <div className="col-12 col-md-9">
+          {/* 1. Appearance Section */}
+          {activeSection === "appearance" && (
+            <div className="settings-card p-4 mb-3">
+              <h2 className="h5 fw-bold mb-4">🎨 Appearance</h2>
+
+              {/* Theme Mode */}
+              <div className="mb-4">
+                <label className="form-label text-muted small fw-semibold">
+                  Theme Mode
+                </label>
+                <div className="row g-2">
+                  {["light", "dark", "system"].map((mode) => (
+                    <div key={mode} className="col-4">
+                      <button
+                        onClick={() => setThemeMode(mode)}
+                        className={`btn w-100 p-3 theme-option-btn text-center ${
+                          themeMode === mode ? "selected" : ""
+                        }`}
+                      >
+                        <div className="fs-4 mb-1">
+                          {mode === "light"
+                            ? "☀️"
+                            : mode === "dark"
+                            ? "🌙"
+                            : "💻"}
+                        </div>
+                        <span className="text-capitalize small fw-bold d-block">
+                          {mode}
+                        </span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Themes */}
+              <div className="mb-4">
+                <label className="form-label text-muted small fw-semibold">
+                  Color Theme
+                </label>
+                <div className="d-flex flex-wrap gap-2">
+                  {warmThemes.map((t) => {
+                    const isSelected = activeTheme === t.name;
+                    return (
+                      <button
+                        key={t.name}
+                        onClick={() => handleThemeChange(t)}
+                        className={`btn theme-option-btn d-flex align-items-center gap-2 px-3 py-2 ${
+                          isSelected ? "selected" : ""
+                        }`}
+                      >
+                        <span
+                          className="rounded-circle d-inline-block"
+                          style={{
+                            width: "14px",
+                            height: "14px",
+                            background: `linear-gradient(135deg, ${t.coral}, ${t.peach})`,
+                          }}
+                        />
+                        <span className="small fw-semibold">{t.name}</span>
+                        {isSelected && (
+                          <span style={{ color: "var(--coral)" }}>✓</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Animation Level */}
+              <div>
+                <label className="form-label text-muted small fw-semibold">
+                  Animation Level
+                </label>
+                <div className="row g-2">
+                  {["full", "reduced", "off"].map((level) => (
+                    <div key={level} className="col-4">
+                      <button
+                        onClick={() => setAnimation(level)}
+                        className={`btn w-100 p-3 theme-option-btn text-center ${
+                          animation === level ? "selected" : ""
+                        }`}
+                      >
+                        <div className="fs-4 mb-1">
+                          {level === "full"
+                            ? "✨"
+                            : level === "reduced"
+                            ? "⚡"
+                            : "🔇"}
+                        </div>
+                        <span className="text-capitalize small fw-bold d-block">
+                          {level}
+                        </span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Font Customization */}
+          {activeSection === "font" && (
+            <div className="settings-card p-4 mb-3">
+              <h2 className="h5 fw-bold mb-2">✍️ Font Customization</h2>
+              <p className="text-muted small mb-4">
+                Choose a font and the entire app updates instantly.
+              </p>
+              <div className="d-flex flex-column gap-2">
+                {fonts.map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFont(f)}
+                    className={`btn theme-option-btn text-start p-3 d-flex justify-content-between align-items-center ${
+                      font === f ? "selected" : ""
+                    }`}
+                  >
+                    <div>
+                      <div
+                        className="fw-bold"
+                        style={{ fontFamily: `'${f}', sans-serif` }}
+                      >
+                        {f}
+                      </div>
+                      <div
+                        className="small text-muted"
+                        style={{ fontFamily: `'${f}', sans-serif` }}
+                      >
+                        {fontPreviews[f]} — ₹12,550 saved this month
+                      </div>
+                    </div>
+                    {font === f && (
+                      <span
+                        className="badge rounded-circle p-2"
+                        style={{ backgroundColor: "var(--coral)" }}
+                      >
+                        ✓
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 3. Notifications */}
+          {activeSection === "notifications" && (
+            <div className="settings-card p-4 mb-3">
+              <h2 className="h5 fw-bold mb-4">🔔 Notification Preferences</h2>
+              <div className="d-flex flex-column gap-3">
+                {[
+                  {
+                    key: "budgetAlert",
+                    label: "Budget Alerts",
+                    desc: "Get notified when you exceed budget limits",
+                  },
+                  {
+                    key: "expenseReminder",
+                    label: "Expense Reminders",
+                    desc: "Daily reminders to log your expenses",
+                  },
+                  {
+                    key: "bills",
+                    label: "Bill Reminders",
+                    desc: "Upcoming bill payment alerts",
+                  },
+                  {
+                    key: "weeklyReport",
+                    label: "Weekly Reports",
+                    desc: "Receive weekly spending summary",
+                  },
+                  {
+                    key: "unusualSpending",
+                    label: "Unusual Spending",
+                    desc: "Alert on spending anomalies",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.key}
+                    className="d-flex justify-content-between align-items-center p-3 rounded-3"
+                    style={{ backgroundColor: "var(--bg-alt)" }}
+                  >
+                    <div>
+                      <div className="fw-semibold small">{item.label}</div>
+                      <div className="text-muted extra-small">{item.desc}</div>
+                    </div>
+                    <Toggle
+                      checked={notifs[item.key]}
+                      onChange={(v) =>
+                        setNotifs((n) => ({ ...n, [item.key]: v }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 4. Profile Section */}
+          {activeSection === "profile" && (
+            <div className="settings-card p-4 mb-3">
+              <h2 className="h5 fw-bold mb-4">👤 Profile Information</h2>
+
+              <div className="d-flex align-items-center gap-3 mb-4">
+                <div
+                  className="rounded-4 d-flex align-items-center justify-content-center fs-2"
+                  style={{
+                    width: "60px",
+                    height: "60px",
+                    background:
+                      "linear-gradient(135deg, var(--coral), var(--peach))",
+                  }}
+                >
+                  👩
+                </div>
+                <div>
+                  <div className="fw-bold">Priya Sharma</div>
+                  <div className="text-muted small">priya@example.com</div>
+                  <button className="btn btn-link p-0 text-decoration-none extra-small fw-bold style-coral">
+                    Change photo
+                  </button>
+                </div>
+              </div>
+
+              <div className="row g-3 mb-4">
+                {[
+                  { label: "Full Name", value: "Priya Sharma" },
+                  { label: "Email", value: "priya@example.com" },
+                  { label: "Monthly Income (₹)", value: "35000" },
+                  { label: "Currency", value: "INR (₹)" },
+                ].map((field) => (
+                  <div key={field.label} className="col-12 col-md-6">
+                    <label className="form-label small fw-bold mb-1">
+                      {field.label}
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control input-custom"
+                      defaultValue={field.value}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button className="btn btn-primary-gradient">
+                💾 Save Changes
+              </button>
+            </div>
+          )}
+
+          {/* 5. Security Section */}
+          {activeSection === "security" && (
+            <div className="settings-card p-4 mb-3">
+              <h2 className="h5 fw-bold mb-4">🔐 Security & Privacy</h2>
+              <div className="d-flex flex-column gap-3">
+                {[
+                  {
+                    emoji: "🔑",
+                    label: "Change Password",
+                    desc: "Update your account password",
+                  },
+                  {
+                    emoji: "📱",
+                    label: "Two-Factor Authentication",
+                    desc: "Add an extra layer of security",
+                  },
+                  {
+                    emoji: "🛡️",
+                    label: "Privacy Settings",
+                    desc: "Control your data and privacy",
+                  },
+                  {
+                    emoji: "📋",
+                    label: "Active Sessions",
+                    desc: "Manage where you're logged in",
+                  },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    className="btn theme-option-btn text-start p-3 d-flex align-items-center gap-3"
+                  >
+                    <span className="fs-4">{item.emoji}</span>
+                    <div className="flex-grow-1">
+                      <div className="fw-semibold small">{item.label}</div>
+                      <div className="text-muted extra-small">{item.desc}</div>
+                    </div>
+                    <span className="text-muted">→</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Logout Button */}
           <button
-            type="button"
-            onClick={handleLogout}
-            className={`mt-6 flex w-full items-center justify-center gap-3 rounded-full border-2 border-[color:var(--cm-accent-border)] bg-[color:var(--cm-opt)] p-5 text-lg font-bold text-[color:var(--cm-primary)] transition-colors hover:bg-[color:var(--cm-accent-soft)] sm:p-6 sm:text-xl ${focusRing}`}
+            onClick={() => alert("Logout button clicked")}
+            className="btn w-100 py-3 fw-bold rounded-4 border-2"
+            style={{
+              borderColor: "rgba(232, 93, 46, 0.3)",
+              color: "var(--coral)",
+              backgroundColor: "rgba(232, 93, 46, 0.04)",
+            }}
           >
-            <LogOut size={18} />
-            Logout
+            🚪 Logout
           </button>
         </div>
       </div>

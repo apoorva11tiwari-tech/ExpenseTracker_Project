@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Edit2, Trash2 } from "lucide-react";
-import "./Expenses.css"
+import"./Expenses.css";
 
 const allTx = [
 //   {

@@ -1,15 +1,18 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Landing from "./LandingPage";
 import Login from "./Login";
-import Signup from "./SignUp";
-
+import SignUp from "./SignUp";
 import Dashboard from "./Component/User/Dashboard";
-import Notification from "./Component/User/Notification";
+import AddExpense from "./Component/User/AddExpense";
+import Expenses from "./Component/User/Expenses"
+import { Wallet, DollarSign, PlusCircle } from "lucide-react";
+import Settings from "./Component/User/Settings";
+import GoalSavings from "./Component/User/GoalSavings";
 import Analytics from "./Component/User/Analytics";
-import Reminders from "./Component/User/Reminders";
-import Expenses from "./Component/User/Expenses";
+import AIInsights from "./Component/AIInsights";
+
 
 function App() {
   return (
@@ -19,44 +22,50 @@ function App() {
         {/* Landing Page */}
         <Route path="/" element={<Landing />} />
 
-        {/* Login */}
+        {/* Login Page */}
         <Route path="/login" element={<Login />} />
 
-        {/* Signup */}
-        <Route path="/signup" element={<Signup />} />
+       {/* SignUp page */}
+        <Route path="/signup" element={<SignUp />} />
 
-        {/* Dashboard */}
-        <Route
-          path="/app/dashboard"
-          element={<Dashboard />}
-        />
+        {/* User Dashboard */}
+        <Route path="/app/dashboard" element={<Dashboard />} />
 
-        {/* Notifications */}
-        <Route
-          path="/app/notification"
-          element={<Notification />}
-        />
+        {/* Add Expense */}
+        <Route path ="/app/add-expense" element={<AddExpense/>} />
+
+        {/* settings */}
+        <Route path="/app/settings" element={<Settings />} />
+
+        {/* Goalsavings  */}
+        <Route path="/app/goals" element={<GoalSavings />} />
+
+        {/*Expenses  */}
+        <Route path="/app/expenses" element={< Expenses />} />
 
         {/* Analytics */}
-        <Route
-          path="/app/analytics"
-          element={<Analytics />}
-        />
+        <Route path="/app/analytics" element={< Analytics/>} />
 
-        {/* Reminders */}
-        <Route
-          path="/app/reminders"
-          element={<Reminders />}
-        />
+        {/* AiInsights */}
+        <Route path="/app/aiinsights" element={<AIInsights/>}/>
+        
 
-        {/* Expenses */}
-        <Route
-          path="/app/expenses"
-          element={<Expenses />}
-        />
 
+
+
+        <Route 
+          path="*" 
+          element={
+            <div className="text-center mt-5">
+              <h2>404 - Page Not Found</h2>
+              <Link to="/" className="btn btn-primary mt-3">Go Home</Link>
+            </div>
+          } 
+        />
       </Routes>
     </BrowserRouter>
+
+    
   );
 }
 

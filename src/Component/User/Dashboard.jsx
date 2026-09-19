@@ -1,5 +1,7 @@
-
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useCountUp } from "../../Hooks/useCountUp";
+
 import {
   AreaChart,
   Area,
@@ -13,9 +15,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-
-
-
 
 import {
   LayoutDashboard,
@@ -31,11 +30,11 @@ import {
   Menu,
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
 
-<<<<<<< HEAD
-// Empty data for now.
-// Later you can get this data from Firebase/MongoDB/API.
+// =====================================================
+// EMPTY DATA
+// Later you can get this data from Firebase / MongoDB / API
+// =====================================================
 
 const trendData = [];
 
@@ -48,151 +47,137 @@ const budgets = [];
 const goals = [];
 
 
+// =====================================================
+// CHART COLORS
+// =====================================================
 
-
-// Colors for category chart
 const chartColors = [
   "#E85D2E",
   "#9B8AFB",
   "#6FCF97",
   "#F4A261",
   "#B8A9D9",
-  "#A8B5C1"
+  "#A8B5C1",
 ];
 
 
-// ================= STAT CARD =================
-
-function StatCard({ title, value, subtitle, icon, trend, className }) {
-  return (
-    <div className={`dashboard-card stat-card ${className || ""}`}>
-
-      <div className="stat-top">
-
-        <div className="stat-icon">
-          {icon}
-        </div>
-
-        {trend !== undefined && (
-          <span className="stat-trend">
-            {trend > 0 ? (
-              <ArrowUpRight size={14} />
-            ) : (
-              <ArrowDownRight size={14} />
-            )}
-
-            {Math.abs(trend)}%
-          </span>
-        )}
-
-      </div>
-
-      <h3 className="stat-value">
-        {value}
-      </h3>
-
-      <p className="stat-title">
-        {title}
-      </p>
-
-      {subtitle && (
-        <p className="stat-subtitle">
-          {subtitle}
-        </p>
-      )}
-
-    </div>
-  );
-}
-
-
-// ================= DASHBOARD =================
+// =====================================================
+// DASHBOARD
+// =====================================================
 
 export default function Dashboard() {
-=======
-function Dashboard() {
-  // Empty data for now
-  const trendData = [];
-  const categoryData = [];
-  const transactions = [];
-  const budgets = [];
-  const goals = [];
->>>>>>> 69a19593a8b32b84428127c7cea8d68ce57b6c9c
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  const balance = useCountUp(0);
+  const income = useCountUp(0);
+  const expenses = useCountUp(0);
+  const budget = useCountUp(0);
+
   return (
-<<<<<<< HEAD
-    <>
+    <div className="dashboard-layout">
 
-    <div>
-      <button
-  className="btn btn-primary"
-  onClick={() => navigate("/app/add-expense")}
->
-  + Add Expense
-</button>
-    </div>
-=======
-    <div className="app-layout">
->>>>>>> 69a19593a8b32b84428127c7cea8d68ce57b6c9c
+      {/* =================================================
+          SIDEBAR
+      ================================================= */}
 
-      {/* ================= SIDEBAR ================= */}
       <aside className="sidebar">
 
         {/* Logo */}
         <div className="sidebar-logo">
-          <div className="logo-icon">💳</div>
+
+          <div className="logo-icon">
+            💳
+          </div>
 
           <div>
             <h4>CashMate</h4>
             <small>Secure Finance</small>
           </div>
+
         </div>
+
 
         {/* Menu */}
         <nav className="sidebar-menu">
 
-          <Link to="/app/dashboard" className="sidebar-link active">
+          {/* Dashboard */}
+          <Link
+            to="/app/dashboard"
+            className="sidebar-link active"
+          >
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </Link>
 
-          <Link to="/app/transactions" className="sidebar-link">
+
+          {/* Expenses */}
+          <Link
+            to="/app/expenses"
+            className="sidebar-link"
+          >
             <Receipt size={20} />
             <span>Expenses</span>
           </Link>
 
-          <Link to="/app/add-expense" className="sidebar-link">
+
+          {/* Add Expense */}
+          <Link
+            to="/app/add-expense"
+            className="sidebar-link"
+          >
             <PlusCircle size={20} />
             <span>Add Expense</span>
           </Link>
 
-          <Link to="/app/budget" className="sidebar-link">
+
+          {/* Budget */}
+          <Link
+            to="/app/budget"
+            className="sidebar-link"
+          >
             <WalletCards size={20} />
             <span>Budget</span>
           </Link>
 
-          <Link to="/app/analytics" className="sidebar-link">
+
+          {/* Analytics */}
+          <Link
+            to="/app/analytics"
+            className="sidebar-link"
+          >
             <BarChart3 size={20} />
             <span>Analytics</span>
           </Link>
 
-          <Link to="/app/goals" className="sidebar-link">
+
+          {/* Goals */}
+          <Link
+            to="/app/goals"
+            className="sidebar-link"
+          >
             <Target size={20} />
             <span>Goals</span>
           </Link>
 
-          <Link to="/app/notification" className="sidebar-link">
+
+          {/* Reminders */}
+          <Link
+            to="/app/reminders"
+            className="sidebar-link"
+          >
             <Bell size={20} />
             <span>Reminders</span>
           </Link>
 
         </nav>
 
-        {/* User section */}
+
+        {/* User Section */}
         <div className="sidebar-bottom">
 
           <div className="sidebar-user">
+
             <div className="user-icon">
               <User size={20} />
             </div>
@@ -201,9 +186,15 @@ const navigate = useNavigate();
               <strong>User</strong>
               <small>My Account</small>
             </div>
+
           </div>
 
-          <button className="logout-btn">
+
+          {/* Logout */}
+          <button
+            className="logout-btn"
+            type="button"
+          >
             <LogOut size={18} />
             Logout
           </button>
@@ -213,25 +204,48 @@ const navigate = useNavigate();
       </aside>
 
 
-      {/* ================= MAIN AREA ================= */}
+      {/* =================================================
+          MAIN AREA
+      ================================================= */}
+
       <main className="main-area">
 
-        {/* Top Navbar */}
+
+        {/* =================================================
+            TOP NAVBAR
+        ================================================= */}
+
         <header className="top-navbar">
 
-          <button className="mobile-menu-btn">
+          {/* Mobile Menu */}
+          <button
+            className="mobile-menu-btn"
+            type="button"
+          >
             <Menu size={22} />
           </button>
 
+
           <div></div>
 
+
+          {/* Top Actions */}
           <div className="top-actions">
 
-            <Link to="/app/notification" className="top-icon">
+            {/* Notifications */}
+            <Link
+              to="/app/reminders"
+              className="top-icon"
+            >
               <BellRing size={21} />
             </Link>
 
-            <Link to="/app/profile" className="profile-icon">
+
+            {/* Profile */}
+            <Link
+              to="/app/profile"
+              className="profile-icon"
+            >
               <User size={20} />
             </Link>
 
@@ -240,24 +254,51 @@ const navigate = useNavigate();
         </header>
 
 
-        {/* Dashboard Content */}
+        {/* =================================================
+            DASHBOARD CONTENT
+        ================================================= */}
+
         <div className="dashboard-page">
 
-          {/* Heading */}
+
+          {/* =================================================
+              DASHBOARD HEADER
+          ================================================= */}
+
           <div className="dashboard-header">
 
-            <h1 className="dashboard-title">
-              Dashboard 👋
-            </h1>
+            <div>
 
-            <p className="dashboard-subtitle">
-              Manage and track your finances easily.
-            </p>
+              <h1 className="dashboard-title">
+                Dashboard 👋
+              </h1>
+
+              <p className="dashboard-subtitle">
+                Manage and track your finances easily.
+              </p>
+
+            </div>
+
+
+            {/* Add Expense Button */}
+            <button
+              type="button"
+              className="btn btn-primary add-expense-btn"
+              onClick={() =>
+                navigate("/app/add-expense")
+              }
+            >
+              <PlusCircle size={18} />
+              Add Expense
+            </button>
 
           </div>
 
 
-          {/* Welcome Message */}
+          {/* =================================================
+              WELCOME MESSAGE
+          ================================================= */}
+
           <div className="dashboard-message">
 
             <div className="message-icon">
@@ -265,21 +306,31 @@ const navigate = useNavigate();
             </div>
 
             <div>
-              <strong>Welcome to CashMate!</strong>
+
+              <strong>
+                Welcome to CashMate!
+              </strong>
 
               <p>
-                Start adding your income and expenses to see your
-                financial summary here.
+                Start adding your income and expenses
+                to see your financial summary here.
               </p>
+
             </div>
 
           </div>
 
 
-          {/* Statistics */}
+          {/* =================================================
+              STATISTICS
+          ================================================= */}
+
           <div className="row g-4 mt-1">
 
+
+            {/* Total Balance */}
             <div className="col-12 col-sm-6 col-lg-3">
+
               <div className="dashboard-card stat-card balance-card">
 
                 <div className="stat-icon">
@@ -287,7 +338,7 @@ const navigate = useNavigate();
                 </div>
 
                 <div className="stat-value">
-                  ₹0
+                  ₹{balance.toLocaleString("en-IN")}
                 </div>
 
                 <div className="stat-title">
@@ -299,10 +350,13 @@ const navigate = useNavigate();
                 </div>
 
               </div>
+
             </div>
 
 
+            {/* Monthly Income */}
             <div className="col-12 col-sm-6 col-lg-3">
+
               <div className="dashboard-card stat-card income-card">
 
                 <div className="stat-icon">
@@ -310,7 +364,7 @@ const navigate = useNavigate();
                 </div>
 
                 <div className="stat-value">
-                  ₹0
+                   ₹{income.toLocaleString("en-IN")}
                 </div>
 
                 <div className="stat-title">
@@ -322,10 +376,13 @@ const navigate = useNavigate();
                 </div>
 
               </div>
+
             </div>
 
 
+            {/* Total Expenses */}
             <div className="col-12 col-sm-6 col-lg-3">
+
               <div className="dashboard-card stat-card expense-card">
 
                 <div className="stat-icon">
@@ -333,7 +390,7 @@ const navigate = useNavigate();
                 </div>
 
                 <div className="stat-value">
-                  ₹0
+                  ₹{expenses.toLocaleString("en-IN")}
                 </div>
 
                 <div className="stat-title">
@@ -345,10 +402,13 @@ const navigate = useNavigate();
                 </div>
 
               </div>
+
             </div>
 
 
+            {/* Budget Remaining */}
             <div className="col-12 col-sm-6 col-lg-3">
+
               <div className="dashboard-card stat-card budget-card">
 
                 <div className="stat-icon">
@@ -356,7 +416,7 @@ const navigate = useNavigate();
                 </div>
 
                 <div className="stat-value">
-                  ₹0
+                  ₹{budget.toLocaleString("en-IN")}
                 </div>
 
                 <div className="stat-title">
@@ -368,13 +428,18 @@ const navigate = useNavigate();
                 </div>
 
               </div>
+
             </div>
 
           </div>
 
 
-          {/* Charts */}
+          {/* =================================================
+              CHARTS
+          ================================================= */}
+
           <div className="row g-4 mt-1">
+
 
             {/* Income vs Expenses */}
             <div className="col-12 col-lg-8">
@@ -389,29 +454,49 @@ const navigate = useNavigate();
                   Your financial activity
                 </p>
 
+
                 {trendData.length === 0 ? (
 
                   <div className="empty-chart">
+
                     <div className="empty-icon">
                       📊
                     </div>
 
-                    <h5>No financial data yet</h5>
+                    <h5>
+                      No financial data yet
+                    </h5>
 
                     <p>
-                      Add income and expenses to see your chart.
+                      Add income and expenses to see
+                      your chart.
                     </p>
+
                   </div>
 
                 ) : (
 
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer
+                    width="100%"
+                    height={300}
+                  >
+
                     <AreaChart data={trendData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
+
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                      />
+
+                      <XAxis
+                        dataKey="month"
+                      />
+
                       <YAxis />
+
                       <Tooltip />
+
                       <Legend />
+
 
                       <Area
                         type="monotone"
@@ -420,13 +505,16 @@ const navigate = useNavigate();
                         stroke="var(--mint)"
                       />
 
+
                       <Area
                         type="monotone"
                         dataKey="expense"
                         fill="var(--coral)"
                         stroke="var(--coral)"
                       />
+
                     </AreaChart>
+
                   </ResponsiveContainer>
 
                 )}
@@ -449,6 +537,7 @@ const navigate = useNavigate();
                   Expense distribution
                 </p>
 
+
                 {categoryData.length === 0 ? (
 
                   <div className="empty-chart">
@@ -462,29 +551,52 @@ const navigate = useNavigate();
                     </h5>
 
                     <p>
-                      Add an expense to see categories.
+                      Add an expense to see
+                      categories.
                     </p>
 
                   </div>
 
                 ) : (
 
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer
+                    width="100%"
+                    height={300}
+                  >
+
                     <PieChart>
+
                       <Pie
                         data={categoryData}
                         dataKey="value"
                         nameKey="name"
                         outerRadius={100}
                       >
-                        {categoryData.map((entry, index) => (
-                          <Cell key={index} />
-                        ))}
+
+                        {categoryData.map(
+                          (entry, index) => (
+
+                            <Cell
+                              key={index}
+                              fill={
+                                chartColors[
+                                  index %
+                                  chartColors.length
+                                ]
+                              }
+                            />
+
+                          )
+                        )}
+
                       </Pie>
 
                       <Tooltip />
+
                       <Legend />
+
                     </PieChart>
+
                   </ResponsiveContainer>
 
                 )}
@@ -496,12 +608,16 @@ const navigate = useNavigate();
           </div>
 
 
-          {/* Transactions */}
+          {/* =================================================
+              RECENT TRANSACTIONS
+          ================================================= */}
+
           <div className="dashboard-card mt-4">
 
             <h5 className="card-heading">
               Recent Transactions
             </h5>
+
 
             {transactions.length === 0 ? (
 
@@ -516,27 +632,40 @@ const navigate = useNavigate();
                 </h5>
 
                 <p>
-                  Your recent transactions will appear here.
+                  Your recent transactions will
+                  appear here.
                 </p>
 
               </div>
 
             ) : (
 
-              transactions.map((transaction) => (
-                <div key={transaction.id}>
-                  {transaction.title}
-                </div>
-              ))
+              transactions.map(
+                (transaction) => (
+
+                  <div
+                    key={transaction.id}
+                    className="transaction-item"
+                  >
+                    {transaction.title}
+                  </div>
+
+                )
+              )
 
             )}
 
           </div>
 
 
-          {/* Budgets and Goals */}
+          {/* =================================================
+              BUDGETS AND GOALS
+          ================================================= */}
+
           <div className="row g-4 mt-1">
 
+
+            {/* Budgets */}
             <div className="col-12 col-lg-6">
 
               <div className="dashboard-card">
@@ -545,7 +674,9 @@ const navigate = useNavigate();
                   Budgets
                 </h5>
 
+
                 {budgets.length === 0 && (
+
                   <div className="empty-section">
 
                     <div className="empty-icon">
@@ -557,10 +688,12 @@ const navigate = useNavigate();
                     </h5>
 
                     <p>
-                      Create a budget to start tracking your spending.
+                      Create a budget to start
+                      tracking your spending.
                     </p>
 
                   </div>
+
                 )}
 
               </div>
@@ -568,6 +701,7 @@ const navigate = useNavigate();
             </div>
 
 
+            {/* Savings Goals */}
             <div className="col-12 col-lg-6">
 
               <div className="dashboard-card">
@@ -576,7 +710,9 @@ const navigate = useNavigate();
                   Savings Goals
                 </h5>
 
+
                 {goals.length === 0 && (
+
                   <div className="empty-section">
 
                     <div className="empty-icon">
@@ -588,10 +724,12 @@ const navigate = useNavigate();
                     </h5>
 
                     <p>
-                      Create a savings goal to track your progress.
+                      Create a savings goal to
+                      track your progress.
                     </p>
 
                   </div>
+
                 )}
 
               </div>
@@ -605,11 +743,5 @@ const navigate = useNavigate();
       </main>
 
     </div>
-<<<<<<< HEAD
-</>
-=======
->>>>>>> 69a19593a8b32b84428127c7cea8d68ce57b6c9c
   );
 }
-
-export default Dashboard;

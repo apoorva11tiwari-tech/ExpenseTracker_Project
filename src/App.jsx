@@ -23,7 +23,6 @@ function App() {
 
         {/* Landing Page */}
         <Route path="/" element={<Landing />} />
-
         {/* Login Page */}
         <Route path="/login" element={<Login />} />
 

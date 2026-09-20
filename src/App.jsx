@@ -11,7 +11,9 @@ import { Wallet, DollarSign, PlusCircle } from "lucide-react";
 import Settings from "./Component/User/Settings";
 import GoalSavings from "./Component/User/GoalSavings";
 import Analytics from "./Component/User/Analytics";
-import AIInsights from "./Component/AIInsights";
+import AIInsights from "./Component/User/AIInsights";
+import Notifications from "./Component/User/Notifications";
+import Reminders from "./Component/User/Reminders";
 
 
 function App() {
@@ -48,6 +50,12 @@ function App() {
 
         {/* AiInsights */}
         <Route path="/app/aiinsights" element={<AIInsights/>}/>
+
+        {/* Notification */}
+        <Route path="/app/notification" element={<Notifications/>}/>
+
+        {/* Reminders */}
+        <Route path="/app/reminders" element={<Reminders/>}/>
         
 
 

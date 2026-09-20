@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import "./Notification.css"
+import "./Notifications.css"
 
 const notificationsData = [
 //   {

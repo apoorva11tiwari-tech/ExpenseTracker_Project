@@ -184,7 +184,7 @@ export default function Dashboard() {
           <div className="top-actions">
             {/* Notifications */}
 
-            <Link to="/app/reminders" className="top-icon">
+            <Link to="/app/notification" className="top-icon">
               <BellRing size={21} />
             </Link>
 

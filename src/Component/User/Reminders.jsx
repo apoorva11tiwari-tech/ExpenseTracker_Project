@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Clock, Eye, Edit2 } from "lucide-react";
-import "./Reminder.css"
+import "./Reminders.css"
 
 const initialReminders = [
 //   {

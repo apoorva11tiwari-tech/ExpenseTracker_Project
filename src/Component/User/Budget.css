@@ -1,0 +1,170 @@
+:root {
+  --coral: #e85d2e;
+  --peach: #fca311;
+  --mint: #2ec4b6;
+  --lavender: #a855f7;
+  --purple: #b8a9d9;
+  --teal: #7ec8b5;
+  --slate: #a8b5c1;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+  --ai-purple: #8a2be2;
+}
+
+.budget-page {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.budget-page.fade-in {
+  opacity: 1;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.shrink-0 {
+  flex-shrink: 0;
+}
+
+/* Custom Cards */
+.custom-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease;
+}
+
+.border-danger-custom {
+  border-color: rgba(232, 93, 46, 0.5) !important;
+}
+
+/* Custom Gradient & AI Buttons */
+.btn-gradient {
+  background: linear-gradient(135deg, var(--coral), var(--peach));
+  border: none;
+}
+
+.btn-ai {
+  background: linear-gradient(135deg, var(--ai-purple), #4a00e0);
+  border: none;
+}
+
+.btn-coral {
+  background-color: var(--coral);
+  border: none;
+}
+
+.text-ai {
+  color: var(--ai-purple) !important;
+}
+
+/* Inputs & Form Styling */
+.custom-input,
+.edit-input {
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.edit-input {
+  width: 80px;
+}
+
+/* Alert Boxes */
+.alert-custom {
+  background-color: rgba(232, 93, 46, 0.08);
+  border: 1px solid rgba(232, 93, 46, 0.2);
+}
+
+/* Color Palette Utility Classes */
+.text-coral { color: var(--coral) !important; }
+.text-mint { color: var(--mint) !important; }
+.text-peach { color: var(--peach) !important; }
+
+.bg-coral { background-color: var(--coral) !important; }
+.bg-mint { background-color: var(--mint) !important; }
+.bg-lavender { background-color: var(--lavender) !important; }
+.bg-peach { background-color: var(--peach) !important; }
+.bg-purple { background-color: var(--purple) !important; }
+.bg-teal { background-color: var(--teal) !important; }
+.bg-slate { background-color: var(--slate) !important; }
+
+.bg-peach-gradient {
+  background: linear-gradient(90deg, var(--peach), var(--coral)) !important;
+}
+
+/* Progress Bars */
+.main-progress-bar {
+  height: 12px;
+  border-radius: 10px;
+  background-color: var(--border-color);
+}
+
+.category-progress-bar {
+  height: 8px;
+  border-radius: 10px;
+  background-color: var(--border-color);
+}
+
+/* SVG Circular Chart */
+.circular-progress-svg {
+  transform: rotate(-90deg);
+}
+
+.circle-bg {
+  fill: none;
+  stroke: var(--border-color);
+}
+
+.circle-bar {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.circle-bar.coral { stroke: var(--coral); }
+.circle-bar.mint { stroke: var(--mint); }
+.circle-bar.lavender { stroke: var(--lavender); }
+.circle-bar.peach { stroke: var(--peach); }
+.circle-bar.purple { stroke: var(--purple); }
+.circle-bar.teal { stroke: var(--teal); }
+.circle-bar.slate { stroke: var(--slate); }
+
+.progress-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.progress-center-emoji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+}
+
+/* Custom Modal Backdrop */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+}
+
+.modal-dialog-custom {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 24px;
+}

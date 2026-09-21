@@ -15,6 +15,7 @@ import AIInsights from "./Component/User/AIInsights";
 import Notifications from "./Component/User/Notifications";
 import Reminders from "./Component/User/Reminders";
 import Budget from "./Component/User/Budget";
+import UserIncome from "./Component/User/UserIncome";
 
 
 function App() {
@@ -59,6 +60,9 @@ function App() {
 
         {/* Budget */}
         <Route path="/app/budget" element={<Budget/>}/>
+
+        {/* User Income */}
+        <Route path="/app/userincome" element={<UserIncome/>}/>
         
 
 

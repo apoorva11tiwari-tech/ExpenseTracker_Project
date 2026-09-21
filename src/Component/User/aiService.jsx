@@ -1,30 +1,32 @@
 // aiService.js
 
-export async function getAIBudgetRecommendations(income, goal, currentBudgets) {
+export async function getAIBudgetRecommendations(income, goal, currentBudgets = []) {
   const numericIncome = Number(income);
 
-  // Define multipliers that total 100% (1.0)
+  if (!numericIncome || numericIncome <= 0) return null;
+
+  // Base Multipliers (default: Balanced Spending)
   let multipliers = {
-    Food: 0.20,          // 20%
-    Shopping: 0.10,      // 10%
-    Transport: 0.08,     // 8%
-    Bills: 0.22,         // 22%
-    Entertainment: 0.05, // 5%
-    Health: 0.08,        // 8%
-    Education: 0.07,     // 7%
-    Savings: 0.20,       // 20% (Savings & Investments)
+    Food: 0.20,
+    Shopping: 0.10,
+    Transport: 0.08,
+    Bills: 0.22,
+    Entertainment: 0.05,
+    Health: 0.08,
+    Education: 0.07,
+    Savings: 0.20,
   };
 
   if (goal === "Save More Money") {
     multipliers = {
-      Food: 0.18,        // 18%
-      Shopping: 0.05,    // 5%
-      Transport: 0.07,    // 7%
-      Bills: 0.20,       // 20%
-      Entertainment: 0.05, // 5%
-      Health: 0.08,      // 8%
-      Education: 0.07,   // 7%
-      Savings: 0.30,     // 30% Extra Savings!
+      Food: 0.18,
+      Shopping: 0.05,
+      Transport: 0.07,
+      Bills: 0.20,
+      Entertainment: 0.05,
+      Health: 0.08,
+      Education: 0.07,
+      Savings: 0.30,
     };
   } else if (goal === "Aggressive Debt Payoff") {
     multipliers = {
@@ -53,12 +55,20 @@ export async function getAIBudgetRecommendations(income, goal, currentBudgets) {
   // Simulate AI delay
   await new Promise((resolve) => setTimeout(resolve, 600));
 
-  return currentBudgets.map((item) => {
-    const ratio = multipliers[item.cat] || 0.10;
-    const suggested = Math.round((numericIncome * ratio) / 100) * 100;
+  // Fallback category list if currentBudgets is empty
+  const categoriesToProcess =
+    currentBudgets.length > 0
+      ? currentBudgets
+      : Object.keys(multipliers).map((cat) => ({ cat }));
+
+  return categoriesToProcess.map((item) => {
+    const categoryName = item.cat || item.category;
+    const ratio = multipliers[categoryName] || 0.10;
+    const calculatedBudget = Math.round(numericIncome * ratio);
+
     return {
-      cat: item.cat,
-      suggestedBudget: Math.max(suggested, 1000),
+      cat: categoryName,
+      suggestedBudget: Math.max(calculatedBudget, 500), // Ensures minimum floor of ₹500 per category
     };
   });
 }

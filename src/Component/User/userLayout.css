@@ -1,0 +1,120 @@
+/* Layout Containers */
+.layout-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.topbar {
+  height: 56px;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Sidebar Responsive Styles */
+.sidebar-drawer {
+  width: 250px;
+  background-color: #1a1d24;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1045;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(-100%);
+}
+
+@media (min-width: 992px) {
+  .sidebar-drawer {
+    position: static;
+    transform: none;
+  }
+}
+
+.sidebar-drawer.show {
+  transform: translateX(0);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.sidebar-header {
+  height: 60px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #e85d2e, #a855f7);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* Nav Item Link */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-item-link {
+  color: #a0aec0;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-item-link:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav-item-link.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #e85d2e, #fca311);
+  font-weight: 600;
+}
+
+/* User Avatar & Floating Action Button */
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e85d2e, #fca311);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.fab-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1030;
+}

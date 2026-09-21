@@ -1,0 +1,330 @@
+/* =====================================================
+   CASHMATE SOBER & COLORFUL LIGHT THEME
+===================================================== */
+
+:root {
+  /* Light Background Colors matching Landing Page */
+  --bg: #f8fafc;
+  --bg-alt: #f1f5f9;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  
+  /* Text Colors */
+  --text: #0f172a;
+  --text-2: #475569;
+  --muted: #64748b;
+  
+  /* Brand Pastel & Vibrant Colors */
+  --mint: #10b981;
+  --mint-bg: #ecfdf5;
+  --coral: #ff6b52;
+  --coral-bg: #fff1f2;
+  --lavender: #6366f1;
+  --lavender-bg: #eef2ff;
+  --peach: #f59e0b;
+  --peach-bg: #fffbeb;
+}
+
+/* Main Area Container */
+.main-area {
+  background-color: var(--bg) !important;
+  min-height: 100vh;
+}
+
+.dashboard-page {
+  padding: 28px 28px;
+  background-color: var(--bg);
+  min-height: calc(100vh - 65px);
+}
+
+/* Top Navbar */
+.top-navbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Header Typography */
+.dashboard-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.dashboard-subtitle {
+  color: var(--text-2);
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+/* Welcome Message Banner */
+.dashboard-message {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  border: 1px solid #c7d2fe;
+  margin-bottom: 24px;
+}
+
+.message-icon {
+  font-size: 24px;
+}
+
+.dashboard-message strong {
+  color: #312e81;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.dashboard-message p {
+  margin: 2px 0 0;
+  color: #4338ca;
+  font-size: 13px;
+}
+
+/* =====================================================
+   CARDS WITH SOFT PASTEL TINTS & BOLD ACCENTS
+===================================================== */
+
+.dashboard-card {
+  height: 100%;
+  padding: 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease-in-out;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.07);
+}
+
+/* Stat Card Specific Colorful Tints */
+.balance-card {
+  background: linear-gradient(180deg, #ffffff 0%, var(--lavender-bg) 100%);
+  border-top: 4px solid var(--lavender);
+}
+
+.income-card {
+  background: linear-gradient(180deg, #ffffff 0%, var(--mint-bg) 100%);
+  border-top: 4px solid var(--mint);
+}
+
+.expense-card {
+  background: linear-gradient(180deg, #ffffff 0%, var(--coral-bg) 100%);
+  border-top: 4px solid var(--coral);
+}
+
+.budget-card {
+  background: linear-gradient(180deg, #ffffff 0%, var(--peach-bg) 100%);
+  border-top: 4px solid var(--peach);
+}
+
+.stat-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #ffffff;
+  font-size: 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  margin: 10px 0 2px;
+}
+
+.stat-title {
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Headings inside Cards */
+.card-heading {
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* =====================================================
+   TRANSACTION ITEMS
+===================================================== */
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.transaction-item:hover {
+  background: #ffffff;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.transaction-info h6 {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.transaction-info p {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.expense-text {
+  color: var(--coral);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.income-text {
+  color: var(--mint);
+  font-size: 15px;
+  font-weight: 700;
+}
+/* =====================================================
+   COLORFUL RECENT TRANSACTIONS
+===================================================== */
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: all 0.25s ease;
+}
+
+.transaction-item:hover {
+  transform: translateX(6px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon Box */
+.transaction-icon-box {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 20px;
+}
+
+/* Category Badge Tags */
+.category-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+/* Food Theme (Peach / Coral Accent) */
+.transaction-item.cat-food {
+  background: #fff7ed;
+  border-color: #ffedd5;
+}
+.transaction-icon-box.cat-food {
+  background: #ffebd2;
+}
+.category-tag.cat-food {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* Shopping Theme (Purple / Lavender Accent) */
+.transaction-item.cat-shopping {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+}
+.transaction-icon-box.cat-shopping {
+  background: #ede9fe;
+}
+.category-tag.cat-shopping {
+  background: #ddd6fe;
+  color: #6d28d9;
+}
+
+/* Travel Theme (Mint / Green Accent) */
+.transaction-item.cat-travel {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.transaction-icon-box.cat-travel {
+  background: #d1fae5;
+}
+.category-tag.cat-travel {
+  background: #a7f3d0;
+  color: #047857;
+}
+
+/* Bills / Utilities Theme (Blue Accent) */
+.transaction-item.cat-bills {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.transaction-icon-box.cat-bills {
+  background: #dbeafe;
+}
+.category-tag.cat-bills {
+  background: #bfdbfe;
+  color: #1d4ed8;
+}
+
+/* Other / General Theme */
+.transaction-item.cat-other {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+.transaction-icon-box.cat-other {
+  background: #f1f5f9;
+}
+.category-tag.cat-other {
+  background: #e2e8f0;
+  color: #475569;
+}

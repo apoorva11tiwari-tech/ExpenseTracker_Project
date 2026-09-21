@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Plus, X, Edit2, AlertTriangle, Sparkles } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, X, Edit2, AlertTriangle, Sparkles, Trash2 } from "lucide-react";
 import { useFadeIn } from "../../hooks/useCountUp";
 import { getAIBudgetRecommendations } from "./aiService";
 import "./Budget.css";
 
-const initialBudgets = [
-//   { id: 1, cat: "Food", emoji: "🍔", budget: 8000, used: 7850, color: "coral" },
-//   { id: 2, cat: "Shopping", emoji: "🛍️", budget: 6000, used: 5600, color: "lavender" },
-//   { id: 3, cat: "Transport", emoji: "🚗", budget: 3000, used: 2800, color: "mint" },
-//   { id: 4, cat: "Bills", emoji: "🏠", budget: 5000, used: 4200, color: "peach" },
-//   { id: 5, cat: "Entertainment", emoji: "🎮", budget: 2000, used: 1200, color: "purple" },
-//   { id: 6, cat: "Health", emoji: "💊", budget: 2000, used: 340, color: "teal" },
-//   { id: 7, cat: "Education", emoji: "📚", budget: 3000, used: 799, color: "slate" },
-//   { id: 8, cat: "Savings", emoji: "💰", budget: 10000, used: 0, color: "mint" }, // New Savings Category
- ];
+const categoryMeta = {
+  Food: { emoji: "🍔", color: "coral" },
+  Shopping: { emoji: "🛍️", color: "lavender" },
+  Transport: { emoji: "🚗", color: "mint" },
+  Bills: { emoji: "🏠", color: "peach" },
+  Entertainment: { emoji: "🎮", color: "purple" },
+  Health: { emoji: "💊", color: "teal" },
+  Education: { emoji: "📚", color: "slate" },
+  Savings: { emoji: "💰", color: "mint" },
+  Other: { emoji: "📦", color: "slate" },
+};
 
 function CircularProgress({ pct, colorClass, size = 80 }) {
   const r = (size - 12) / 2;
@@ -43,7 +44,7 @@ function CircularProgress({ pct, colorClass, size = 80 }) {
 }
 
 export default function Budget() {
-  const [budgets, setBudgets] = useState(initialBudgets);
+  const [budgets, setBudgets] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
 
@@ -59,20 +60,58 @@ export default function Budget() {
   const [editVal, setEditVal] = useState("");
   const visible = useFadeIn(100);
 
+  // Fetch Live Budgets from Backend API
+  const fetchBudgets = () => {
+    fetch("http://localhost:5000/api/budgets")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const formatted = data.map((b) => {
+            const meta = categoryMeta[b.category] || { emoji: "🎯", color: "lavender" };
+            return {
+              id: b._id,
+              cat: b.category,
+              emoji: meta.emoji,
+              budget: b.budgetedAmount,
+              used: b.spentAmount,
+              color: meta.color,
+            };
+          });
+          setBudgets(formatted);
+        }
+      })
+      .catch((err) => console.error("Error loading budgets:", err));
+  };
+
+  useEffect(() => {
+    fetchBudgets();
+  }, []);
+
   const totalBudget = budgets.reduce((sum, item) => sum + item.budget, 0);
   const totalUsed = budgets.reduce((sum, item) => sum + item.used, 0);
   const totalPct = totalBudget > 0 ? Math.round((totalUsed / totalBudget) * 100) : 0;
 
-  // Manual Edit Save
+  // Save manual edit to MongoDB
   const saveEdit = () => {
     if (editId !== null && editVal !== "") {
-      setBudgets((items) =>
-        items.map((item) =>
-          item.id === editId ? { ...item, budget: Number(editVal) } : item
-        )
-      );
-      setEditId(null);
-      setEditVal("");
+      const targetItem = budgets.find((b) => b.id === editId);
+      if (!targetItem) return;
+
+      fetch("http://localhost:5000/api/budgets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: targetItem.cat,
+          amount: Number(editVal),
+        }),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          setEditId(null);
+          setEditVal("");
+          fetchBudgets();
+        })
+        .catch((err) => console.error("Error updating budget:", err));
     }
   };
 
@@ -82,11 +121,36 @@ export default function Budget() {
       alert("Please enter a valid monthly limit!");
       return;
     }
-    setBudgets((prev) =>
-      prev.map((b) => (b.cat === newCat ? { ...b, budget: Number(newLimit) } : b))
-    );
-    setShowModal(false);
-    setNewLimit("");
+
+    fetch("http://localhost:5000/api/budgets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: newCat,
+        amount: Number(newLimit),
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setShowModal(false);
+        setNewLimit("");
+        fetchBudgets();
+      })
+      .catch((err) => console.error("Error saving budget:", err));
+  };
+
+  // Delete budget category
+  const handleDelete = (id, categoryName) => {
+    if (!window.confirm(`Are you sure you want to delete the budget for ${categoryName}?`)) return;
+
+    fetch(`http://localhost:5000/api/budgets/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        fetchBudgets();
+      })
+      .catch((err) => console.error("Error deleting budget:", err));
   };
 
   // AI Auto Customization Trigger
@@ -97,25 +161,41 @@ export default function Budget() {
     }
 
     setIsAiLoading(true);
-    const aiSuggestions = await getAIBudgetRecommendations(
-      monthlyIncome,
-      financialGoal,
-      budgets
-    );
-    setIsAiLoading(false);
+    let aiSuggestions = null;
+    try {
+      aiSuggestions = await getAIBudgetRecommendations(
+        monthlyIncome,
+        financialGoal,
+        []
+      );
+    } catch (e) {
+      console.error(e);
+    }
 
     if (aiSuggestions && Array.isArray(aiSuggestions)) {
-      setBudgets((prevBudgets) =>
-        prevBudgets.map((item) => {
-          const match = aiSuggestions.find(
-            (s) => s.cat.toLowerCase() === item.cat.toLowerCase()
-          );
-          return match ? { ...item, budget: match.suggestedBudget } : item;
-        })
-      );
-      setShowAIModal(false);
-      setMonthlyIncome("");
+      try {
+        for (const s of aiSuggestions) {
+          await fetch("http://localhost:5000/api/budgets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              category: s.cat,
+              amount: Number(s.suggestedBudget),
+            }),
+          });
+        }
+
+        setIsAiLoading(false);
+        setShowAIModal(false);
+        setMonthlyIncome("");
+        fetchBudgets();
+      } catch (err) {
+        console.error("Error saving AI budget allocations:", err);
+        setIsAiLoading(false);
+        alert("Failed to save AI budget allocations.");
+      }
     } else {
+      setIsAiLoading(false);
       alert("Oops, the AI recommendation engine stalled. Tap retry.");
     }
   };
@@ -123,13 +203,13 @@ export default function Budget() {
   return (
     <div className={`container my-4 budget-page ${visible ? "fade-in" : ""}`}>
       {/* Header with AI & Manual Action Buttons */}
-      <div className="d-flex align-items-center justify-between flex-wrap gap-3 mb-4">
+      <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
         <div>
           <h1 className="fw-bold fs-3 mb-1 budget-title">
             Budget Management 🎯
           </h1>
           <p className="text-muted small mb-0">
-            September 2026 — Track & Customize smartly
+            Track & Customize smartly with real-time budget tracking
           </p>
         </div>
 
@@ -178,7 +258,7 @@ export default function Budget() {
           <div className="col-12 col-md-8">
             <h2 className="fs-5 fw-bold mb-1">Monthly Budget Overview</h2>
             <p className="text-muted small mb-3">
-              ₹{totalUsed.toLocaleString()} of ₹{totalBudget.toLocaleString()}{" "}
+              ₹{totalUsed.toLocaleString("en-IN")} of ₹{totalBudget.toLocaleString("en-IN")}{" "}
               used
             </p>
 
@@ -194,10 +274,10 @@ export default function Budget() {
 
             <div className="d-flex justify-content-between mb-3">
               <span className="small text-muted">
-                Spent: ₹{totalUsed.toLocaleString()}
+                Spent: ₹{totalUsed.toLocaleString("en-IN")}
               </span>
               <span className="small fw-bold text-mint">
-                Remaining: ₹{Math.max(0, totalBudget - totalUsed).toLocaleString()}
+                Remaining: ₹{Math.max(0, totalBudget - totalUsed).toLocaleString("en-IN")}
               </span>
             </div>
 
@@ -216,108 +296,125 @@ export default function Budget() {
 
       {/* Category Grid */}
       <div className="row g-3">
-        {budgets.map((b) => {
-          const pct = Math.round((b.used / b.budget) * 100);
-          const over = pct > 100;
+        {budgets.length === 0 ? (
+          <div className="col-12 text-center text-muted py-4">
+            No budget limits set yet. Click <strong>"Add Budget"</strong> or <strong>"AI Customize"</strong> to set up limits!
+          </div>
+        ) : (
+          budgets.map((b) => {
+            const pct = b.budget > 0 ? Math.round((b.used / b.budget) * 100) : 0;
+            const over = pct > 100;
 
-          return (
-            <div className="col-12 col-md-6" key={b.id}>
-              <div
-                className={`card custom-card p-3 ${
-                  over ? "border-danger-custom" : ""
-                }`}
-              >
-                <div className="d-flex align-items-center gap-3">
-                  <div className="position-relative shrink-0">
-                    <CircularProgress
-                      pct={pct}
-                      colorClass={b.color}
-                      size={60}
-                    />
-                    <div className="progress-center-emoji">{b.emoji}</div>
-                  </div>
+            return (
+              <div className="col-12 col-md-6" key={b.id}>
+                <div
+                  className={`card custom-card p-3 ${
+                    over ? "border-danger-custom" : ""
+                  }`}
+                >
+                  <div className="d-flex align-items-center gap-3">
+                    <div className="position-relative shrink-0">
+                      <CircularProgress
+                        pct={pct}
+                        colorClass={b.color}
+                        size={60}
+                      />
+                      <div className="progress-center-emoji">{b.emoji}</div>
+                    </div>
 
-                  <div className="flex-grow-1 min-w-0">
-                    <div className="d-flex align-items-center justify-content-between mb-1">
-                      <h3 className="fs-6 fw-bold mb-0">{b.cat}</h3>
-                      <div className="d-flex align-items-center gap-1">
-                        {over && (
-                          <AlertTriangle size={14} className="text-coral" />
-                        )}
-                        {editId === b.id ? (
-                          <div className="d-flex align-items-center gap-1">
-                            <input
-                              type="number"
-                              value={editVal}
-                              onChange={(e) => setEditVal(e.target.value)}
-                              className="form-control form-control-sm edit-input"
-                            />
-                            <button
-                              onClick={saveEdit}
-                              className="btn btn-sm btn-coral text-white fw-bold py-0 px-2"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={() => setEditId(null)}
-                              className="btn btn-sm text-muted p-0 ms-1"
-                            >
-                              <X size={14} />
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setEditId(b.id);
-                              setEditVal(String(b.budget));
-                            }}
-                            className="btn btn-sm text-muted p-1"
-                            title="Edit Budget"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                        )}
+                    <div className="flex-grow-1 min-w-0">
+                      <div className="d-flex align-items-center justify-content-between mb-1">
+                        <h3 className="fs-6 fw-bold mb-0">{b.cat}</h3>
+                        <div className="d-flex align-items-center gap-1">
+                          {over && (
+                            <AlertTriangle size={14} className="text-coral" />
+                          )}
+                          {editId === b.id ? (
+                            <div className="d-flex align-items-center gap-1 edit-actions-wrapper">
+                              <input
+                                type="number"
+                                value={editVal}
+                                onChange={(e) => setEditVal(e.target.value)}
+                                className="form-control form-control-sm edit-input"
+                                style={{ width: "80px", fontSize: "12px" }}
+                              />
+                              <button
+                                onClick={saveEdit}
+                                className="btn btn-sm btn-save-custom fw-bold py-1 px-2"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() => setEditId(null)}
+                                className="btn btn-sm text-muted p-1"
+                                title="Cancel Edit"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="d-flex align-items-center gap-1">
+                              <button
+                                onClick={() => {
+                                  setEditId(b.id);
+                                  setEditVal(String(b.budget));
+                                }}
+                                className="btn btn-sm text-muted p-1"
+                                title="Edit Budget"
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(b.id, b.cat)}
+                                className="btn btn-sm text-danger p-1"
+                                title="Delete Budget"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <p className="small text-muted mb-2">
-                      ₹{b.used.toLocaleString()} / ₹{b.budget.toLocaleString()}
-                    </p>
+                      <p className="small text-muted mb-2">
+                        ₹{b.used.toLocaleString("en-IN")} / ₹{b.budget.toLocaleString("en-IN")}
+                      </p>
 
-                    <div className="progress category-progress-bar mb-1">
-                      <div
-                        className={`progress-bar ${
-                          over ? "bg-coral" : `bg-${b.color}`
-                        }`}
-                        role="progressbar"
-                        style={{ width: `${Math.min(pct, 100)}%` }}
-                      ></div>
-                    </div>
+                      <div className="progress category-progress-bar mb-1">
+                        <div
+                          className={`progress-bar ${
+                            over ? "bg-coral" : `bg-${b.color}`
+                          }`}
+                          role="progressbar"
+                          style={{ width: `${Math.min(pct, 100)}%` }}
+                        ></div>
+                      </div>
 
-                    <div className="d-flex justify-content-between">
-                      <span
-                        className={`small fw-bold ${
-                          over
-                            ? "text-coral"
-                            : pct >= 80
-                            ? "text-peach"
-                            : "text-muted"
-                        }`}
-                      >
-                        {pct}% used
-                      </span>
-                      <span className="small text-muted">
-                        {over
-                          ? `₹${(b.used - b.budget).toLocaleString()} over!`
-                          : `₹${(b.budget - b.used).toLocaleString()} left`}
-                      </span>
+                      <div className="d-flex justify-content-between">
+                        <span
+                          className={`small fw-bold ${
+                            over
+                              ? "text-coral"
+                              : pct >= 80
+                              ? "text-peach"
+                              : "text-muted"
+                          }`}
+                        >
+                          {pct}% used
+                        </span>
+                        <span className="small text-muted">
+                          {over
+                            ? `₹${(b.used - b.budget).toLocaleString("en-IN")} over!`
+                            : `₹${(b.budget - b.used).toLocaleString("en-IN")} left`}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {/* AI Customize Modal */}
@@ -401,9 +498,9 @@ export default function Budget() {
                 onChange={(e) => setNewCat(e.target.value)}
                 className="form-select custom-input"
               >
-                {budgets.map((b) => (
-                  <option key={b.id} value={b.cat}>
-                    {b.emoji} {b.cat}
+                {Object.keys(categoryMeta).map((catName) => (
+                  <option key={catName} value={catName}>
+                    {categoryMeta[catName].emoji} {catName}
                   </option>
                 ))}
               </select>

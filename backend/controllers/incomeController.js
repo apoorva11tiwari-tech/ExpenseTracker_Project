@@ -1,10 +1,33 @@
 const Income = require("../models/Income");
 
-// Add a new income
+// Add or update income
+// Add or update income
 const addIncome = async (req, res) => {
     try {
         const { title, amount, source, date, description } = req.body;
 
+        // Check if this is a monthly salary entry and update it if it already exists
+        if (title === "Monthly Salary" || title === "Monthly Salary / Baseline") {
+            let existingIncome = await Income.findOne({ 
+                $or: [{ title: "Monthly Salary" }, { title: "Monthly Salary / Baseline" }] 
+            });
+
+            if (existingIncome) {
+                existingIncome.amount = amount;
+                existingIncome.title = "Monthly Salary"; // standardize title
+                existingIncome.source = source || existingIncome.source;
+                existingIncome.date = date || existingIncome.date;
+                existingIncome.description = description || existingIncome.description;
+                
+                const updatedIncome = await existingIncome.save();
+                return res.status(200).json({
+                    message: "Monthly income updated successfully",
+                    income: updatedIncome
+                });
+            }
+        }
+
+        // Otherwise, create a regular new income entry
         const income = new Income({
             title,
             amount,

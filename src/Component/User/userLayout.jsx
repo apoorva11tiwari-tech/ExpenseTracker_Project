@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Outlet, NavLink, Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Receipt,
@@ -14,9 +14,12 @@ import {
   LogOut,
   Menu,
   X,
-  Plus
+  Plus,
+  User
 } from "lucide-react";
-import "./UserLayout.css";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../Firebase";
+import "./userLayout.css";
 
 const navItems = [
   { to: "/app/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -25,126 +28,145 @@ const navItems = [
   { to: "/app/budget", icon: PiggyBank, label: "Budget" },
   { to: "/app/analytics", icon: BarChart2, label: "Analytics" },
   { to: "/app/savings", icon: Target, label: "Goals" },
-  { to: "/app/ai-insights", icon: Brain, label: "AI Insights", badge: 4 },
-  { to: "/app/insights", icon: Lightbulb, label: "Reminders", badge: 3 },
-  { to: "/app/notifications", icon: Bell, label: "Notifications", badge: 2 },
+  { to: "/app/ai-insights", icon: Brain, label: "AI Insights" },
+  { to: "/app/insights", icon: Lightbulb, label: "Reminders" },
+  { to: "/app/notifications", icon: Bell, label: "Notifications" },
   { to: "/app/settings", icon: Settings, label: "Settings" },
 ];
 
 export default function UserLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user || null);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <div className="layout-container">
-      {/* Mobile Backdrop Overlay */}
       {sidebarOpen && (
         <div
-          className="sidebar-backdrop"
+          className="sidebar-backdrop d-lg-none"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar Drawer */}
       <aside className={`sidebar-drawer ${sidebarOpen ? "show" : ""}`}>
-        {/* Brand Header */}
-        <div className="sidebar-header d-flex align-items-center justify-content-between px-3">
-          <div className="d-flex align-items-center gap-2">
+        <div className="sidebar-header">
+          <div className="brand-box">
             <div className="brand-logo-icon">💳</div>
             <div>
-              <h6 className="fw-bold text-white mb-0">CashMate</h6>
-              <small className="text-muted">Secure Finance</small>
+              <h6 className="brand-title">CashMate</h6>
+              <small className="brand-subtitle">Secure Finance</small>
             </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="btn btn-sm text-white-50 d-lg-none"
+            className="close-sidebar-btn d-lg-none"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Navigation List */}
-        <nav className="sidebar-nav px-2 py-3">
-          {navItems.map(({ to, icon: Icon, label, badge }) => (
+        <nav className="sidebar-nav">
+          {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `nav-item-link d-flex align-items-center justify-content-between px-3 py-2 rounded-3 text-decoration-none ${
-                  isActive ? "active" : ""
-                }`
+                `nav-item-link ${isActive ? "active" : ""}`
               }
             >
-              <div className="d-flex align-items-center gap-3">
-                <Icon size={18} />
-                <span className="small font-weight-medium">{label}</span>
-              </div>
-              {badge && <span className="badge bg-danger rounded-pill">{badge}</span>}
+              <Icon size={18} />
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
 
-        {/* User Profile Footer */}
-        <div className="sidebar-footer p-3 border-top border-secondary border-opacity-25">
-          <div className="d-flex align-items-center gap-2 mb-2">
-            <div className="user-avatar">👩</div>
-            <div className="overflow-hidden">
-              <p className="text-white small fw-bold mb-0 text-truncate">Priya Sharma</p>
-              <small className="text-muted d-block text-truncate">priya@example.com</small>
+        <div className="sidebar-footer">
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              setSidebarOpen(false);
+              navigate("/app/settings", { state: { activeTab: "profile" } });
+            }}
+            className="user-profile-card"
+          >
+            <div className="user-avatar-box">
+              {currentUser?.photoURL ? (
+                <img src={currentUser.photoURL} alt="Avatar" className="avatar-img" />
+              ) : (
+                <User size={18} />
+              )}
+            </div>
+            <div className="user-info">
+              <p className="user-name">
+                {currentUser?.displayName || currentUser?.email?.split('@')[0] || "My Account"}
+              </p>
+              <small className="user-email">
+                {currentUser?.email || "user@example.com"}
+              </small>
             </div>
           </div>
-          <button
-            onClick={() => navigate("/")}
-            className="btn btn-sm btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2 mt-2"
-          >
+
+          <button onClick={handleLogout} className="logout-btn">
             <LogOut size={16} /> Logout
           </button>
         </div>
       </aside>
 
       {/* Main Page Area */}
-      <div className="main-wrapper">
-        {/* Top Header */}
-        <header className="topbar d-flex align-items-center justify-content-between px-3 bg-white border-bottom">
+      <main className="main-wrapper">
+        <header className="topbar">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="btn btn-light d-lg-none border-0"
+            className="mobile-toggle-btn d-lg-none"
           >
             <Menu size={20} />
           </button>
 
-          <div className="ms-auto d-flex align-items-center gap-3">
-            <NavLink
-              to="/app/add-expense"
-              className="btn btn-primary btn-sm rounded-pill d-none d-sm-flex align-items-center gap-1 px-3"
-            >
+          <div className="topbar-actions">
+            <Link to="/app/add-expense" className="topbar-add-btn">
               <Plus size={16} /> Add Expense
-            </NavLink>
+            </Link>
 
-            <NavLink to="/app/notifications" className="btn btn-light rounded-circle p-2 position-relative">
+            <Link to="/app/notifications" className="topbar-icon-btn">
               <Bell size={18} />
-              <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-            </NavLink>
+            </Link>
 
-            <div className="user-avatar small">👩</div>
+            <Link
+              to="/app/settings"
+              state={{ activeTab: "profile" }}
+              className="topbar-avatar"
+            >
+              {currentUser?.photoURL ? (
+                <img src={currentUser.photoURL} alt="Avatar" className="avatar-img" />
+              ) : (
+                <User size={16} />
+              )}
+            </Link>
           </div>
         </header>
 
-        {/* Dynamic Route Content */}
-        <main className="main-content p-3 p-md-4">
+        <div className="main-content-area">
           <Outlet />
-        </main>
-
-        {/* Floating Add Expense Button for Mobile */}
-        <NavLink
-          to="/app/add-expense"
-          className="fab-btn d-sm-none btn btn-primary rounded-circle shadow-lg"
-        >
-          <Plus size={24} />
-        </NavLink>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

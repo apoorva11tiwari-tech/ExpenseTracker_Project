@@ -1,123 +1,191 @@
-/* Layout container */
-.goals-layout-container {
-  min-height: 100vh;
-  background-color: #f4f6fc;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+/* =====================================================
+   VIBRANT PURPLE / PINK / INDIGO SAVINGS GOALS THEME
+===================================================== */
+
+.goals-page {
+  animation: fadeIn 0.4s ease-in-out;
 }
 
-/* Sidebar styling */
-.sidebar-container {
-  width: 260px;
-  background-color: #0b132b;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.brand-logo-box {
-  font-size: 1.25rem;
-  background-color: #1c2541;
-  padding: 6px 12px;
-  border-radius: 10px;
+@keyframes animatePop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.brand-subtext {
-  font-size: 0.75rem;
-  color: #8d99ae;
+.animate-pop {
+  animation: animatePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.side-link {
-  color: #a0aec0;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-weight: 500;
+.goals-title {
+  color: #0f172a;
+}
+
+/* Custom Cards */
+.custom-card {
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
   transition: all 0.2s ease-in-out;
 }
 
-.side-link:hover {
-  background-color: #1c2541;
-  color: #ffffff;
-}
-
-.side-link.active {
-  background-color: #2563eb;
-  color: #ffffff;
-}
-
-.micro-text {
-  font-size: 0.725rem;
-}
-
-.avatar-img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-}
-
-/* Main Content Area */
-.main-content-container {
-  background-color: #f4f6fc;
-}
-
-.page-title {
-  color: #1e293b;
-  font-size: 1.75rem;
-}
-
-.sub-heading {
-  font-size: 0.9rem;
-}
-
-.primary-btn {
-  background-color: #2563eb;
-  border: none;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.primary-btn:hover {
-  background-color: #1d4ed8;
-}
-
-/* Cards & Progress Styling */
-.summary-card {
-  border-radius: 16px !important;
-}
-
-.metric-value {
-  color: #2563eb !important;
-  font-size: 1.5rem;
-}
-
-.goal-card {
-  border-radius: 16px !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.goal-card:hover {
+.custom-card:hover {
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.12);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
 }
 
-.goal-progress {
-  height: 8px;
-  background-color: #e2e8f0;
+.border-purple-custom {
+  border: 2px solid #8b5cf6 !important;
+}
+
+/* Icon & Emoji Containers */
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.goal-emoji-box {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+/* Rich Subtitle Pastel Backgrounds */
+.bg-purple-subtle { background-color: #f3e8ff !important; }
+.bg-indigo-subtle { background-color: #e0e7ff !important; }
+.bg-pink-subtle { background-color: #fce7f3 !important; }
+.bg-violet-subtle { background-color: #ede9fe !important; }
+.bg-lavender-subtle { background-color: #f5f3ff !important; }
+
+/* Progress Bar Options */
+.goal-progress-bar {
+  height: 10px;
   border-radius: 10px;
+  background-color: #f1f5f9;
   overflow: hidden;
 }
 
-.custom-bar {
-  background-color: #2563eb;
-  border-radius: 10px;
+.bg-purple { background-color: #8b5cf6 !important; }
+.bg-indigo { background-color: #6366f1 !important; }
+.bg-pink { background-color: #ec4899 !important; }
+.bg-violet { background-color: #7c3aed !important; }
+.bg-lavender { background-color: #a78bfa !important; }
+
+/* Text Color Palette */
+.text-purple { color: #8b5cf6 !important; }
+.text-indigo { color: #6366f1 !important; }
+.text-pink { color: #ec4899 !important; }
+.text-violet { color: #7c3aed !important; }
+
+/* Gradient Action Buttons */
+.btn-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-.icon-btn {
-  background: transparent;
-  border: none;
-  font-size: 0.9rem;
+.btn-gradient-purple:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45) !important;
+  color: #ffffff !important;
 }
 
-.action-link {
-  font-size: 0.9rem;
+.btn-purple {
+  background-color: #8b5cf6 !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.btn-purple:hover {
+  background-color: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+/* Priority Badges */
+.badge-priority-high {
+  background-color: #ffe4e6 !important;
+  color: #e11d48 !important;
+  font-size: 10px !important;
+  border-radius: 6px !important;
+  padding: 3px 6px !important;
+}
+
+.badge-priority-med {
+  background-color: #fef3c7 !important;
+  color: #d97706 !important;
+  font-size: 10px !important;
+  border-radius: 6px !important;
+  padding: 3px 6px !important;
+}
+
+.badge-priority-low {
+  background-color: #d1fae5 !important;
+  color: #059669 !important;
+  font-size: 10px !important;
+  border-radius: 6px !important;
+  padding: 3px 6px !important;
+}
+
+/* Quick Deposit Buttons */
+.btn-outline-purple {
+  border: 1px solid #8b5cf6 !important;
+  color: #8b5cf6 !important;
+  background-color: #ffffff !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.btn-outline-purple:hover {
+  background-color: #8b5cf6 !important;
+  color: #ffffff !important;
+}
+
+/* Modal Popups */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-dialog-custom {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.custom-input {
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  padding: 10px 14px;
+}
+
+.custom-input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
 }

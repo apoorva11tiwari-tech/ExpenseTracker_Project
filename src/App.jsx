@@ -4,10 +4,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Landing from "./LandingPage";
 import Login from "./Login";
 import SignUp from "./SignUp";
+
+// Layout
+import UserLayout from "./Component/User/userLayout";
+
+// Components
 import Dashboard from "./Component/User/Dashboard";
 import AddExpense from "./Component/User/AddExpense";
-import Expenses from "./Component/User/Expenses"
-import { Wallet, DollarSign, PlusCircle } from "lucide-react";
+import Expenses from "./Component/User/Expenses";
 import Settings from "./Component/User/Settings";
 import GoalSavings from "./Component/User/GoalSavings";
 import Analytics from "./Component/User/Analytics";
@@ -17,70 +21,83 @@ import Reminders from "./Component/User/Reminders";
 import Budget from "./Component/User/Budget";
 import UserIncome from "./Component/User/UserIncome";
 
-
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* ========================================== */}
+        {/*              PUBLIC ROUTES                 */}
+        {/* ========================================== */}
 
         {/* Landing Page */}
         <Route path="/" element={<Landing />} />
+
         {/* Login Page */}
         <Route path="/login" element={<Login />} />
 
-       {/* SignUp page */}
+        {/* SignUp page */}
         <Route path="/signup" element={<SignUp />} />
 
-        {/* User Dashboard */}
-        <Route path="/app/dashboard" element={<Dashboard />} />
+        {/* ========================================== */}
+        {/*             PROTECTED ROUTES               */}
+        {/* ========================================== */}
 
-        {/* Add Expense */}
-        <Route path ="/app/add-expense" element={<AddExpense/>} />
+        <Route path="/app" element={<UserLayout />}>
+          {/* User Dashboard */}
+          <Route path="dashboard" element={<Dashboard />} />
 
-        {/* settings */}
-        <Route path="/app/settings" element={<Settings />} />
+          {/* Add Expense */}
+          <Route path="add-expense" element={<AddExpense />} />
 
-        {/* Goalsavings  */}
-        <Route path="/app/goals" element={<GoalSavings />} />
+          {/* settings */}
+          <Route path="settings" element={<Settings />} />
 
-        {/*Expenses  */}
-        <Route path="/app/expenses" element={< Expenses />} />
+          {/* Goalsavings */}
+          <Route path="goals" element={<GoalSavings />} />
+          <Route path="savings" element={<GoalSavings />} />
 
-        {/* Analytics */}
-        <Route path="/app/analytics" element={< Analytics/>} />
+          {/* Expenses */}
+          <Route path="expenses" element={<Expenses />} />
+          <Route path="transactions" element={<Expenses />} />
 
-        {/* AiInsights */}
-        <Route path="/app/insights" element={<AIInsights/>}/>
+          {/* Analytics */}
+          <Route path="analytics" element={<Analytics />} />
 
-        {/* Notification */}
-        <Route path="/app/notification" element={<Notifications/>}/>
+          {/* AiInsights */}
+          <Route path="insights" element={<AIInsights />} />
+          <Route path="ai-insights" element={<AIInsights />} />
 
-        {/* Reminders */}
-        <Route path="/app/reminders" element={<Reminders/>}/>
+          {/* Notification */}
+          <Route path="notification" element={<Notifications />} />
+          <Route path="notifications" element={<Notifications />} />
 
-        {/* Budget */}
-        <Route path="/app/budget" element={<Budget/>}/>
+          {/* Reminders */}
+          <Route path="reminders" element={<Reminders />} />
 
-        {/* User Income */}
-        <Route path="/app/userincome" element={<UserIncome/>}/>
-        
+          {/* Budget */}
+          <Route path="budget" element={<Budget />} />
 
+          {/* User Income */}
+          <Route path="userincome" element={<UserIncome />} />
+        </Route>
 
+        {/* ========================================== */}
+        {/*               FALLBACK ROUTE               */}
+        {/* ========================================== */}
 
-
-        <Route 
-          path="*" 
+        <Route
+          path="*"
           element={
             <div className="text-center mt-5">
               <h2>404 - Page Not Found</h2>
-              <Link to="/" className="btn btn-primary mt-3">Go Home</Link>
+              <Link to="/" className="btn btn-primary mt-3">
+                Go Home
+              </Link>
             </div>
-          } 
+          }
         />
       </Routes>
     </BrowserRouter>
-
-    
   );
 }
 

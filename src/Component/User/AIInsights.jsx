@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
@@ -8,20 +8,6 @@ import {
   CalendarDays, Sparkles, BotMessageSquare
 } from "lucide-react";
 import "./AIInsights.css";
-
-// Dynamic Data Structures (Initially empty until populated via API/Context)
-const historicalData = {
-  "7D": [],
-  "30D": [],
-  "6M": [],
-  "1Y": []
-};
-
-const patterns = [];
-const problems = [];
-const recommendations = [];
-const insightHistory = [];
-const predictionBars = [];
 
 // Helper Sub-Components
 function TrendChip({ trend }) {
@@ -90,11 +76,52 @@ export default function AIInsights() {
   const [chartRange, setChartRange] = useState("6M");
   const [loading, setLoading] = useState(false);
   const [refreshed, setRefreshed] = useState(false);
+  const [recommendations, setRecommendations] = useState([]);
+  const [predictionBars, setPredictionBars] = useState([]);
 
-  // Dynamic values or fallback to zero
+  // Fetch AI budget recommendations from backend on load
+  useEffect(() => {
+    const fetchAiRecommendations = async () => {
+      try {
+        const income = localStorage.getItem("userIncome") || "50000";
+        const response = await fetch("http://localhost:5000/api/ai/budget-recommendations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            monthlyIncome: Number(income),
+            financialGoal: "Save More Money"
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok && Array.isArray(data)) {
+          const formattedRecs = data.map((item) => ({
+            label: `${item.cat} Budget`,
+            desc: `AI recommends allocating ₹${item.suggestedBudget.toLocaleString("en-IN")} for ${item.cat}.`,
+            theme: "success",
+            icon: Zap,
+            action: "Apply Budget"
+          }));
+          setRecommendations(formattedRecs);
+
+          const formattedPredictions = data.map((item) => ({
+            label: item.cat,
+            amount: item.suggestedBudget,
+            colorClass: "bg-success"
+          }));
+          setPredictionBars(formattedPredictions);
+        }
+      } catch (error) {
+        console.error("Failed to fetch AI budget recommendations:", error);
+      }
+    };
+
+    fetchAiRecommendations();
+  }, []);
+
   const currentSpend = 0;
   const avgSpend = 0;
-  const totalPotentialSavings = 0;
+  const totalPredicted = predictionBars.reduce((sum, item) => sum + item.amount, 0);
 
   function handleRefresh() {
     setLoading(true);
@@ -106,8 +133,7 @@ export default function AIInsights() {
     }, 1500);
   }
 
-  const chartData = historicalData[chartRange] || [];
-  const totalPredicted = predictionBars.reduce((sum, item) => sum + item.amount, 0);
+  const chartData = [];
 
   return (
     <div className="container py-4 max-w-custom">
@@ -162,7 +188,7 @@ export default function AIInsights() {
               <span className="fs-4">💡</span>
               <span className="badge bg-light text-secondary border">AI</span>
             </div>
-            <h3 className="fw-bold text-mint mb-0">₹{totalPotentialSavings.toLocaleString()}</h3>
+            <h3 className="fw-bold text-mint mb-0">₹{totalPredicted.toLocaleString()}</h3>
             <div className="fw-semibold small text-dark">AI Savings Potential</div>
             <small className="text-muted">Based on optimized recommendations</small>
           </div>
@@ -178,9 +204,7 @@ export default function AIInsights() {
           <div>
             <h6 className="fw-bold mb-1">🤖 AI Summary</h6>
             <p className="small text-secondary mb-0">
-              {currentSpend > 0
-                ? "AI analysis is ready based on your recent spending habits."
-                : "Add transactions to enable full AI spending insights and pattern detection."}
+              AI analysis is active based on your income goals and baseline budgets.
             </p>
           </div>
         </div>
@@ -206,77 +230,9 @@ export default function AIInsights() {
           </div>
         </div>
 
-        {chartData.length > 0 ? (
-          <>
-            <div className="d-flex gap-3 mb-3">
-              <small className="d-flex align-items-center gap-1 text-secondary">
-                <span className="legend-dot bg-coral"></span> Your spending
-              </small>
-              <small className="d-flex align-items-center gap-1 text-secondary">
-                <span className="legend-dot bg-lavender"></span> Your average
-              </small>
-            </div>
-
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#888" }} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={(v) => (v >= 1000 ? `₹${v / 1000}k` : `₹${v}`)} tick={{ fontSize: 10, fill: "#888" }} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(v) => [`₹${v.toLocaleString()}`, ""]} />
-                <Area type="monotone" dataKey="spend" stroke="#e85d2e" fill="#e85d2e22" strokeWidth={2} name="Spending" />
-                <Area type="monotone" dataKey="avg" stroke="#8b5cf6" fill="#8b5cf615" strokeWidth={2} strokeDasharray="5 4" name="Average" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </>
-        ) : (
-          <div className="text-center py-5 text-muted border rounded-3 bg-light">
-            <p className="mb-0 small">No historical transaction data available for this range.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Spending Patterns Grid */}
-      <div className="mb-4">
-        <h5 className="fw-bold d-flex align-items-center gap-2 mb-3">
-          <CalendarDays size={18} className="text-lavender" />
-          Spending Patterns
-        </h5>
-        {patterns.length > 0 ? (
-          <div className="row g-3">
-            {patterns.map((p) => (
-              <div key={p.label} className="col-6 col-md-4">
-                <div className="card border-0 shadow-sm rounded-4 p-3 h-100">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="fs-4">{p.icon}</span>
-                    <TrendChip trend={p.trend} />
-                  </div>
-                  <h6 className={`fw-bold mb-0 ${p.colorClass}`}>{p.value}</h6>
-                  <div className="fw-bold small text-dark mb-1">{p.label}</div>
-                  <small className="text-muted d-block">{p.detail}</small>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="card border-0 shadow-sm p-4 text-center text-muted">
-            <p className="mb-0 small">No recurring patterns detected yet.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Problems & Solutions */}
-      <div className="mb-4">
-        <h5 className="fw-bold d-flex align-items-center gap-2 mb-3">
-          <AlertTriangle size={18} className="text-coral" />
-          AI Problems & Solutions
-        </h5>
-        {problems.length > 0 ? (
-          problems.map((item, index) => <ProblemCard key={index} item={item} />)
-        ) : (
-          <div className="card border-0 shadow-sm p-4 text-center text-muted">
-            <p className="mb-0 small">No overspending anomalies detected by AI.</p>
-          </div>
-        )}
+        <div className="text-center py-5 text-muted border rounded-3 bg-light">
+          <p className="mb-0 small">No historical transaction data available for this range.</p>
+        </div>
       </div>
 
       {/* Smart Recommendations */}
@@ -309,7 +265,7 @@ export default function AIInsights() {
           </div>
         ) : (
           <div className="card border-0 shadow-sm p-4 text-center text-muted">
-            <p className="mb-0 small">No active recommendations right now.</p>
+            <p className="mb-0 small">Loading AI budget recommendations...</p>
           </div>
         )}
       </div>
@@ -320,7 +276,7 @@ export default function AIInsights() {
           <Lightbulb size={18} className="text-warning" />
           AI Savings Prediction
         </h5>
-        <p className="small text-muted mb-4">Potential savings when following AI suggestions</p>
+        <p className="small text-muted mb-4">Potential allocations when following AI suggestions</p>
 
         {predictionBars.length > 0 ? (
           <div className="row g-4 align-items-center">
@@ -342,7 +298,7 @@ export default function AIInsights() {
             </div>
             <div className="col-md-5">
               <div className="bg-success-subtle p-4 rounded-4 text-center border border-success-subtle">
-                <small className="text-uppercase fw-bold text-success d-block mb-1">Total Savings</small>
+                <small className="text-uppercase fw-bold text-success d-block mb-1">Total Allocated</small>
                 <h2 className="fw-bold text-success mb-1">₹{totalPredicted.toLocaleString()}</h2>
                 <small className="text-muted d-block mb-3">per month estimated</small>
               </div>
@@ -351,44 +307,6 @@ export default function AIInsights() {
         ) : (
           <div className="text-center py-4 text-muted border rounded-3 bg-light">
             <p className="mb-0 small">No prediction metrics available.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Insight History */}
-      <div className="mb-4">
-        <h5 className="fw-bold d-flex align-items-center gap-2 mb-3">
-          <Clock size={18} className="text-secondary" />
-          Insight History
-        </h5>
-        {insightHistory.length > 0 ? (
-          insightHistory.map((h, i) => (
-            <div key={i} className="card border-0 shadow-sm rounded-4 p-3 mb-2">
-              <div className="d-flex align-items-center gap-3">
-                <div className="bg-gradient-brand text-white fw-bold rounded-3 px-2 py-1 small shrink-0">
-                  AI
-                </div>
-                <div className="flex-grow-1">
-                  <div className="d-flex flex-wrap align-items-center gap-2 mb-1">
-                    <h6 className="fw-bold text-dark mb-0">{h.title}</h6>
-                    {h.tags.map((t) => (
-                      <span key={t} className="badge bg-light text-secondary border">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="small text-secondary mb-1">{h.summary}</p>
-                  <small className="text-muted">{h.date}</small>
-                </div>
-                <button className="btn btn-sm btn-light border text-secondary fw-bold rounded-2">
-                  View
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="card border-0 shadow-sm p-4 text-center text-muted">
-            <p className="mb-0 small">No prior insight logs found.</p>
           </div>
         )}
       </div>

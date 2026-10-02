@@ -9,6 +9,8 @@ const analyticsRoutes = require("./routes/analyticsRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const goalRoutes = require("./routes/goalRoute");
+const notificationRoutes = require("./routes/notificationRoutes");
+const reminderRoutes = require("./routes/reminderRoutes");
 
 const app = express();
 
@@ -31,6 +33,8 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/budgets", budgetRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/goals", goalRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/reminders", reminderRoutes);
 
 // Start server
 const PORT = 5000;

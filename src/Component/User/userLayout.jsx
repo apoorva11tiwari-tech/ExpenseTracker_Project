@@ -29,7 +29,7 @@ const navItems = [
   { to: "/app/analytics", icon: BarChart2, label: "Analytics" },
   { to: "/app/savings", icon: Target, label: "Goals" },
   { to: "/app/ai-insights", icon: Brain, label: "AI Insights" },
-  { to: "/app/insights", icon: Lightbulb, label: "Reminders" },
+  { to: "/app/reminders", icon: Lightbulb, label: "Reminders" },
   { to: "/app/notifications", icon: Bell, label: "Notifications" },
   { to: "/app/settings", icon: Settings, label: "Settings" },
 ];

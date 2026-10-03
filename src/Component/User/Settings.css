@@ -1,111 +1,112 @@
-/* CSS Custom Properties for Themes */
 :root {
-  --coral: #E85D2E;
-  --peach: #F4A261;
-  --bg-alt: #F8F9FA;
-  --card-bg: #FFFFFF;
-  --text-main: #212529;
-  --text-muted: #6C757D;
-  --border-color: #DEE2E6;
+  --coral: #e85d2e;
+  --peach: #f4a261;
+  --text-main: #2d2926;
+  --bg-alt: #fff7f2;
+  --border-color: #e5ddd7;
 }
 
-/* Base Styles */
 body {
-  background-color: #f4f6f8;
+  background: #fffaf7;
   color: var(--text-main);
+  font-family: "Inter", sans-serif;
 }
 
 .settings-card {
-  background-color: var(--card-bg);
+  background: white;
   border: 1px solid var(--border-color);
-  border-radius: 1.25rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.input-custom {
-  background-color: var(--bg-alt);
-  border: 1.5px solid var(--border-color);
-  color: var(--text-main);
-  border-radius: 0.75rem;
-  padding: 0.6rem 1rem;
-}
-
-.input-custom:focus {
-  outline: none;
-  border-color: var(--coral);
-  box-shadow: 0 0 0 0.2rem rgba(232, 93, 46, 0.15);
-}
-
-/* Sidebar Custom Button */
 .sidebar-btn {
-  border-radius: 0.85rem;
-  padding: 0.65rem 1rem;
-  color: var(--text-muted);
-  border: 1px solid transparent;
-  transition: all 0.2s ease-in-out;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-main) !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
 }
 
+.sidebar-btn:hover,
 .sidebar-btn.active {
-  background: linear-gradient(135deg, rgba(232, 93, 46, 0.1), rgba(244, 162, 97, 0.1));
-  color: var(--coral);
-  border-color: rgba(232, 93, 46, 0.2);
+  background: rgba(232, 93, 46, 0.1) !important;
+  color: var(--coral) !important;
 }
 
-/* Theme Options */
 .theme-option-btn {
-  border-radius: 0.85rem;
-  border: 2px solid var(--border-color);
-  background-color: var(--bg-alt);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  border: 1px solid var(--border-color) !important;
+  background: white !important;
+  color: var(--text-main) !important;
+  border-radius: 12px !important;
+  transition: 0.2s ease;
 }
 
 .theme-option-btn:hover {
-  transform: translateY(-2px);
+  border-color: var(--coral) !important;
+  transform: translateY(-1px);
 }
 
 .theme-option-btn.selected {
-  border-color: var(--coral);
-  background-color: rgba(232, 93, 46, 0.06);
+  border: 2px solid var(--coral) !important;
+  background: rgba(232, 93, 46, 0.06) !important;
 }
 
-/* Gradient Primary Button */
-.btn-primary-gradient {
-  background: linear-gradient(135deg, var(--coral), var(--peach));
-  color: #ffffff;
-  border: none;
-  border-radius: 0.85rem;
-  padding: 0.6rem 1.25rem;
-  font-weight: 700;
-  transition: opacity 0.2s;
-}
-
-.btn-primary-gradient:hover {
-  opacity: 0.9;
-  color: #ffffff;
-}
-
-/* Custom Toggle Switch */
 .custom-switch-btn {
-  width: 46px;
+  width: 48px;
   height: 26px;
-  border-radius: 50px;
   border: none;
-  position: relative;
-  transition: background-color 0.3s ease;
+  border-radius: 30px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .custom-switch-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  background: white;
   border-radius: 50%;
-  background-color: #ffffff;
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  transition: left 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: 0.2s;
+  transform: translateX(0);
 }
 
 .custom-switch-btn.active .custom-switch-thumb {
-  left: 24px;
+  transform: translateX(22px);
+}
+
+.input-custom {
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  padding: 10px 12px;
+}
+
+.input-custom:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(232, 93, 46, 0.1);
+}
+
+.btn-primary-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--coral),
+    var(--peach)
+  );
+  color: rgb(18, 10, 72);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.style-coral {
+  color: var(--coral) !important;
+}
+
+.extra-small {
+  font-size: 12px;
+}
+
+.max-w-lg {
+  max-width: 1100px;
 }

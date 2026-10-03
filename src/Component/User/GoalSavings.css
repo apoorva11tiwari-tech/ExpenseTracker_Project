@@ -1,123 +1,133 @@
-/* Layout container */
-.goals-layout-container {
-  min-height: 100vh;
-  background-color: #f4f6fc;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+:root {
+  --bg-alt: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-2: #475569;
+  --muted: #94a3b8;
+  --coral: #ff6b6b;
+  --peach: #ffa07a;
+  --lavender: #b8a9d9;
+  --mint: #4ecdc4;
 }
 
-/* Sidebar styling */
-.sidebar-container {
-  width: 260px;
-  background-color: #0b132b;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
+/* Page Animations */
+.page-enter {
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-.brand-logo-box {
-  font-size: 1.25rem;
-  background-color: #1c2541;
-  padding: 6px 12px;
-  border-radius: 10px;
+/* Card Hover Effects */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.brand-subtext {
-  font-size: 0.75rem;
-  color: #8d99ae;
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
 }
 
-.side-link {
-  color: #a0aec0;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+/* Progress Bar Smooth Transition */
+.progress-animated {
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.side-link:hover {
-  background-color: #1c2541;
-  color: #ffffff;
+/* Confetti Piece Animation */
+.confetti-piece {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: confettiFall linear infinite;
 }
 
-.side-link.active {
-  background-color: #2563eb;
-  color: #ffffff;
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(120px) rotate(360deg);
+  }
 }
 
-.micro-text {
-  font-size: 0.725rem;
+/* Custom Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.avatar-img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
+@keyframes celebratePop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-/* Main Content Area */
-.main-content-container {
-  background-color: #f4f6fc;
+@keyframes bounceSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
-.page-title {
-  color: #1e293b;
-  font-size: 1.75rem;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
-.sub-heading {
-  font-size: 0.9rem;
+@keyframes glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.25;
+  }
 }
 
-.primary-btn {
-  background-color: #2563eb;
-  border: none;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  transition: background-color 0.2s ease;
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
 }
 
-.primary-btn:hover {
-  background-color: #1d4ed8;
+.animate-celebrate {
+  animation: celebratePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Cards & Progress Styling */
-.summary-card {
-  border-radius: 16px !important;
+.animate-bounce-soft {
+  animation: bounceSoft 2s infinite ease-in-out;
 }
 
-.metric-value {
-  color: #2563eb !important;
-  font-size: 1.5rem;
+.animate-float {
+  animation: float 3s infinite ease-in-out;
 }
 
-.goal-card {
-  border-radius: 16px !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.animate-glow {
+  animation: glow 3s infinite ease-in-out;
 }
 
-.goal-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
-}
-
-.goal-progress {
-  height: 8px;
-  background-color: #e2e8f0;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.custom-bar {
-  background-color: #2563eb;
-  border-radius: 10px;
-}
-
-.icon-btn {
-  background: transparent;
-  border: none;
-  font-size: 0.9rem;
-}
-
-.action-link {
-  font-size: 0.9rem;
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(20px);
+  pointer-events: none;
 }

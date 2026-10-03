@@ -1,0 +1,56 @@
+/* Body and Root Background Reset */
+html, body, #root {
+  background-color: #0b1329 !important;
+  color: #ffffff !important;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Main Dashboard Wrapper & Main Layout Area */
+main, 
+.main-content, 
+.admin-panel, 
+.content-wrapper, 
+.dashboard-container,
+div[class*="main"], 
+div[class*="content"] {
+  background-color: #0b1329 !important;
+}
+
+/* Headings and Header Titles */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff !important;
+}
+
+/* Paragraphs, Subtitles, and Labels */
+p, span, label, td, th {
+  color: #cbd5e1;
+}
+
+.subtitle, .text-muted {
+  color: #94a3b8 !important;
+}
+
+/* Sidebar styling - Keep unchanged */
+aside, .sidebar {
+  background-color: #0d1527 !important;
+}
+
+/* Cards & Chart Containers */
+.card, [class*="card"], [class*="box"] {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+/* Input Fields - Proper dark BG with white visible text */
+input, select, textarea {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+}
+
+input::placeholder {
+  color: #64748b !important;
+}

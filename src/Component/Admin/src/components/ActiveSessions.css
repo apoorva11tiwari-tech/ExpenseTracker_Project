@@ -1,0 +1,30 @@
+.bg-light-card {
+  background-color: #ffffff;
+  border: 1px solid #f1f3f9;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.text-muted-custom {
+  color: #8c98a4;
+}
+
+.fs-7 {
+  font-size: 0.85rem;
+}
+
+.badge-active {
+  background-color: #e6fffa;
+  color: #234e52;
+  border: 1px solid #b2f5ea;
+}
+
+.table th {
+  font-weight: 600;
+  border-bottom-width: 1px;
+  background-color: #fcfdfe;
+}
+
+.table td {
+  padding: 1rem 0.75rem;
+  border-bottom-color: #f8fafc;
+}

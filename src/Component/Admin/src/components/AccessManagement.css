@@ -1,0 +1,58 @@
+.auth-logs-container {
+  padding: 1rem;
+  background-color: #090d16;
+  min-height: 85vh;
+  color: #ffffff;
+}
+
+.auth-logs-search-icon {
+  background-color: #0f1523;
+  border-color: #1a2235;
+  color: #64748b;
+}
+
+.auth-logs-input,
+.auth-logs-select {
+  background-color: #0f1523;
+  border-color: #1a2235;
+  color: #ffffff;
+}
+
+.auth-logs-input:focus,
+.auth-logs-select:focus {
+  background-color: #0f1523;
+  border-color: #1e40af;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.auth-logs-table-wrapper {
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: #0f1523;
+  border: 1px solid #1a2235;
+}
+
+.auth-logs-table {
+  background-color: transparent;
+}
+
+.auth-logs-table th {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  background-color: #0f1523;
+  color: #94a3b8;
+  border-bottom: 1px solid #1a2235;
+  padding: 0.75rem 1rem;
+}
+
+.auth-logs-table td {
+  background-color: #0f1523;
+  border-bottom: 1px solid #1a2235;
+  padding: 0.75rem 1rem;
+}
+
+.auth-logs-date {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}

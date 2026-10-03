@@ -273,3 +273,97 @@
     margin-left: 0;
   }
 }
+
+/* LIGHT THEME CUSTOM LOGOUT MODAL */
+.custom-logout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.custom-logout-card {
+  background-color: #ffffff;
+  border-radius: 28px;
+  padding: 32px 28px 24px 28px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalPop 0.18s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.custom-logout-title {
+  color: #0f172a;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+/* Description Text in Indigo Violet shade */
+.custom-logout-subtitle {
+  color: #4c1d95; /* Indigo Violet Shade */
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 28px;
+  font-weight: 500;
+}
+
+.custom-logout-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+/* Red Logout Button */
+.btn-logout-red {
+  color: #ef4444;
+  background-color: #ffffff;
+  border: 1.5px solid #fca5a5;
+}
+
+.btn-logout-red:hover {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+}
+
+/* Black Cancel Button */
+.btn-cancel-black {
+  color: #0f172a;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+}
+
+.btn-cancel-black:hover {
+  background-color: #f8fafc;
+  border-color: #0f172a;
+}

@@ -37,6 +37,7 @@ const navItems = [
 export default function UserLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,12 +47,17 @@ export default function UserLayout() {
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
+  const confirmLogout = async () => {
     try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.clear();
       await signOut(auth);
-      navigate("/login");
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Logout Error:", error);
+    } finally {
+      setShowLogoutModal(false);
+      navigate("/", { replace: true });
     }
   };
 
@@ -124,7 +130,7 @@ export default function UserLayout() {
             </div>
           </div>
 
-          <button onClick={handleLogout} className="logout-btn">
+          <button onClick={() => setShowLogoutModal(true)} className="logout-btn">
             <LogOut size={16} /> Logout
           </button>
         </div>
@@ -167,6 +173,35 @@ export default function UserLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* LOGOUT CONFIRMATION MODAL */}
+      {showLogoutModal && (
+        <div className="custom-logout-overlay">
+          <div className="custom-logout-card">
+            <h3 className="custom-logout-title">Log out?</h3>
+            <p className="custom-logout-subtitle">
+              Are you sure you want to log out of your CashMate account? You can log back in anytime to manage your expenses.
+            </p>
+
+            <div className="custom-logout-actions">
+              <button
+                type="button"
+                className="custom-btn btn-logout-red"
+                onClick={confirmLogout}
+              >
+                Log out
+              </button>
+              <button
+                type="button"
+                className="custom-btn btn-cancel-black"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

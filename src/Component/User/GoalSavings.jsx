@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Plus, X, Edit2, Trash2, PlusCircle, Award, Target, Sparkles, TrendingUp } from "lucide-react";
+import {
+  Plus,
+  X,
+  Edit2,
+  Trash2,
+  PlusCircle,
+  Award,
+  Target,
+  Sparkles,
+  TrendingUp,
+  Loader2
+} from "lucide-react";
 import "./GoalSavings.css";
 
 const colorThemes = ["indigo", "purple", "pink", "violet", "lavender"];
@@ -13,16 +24,20 @@ export default function GoalSavings() {
   const [addAmount, setAddAmount] = useState("");
   const [celebrating, setCelebrating] = useState(null);
 
+  // AI Allocation Modal States
+  const [showAllocateModal, setShowAllocateModal] = useState(false);
+  const [allocateAmount, setAllocateAmount] = useState("");
+  const [isAllocating, setIsAllocating] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     emoji: "🎯",
     target: "",
     saved: "0",
     priority: "Medium",
-    deadline: "",
+    deadline: ""
   });
 
-  // Fetch Live Goals from MongoDB API
   const fetchGoals = () => {
     fetch("http://localhost:5000/api/goals")
       .then((res) => res.json())
@@ -38,10 +53,10 @@ export default function GoalSavings() {
             deadline: g.targetDate
               ? new Date(g.targetDate).toLocaleDateString("en-IN", {
                   month: "short",
-                  year: "numeric",
+                  year: "numeric"
                 })
               : "No deadline",
-            theme: colorThemes[index % colorThemes.length],
+            theme: colorThemes[index % colorThemes.length]
           }));
           setGoals(formatted);
         }
@@ -52,6 +67,33 @@ export default function GoalSavings() {
   useEffect(() => {
     fetchGoals();
   }, []);
+
+  const handleAIAllocate = async (e) => {
+    e.preventDefault();
+    if (!allocateAmount || Number(allocateAmount) <= 0) return;
+
+    setIsAllocating(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/ai/allocate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ availableSavings: Number(allocateAmount) })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setShowAllocateModal(false);
+        setAllocateAmount("");
+        fetchGoals();
+      } else {
+        alert(data.message || "Could not complete allocation.");
+      }
+    } catch (err) {
+      console.error("AI Allocation error:", err);
+    } finally {
+      setIsAllocating(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,20 +108,20 @@ export default function GoalSavings() {
       target: "",
       saved: "0",
       priority: "Medium",
-      deadline: "",
+      deadline: ""
     });
     setShowModal(true);
   };
 
- const openEditModal = (goal) => {
+  const openEditModal = (goal) => {
     setEditingGoalId(goal.id);
     setFormData({
       name: goal.name,
       emoji: goal.emoji,
       target: goal.target.toString(),
       saved: goal.saved.toString(),
-      priority: goal.priority || "Medium", // <-- Sets priority when editing
-      deadline: goal.deadline === "No deadline" ? "" : goal.deadline,
+      priority: goal.priority || "Medium",
+      deadline: goal.deadline === "No deadline" ? "" : goal.deadline
     });
     setShowModal(true);
   };
@@ -97,14 +139,14 @@ export default function GoalSavings() {
       savedAmount: Math.min(savedNum, targetNum),
       category: formData.emoji || "🎯",
       priority: formData.priority,
-      targetDate: formData.deadline || null,
+      targetDate: formData.deadline || null
     };
 
     if (editingGoalId) {
       fetch(`http://localhost:5000/api/goals/${editingGoalId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       })
         .then((res) => res.json())
         .then(() => {
@@ -116,7 +158,7 @@ export default function GoalSavings() {
       fetch("http://localhost:5000/api/goals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       })
         .then((res) => res.json())
         .then((newGoalData) => {
@@ -134,14 +176,13 @@ export default function GoalSavings() {
     if (!window.confirm("Are you sure you want to delete this savings goal?")) return;
 
     fetch(`http://localhost:5000/api/goals/${id}`, {
-      method: "DELETE",
+      method: "DELETE"
     })
       .then((res) => res.json())
       .then(() => fetchGoals())
       .catch((err) => console.error("Error deleting goal:", err));
   };
 
-  // Add Money Handler (supports custom input or quick buttons)
   const addMoney = (customVal) => {
     const amt = customVal !== undefined ? Number(customVal) : Number(addAmount);
     if (!amt || amt <= 0 || addMoneyId === null) return;
@@ -149,7 +190,7 @@ export default function GoalSavings() {
     fetch(`http://localhost:5000/api/goals/${addMoneyId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ addAmount: amt }),
+      body: JSON.stringify({ addAmount: amt })
     })
       .then((res) => res.json())
       .then((updated) => {
@@ -199,12 +240,21 @@ export default function GoalSavings() {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="btn btn-gradient-purple d-flex align-items-center gap-2 rounded-pill px-3 py-2 text-white fw-bold shadow-sm"
-        >
-          <Plus size={16} /> New Goal
-        </button>
+        <div className="d-flex gap-2 align-items-center">
+          <button
+            onClick={() => setShowAllocateModal(true)}
+            className="btn btn-ai-sparkle d-flex align-items-center gap-2 rounded-pill px-3 py-2 text-white fw-bold shadow-sm"
+          >
+            <Sparkles size={16} /> ✨ AI Allocate
+          </button>
+
+          <button
+            onClick={openCreateModal}
+            className="btn btn-gradient-purple d-flex align-items-center gap-2 rounded-pill px-3 py-2 text-white fw-bold shadow-sm"
+          >
+            <Plus size={16} /> New Goal
+          </button>
+        </div>
       </div>
 
       {/* Summary Stat Cards */}
@@ -408,13 +458,72 @@ export default function GoalSavings() {
         )}
       </div>
 
-      {/* Modal Popup */}
+      {/* AI ALLOCATE MODAL */}
+      {showAllocateModal && (
+        <div className="modal-backdrop-custom">
+          <div className="modal-dialog-custom card p-4 shadow-lg animate-pop">
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <h2 className="fs-5 fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                <Sparkles size={18} className="text-purple" /> AI Smart Allocation
+              </h2>
+              <button
+                onClick={() => setShowAllocateModal(false)}
+                className="btn btn-sm text-muted p-0"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <p className="small text-muted mb-3">
+              Enter your available monthly savings or bonus. The AI will distribute it across active goals based on their priority level and target date proximity.
+            </p>
+
+            <form onSubmit={handleAIAllocate}>
+              <div className="mb-4">
+                <label className="form-label small fw-bold">Amount to Distribute (₹)</label>
+                <input
+                  type="number"
+                  required
+                  value={allocateAmount}
+                  onChange={(e) => setAllocateAmount(e.target.value)}
+                  placeholder="e.g. 10000"
+                  className="form-control custom-input"
+                />
+              </div>
+
+              <div className="d-flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAllocateModal(false)}
+                  className="btn btn-outline-secondary w-50 rounded-pill fw-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isAllocating}
+                  className="btn btn-ai-sparkle w-50 rounded-pill text-white fw-bold d-flex align-items-center justify-content-center gap-2"
+                >
+                  {isAllocating ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={16} />
+                  )}
+                  {isAllocating ? "Allocating..." : "Distribute ✨"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create / Edit Goal Modal */}
       {showModal && (
         <div className="modal-backdrop-custom">
           <div className="modal-dialog-custom card p-4 shadow-lg animate-pop">
             <div className="d-flex align-items-center justify-content-between mb-3">
               <h2 className="fs-5 fw-bold mb-0 text-dark">
-                {editingGoalId ? "Edit Goal ✏️" : "Create Savings Goal 🏆"}
+                {editingGoalId ? "Edit Goal ✏️️" : "Create Savings Goal 🏆"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}

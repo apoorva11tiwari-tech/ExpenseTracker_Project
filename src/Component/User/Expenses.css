@@ -1,241 +1,1085 @@
 /* =========================================================
-   EXPENSE HISTORY PAGE - MODERN PREMIUM DASHBOARD
-========================================================= */
-
-:root {
-  --primary-purple: #6c4ab6;
-  --accent-coral: #e87561;
-  --text-dark: #292642;
-  --text-body: #514d63;
-  --text-muted: #77748b;
-  --text-light: #aaa6b7;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --border-color: rgba(108, 74, 182, 0.12);
-  --input-border: #e5e0ed;
-}
+   CASHMATE - EXPENSE HISTORY PAGE
+   Premium Colorful Finance UI
+   ========================================================= */
 
 .transactions-page {
+  --purple: #7357e8;
+  --purple-dark: #5140b7;
+  --purple-light: #f0ecff;
+  --purple-border: #d8cffb;
+
+  --coral: #ed7659;
+  --coral-light: #fff0eb;
+  --coral-border: #ffcbbb;
+
+  --mint: #20b58a;
+  --mint-light: #e9faf5;
+  --mint-border: #a9ead8;
+
+  --text: #1d2638;
+  --text-secondary: #69758b;
+  --text-muted: #9aa4b7;
+
+  --border: #e4e7ef;
+
   min-height: 100vh;
-  padding: 32px;
-  background: 
-    radial-gradient(circle at 10% 10%, rgba(126, 87, 194, 0.08), transparent 28%),
-    radial-gradient(circle at 90% 15%, rgba(244, 127, 94, 0.08), transparent 25%),
-    linear-gradient(135deg, #faf9ff 0%, #fffaf7 50%, #f7fbfa 100%);
-  color: var(--text-body);
-  animation: pageIn 0.5s ease-out;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  padding: 28px 34px 45px;
+
+  background:
+    radial-gradient(
+      circle at 8% 5%,
+      rgba(115, 87, 232, 0.09),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(237, 118, 89, 0.08),
+      transparent 25%
+    ),
+    linear-gradient(
+      135deg,
+      #f8f7fc 0%,
+      #fffaf8 52%,
+      #f7fbfa 100%
+    );
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  animation: expensePageIn 0.4s ease;
 }
 
-/* HEADER */
-.transactions-header {
-  margin-bottom: 28px;
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.transactions-page .transactions-header {
+  margin-bottom: 25px;
 }
 
-.transactions-title {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text-dark);
-}
-
-.transactions-subtitle {
-  margin: 6px 0 0;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-/* FILTER CARD */
-.transactions-filter-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  border-radius: 20px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 10px 30px rgba(55, 45, 90, 0.06);
-  backdrop-filter: blur(12px);
-}
-
-.transaction-search {
-  position: relative;
-  flex: 1;
-  min-width: 260px;
-}
-
-.transaction-search input {
-  width: 100%;
-  height: 44px;
-  padding: 0 15px 0 18px;
-  border-radius: 12px;
-  border: 1.5px solid var(--input-border);
-  outline: none;
-  background: #ffffff;
-  color: var(--text-dark);
-  font-size: 13.5px;
-  transition: all 0.25s ease;
-}
-
-.transaction-search input:focus {
-  border-color: var(--primary-purple);
-  box-shadow: 0 0 0 4px rgba(108, 74, 182, 0.08);
-}
-
-.transaction-select {
-  height: 44px;
-  padding: 0 35px 0 14px;
-  border-radius: 12px;
-  border: 1.5px solid var(--input-border);
-  outline: none;
-  background: #ffffff;
-  color: var(--text-body);
-  font-size: 13.5px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.transaction-select:focus,
-.transaction-select:hover {
-  border-color: var(--primary-purple);
-}
-
-/* TABLE CARD */
-.transactions-table-card {
-  border-radius: 20px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 10px 30px rgba(55, 45, 90, 0.07);
-  backdrop-filter: blur(12px);
-  overflow: hidden;
-}
-
-.transactions-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.transactions-table thead th {
-  padding: 16px 22px;
-  background: #f8f6fc;
-  border-bottom: 1px solid #ebe7f2;
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  text-align: left;
-}
-
-.transactions-table tbody td {
-  padding: 18px 22px;
-  border-bottom: 1px solid #eeeaf3;
-  vertical-align: middle;
-  color: var(--text-body);
-  font-size: 13.5px;
-}
-
-.transactions-table tbody tr:hover {
-  background: rgba(248, 246, 252, 0.7);
-}
-
-.transactions-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* EMPTY STATE */
-.transactions-empty {
-  padding: 70px 20px;
-  text-align: center;
-}
-
-.transactions-empty-icon {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #eee7ff, #fff0ea);
-  font-size: 30px;
-  animation: float 2.5s ease-in-out infinite;
-}
-
-.transactions-empty h4 {
-  margin: 0 0 6px;
-  color: var(--text-dark);
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.transactions-empty p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 13.5px;
-}
-
-/* FOOTER & PAGINATION */
-.transactions-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 22px;
-  background: #f8f6fc;
-  border-top: 1px solid #ebe7f2;
-}
-
-.transactions-footer p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 12.5px;
-}
-
-.transaction-pagination {
+.transactions-page .transactions-title {
   display: flex;
   align-items: center;
   gap: 8px;
+
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 27px;
+  line-height: 1.2;
+  font-weight: 750;
+
+  letter-spacing: -0.5px;
 }
 
-.transaction-pagination button {
-  height: 34px;
-  padding: 0 14px;
-  border: 1px solid var(--input-border);
-  border-radius: 10px;
+.transactions-page .transactions-title span {
+  font-size: 23px;
+}
+
+.transactions-page .transactions-subtitle {
+  margin: 6px 0 0;
+
+  color: var(--text-secondary);
+
+  font-size: 13.5px;
+  font-weight: 450;
+}
+
+
+/* =========================================================
+   FILTER BAR - REFERENCE STYLE
+   ========================================================= */
+
+.transactions-page .transactions-filter-card {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  flex-wrap: nowrap;
+
+  padding: 14px 17px;
+
+  margin-bottom: 22px;
+
+  background:
+    linear-gradient(
+      100deg,
+      rgba(244, 240, 255, 0.98) 0%,
+      rgba(255, 247, 250, 0.98) 52%,
+      rgba(255, 242, 238, 0.98) 100%
+    );
+
+  border: 1px solid rgba(221, 214, 239, 0.95);
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 28px rgba(83, 65, 135, 0.08),
+    0 0 35px rgba(205, 184, 255, 0.12);
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.transactions-page .transaction-search {
+  position: relative;
+
+  flex: 1;
+
+  min-width: 300px;
+}
+
+.transactions-page .transaction-search-icon {
+  position: absolute;
+
+  left: 12px;
+  top: 50%;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 9px;
+
+  box-sizing: border-box;
+
+  color: var(--purple);
+
+  background:
+    linear-gradient(
+      135deg,
+      #eee9ff,
+      #e6e0ff
+    );
+
+  border-radius: 13px;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+
+  z-index: 2;
+}
+
+.transactions-page .transaction-search input {
+  width: 100%;
+
+  height: 56px;
+
+  padding: 0 18px 0 66px;
+
+  border: 2px solid var(--purple-border);
+
+  border-radius: 18px;
+
+  outline: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(250, 248, 255, 0.98)
+    );
+
+  color: var(--text);
+
+  font-size: 15px;
+
+  font-weight: 650;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.transactions-page .transaction-search input::placeholder {
+  color: #8c96ab;
+
+  font-size: 14px;
+
+  font-weight: 550;
+}
+
+.transactions-page .transaction-search input:hover {
+  border-color: #bfb2f2;
+
   background: #ffffff;
-  color: var(--text-body);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.transaction-pagination button:hover:not(:disabled) {
-  border-color: var(--primary-purple);
-  color: var(--primary-purple);
+.transactions-page .transaction-search input:focus {
+  border-color: var(--purple);
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 4px rgba(115, 87, 232, 0.10),
+    0 5px 16px rgba(115, 87, 232, 0.08);
+
   transform: translateY(-1px);
 }
 
-.transaction-pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+
+/* =========================================================
+   SELECT FILTERS
+   ========================================================= */
+
+.transactions-page .transaction-select {
+  position: relative;
+
+  height: 56px;
+
+  min-width: 190px;
+
+  padding: 0 42px 0 20px;
+
+  border: 2px solid;
+
+  border-radius: 18px;
+
+  outline: none;
+
+  background-color: #ffffff;
+
+  color: var(--text);
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
-.transaction-pagination .active-page {
-  border: none;
-  background: linear-gradient(135deg, var(--primary-purple), var(--accent-coral));
-  color: white;
-  box-shadow: 0 4px 12px rgba(108, 74, 182, 0.25);
+
+/* =========================================================
+   FIRST FILTER - PURPLE
+   ========================================================= */
+
+.transactions-page .transaction-select:nth-of-type(1) {
+  border-color: var(--purple-border);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f7f4ff 100%
+    );
+
+  color: #5543b4;
+
+  box-shadow:
+    0 3px 10px rgba(115, 87, 232, 0.04);
 }
 
-@keyframes pageIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.transactions-page .transaction-select:nth-of-type(1):hover {
+  border-color: #a99bea;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f3efff
+    );
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 15px rgba(115, 87, 232, 0.08);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+.transactions-page .transaction-select:nth-of-type(1):focus {
+  border-color: var(--purple);
+
+  box-shadow:
+    0 0 0 4px rgba(115, 87, 232, 0.10);
+}
+
+
+/* =========================================================
+   SECOND FILTER - MINT
+   ========================================================= */
+
+.transactions-page .transaction-select:nth-of-type(2) {
+  border-color: var(--mint-border);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f0fcf8 100%
+    );
+
+  color: #168a6b;
+
+  box-shadow:
+    0 3px 10px rgba(32, 181, 138, 0.04);
+}
+
+.transactions-page .transaction-select:nth-of-type(2):hover {
+  border-color: #76d7bd;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #eafaf5
+    );
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 15px rgba(32, 181, 138, 0.08);
+}
+
+.transactions-page .transaction-select:nth-of-type(2):focus {
+  border-color: var(--mint);
+
+  box-shadow:
+    0 0 0 4px rgba(32, 181, 138, 0.10);
+}
+
+
+/* =========================================================
+   THIRD FILTER - CORAL
+   ========================================================= */
+
+.transactions-page .transaction-select:nth-of-type(3) {
+  border-color: var(--coral-border);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #fff5f1 100%
+    );
+
+  color: #c85e49;
+
+  box-shadow:
+    0 3px 10px rgba(237, 118, 89, 0.04);
+}
+
+.transactions-page .transaction-select:nth-of-type(3):hover {
+  border-color: #f2a895;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #fff1ec
+    );
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 15px rgba(237, 118, 89, 0.08);
+}
+
+.transactions-page .transaction-select:nth-of-type(3):focus {
+  border-color: var(--coral);
+
+  box-shadow:
+    0 0 0 4px rgba(237, 118, 89, 0.10);
+}
+
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.transactions-page .transactions-table-card {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e3eb;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 28px rgba(44, 39, 70, 0.065);
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.transactions-page .transactions-table {
+  width: 100%;
+
+  margin: 0;
+
+  border-collapse: separate;
+
+  border-spacing: 0;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.transactions-page .transactions-table thead th {
+  padding: 16px 22px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f5f1ff 0%,
+      #faf8ff 50%,
+      #fff7f4 100%
+    );
+
+  border-bottom: 2px solid #e6e0f5;
+
+  color: #4e5570;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.65px;
+
+  white-space: nowrap;
+}
+
+.transactions-page .transactions-table thead th:first-child {
+  color: #6352a8;
+}
+
+.transactions-page .transactions-table thead th:nth-child(2) {
+  color: #3e9276;
+}
+
+.transactions-page .transactions-table thead th:nth-child(3) {
+  color: #6179b0;
+}
+
+.transactions-page .transactions-table thead th:nth-child(4) {
+  color: #7962b7;
+}
+
+.transactions-page .transactions-table thead th:nth-child(5) {
+  color: #c56652;
+}
+
+.transactions-page .transactions-table thead th:nth-child(6) {
+  color: #6b6280;
+}
+
+
+/* =========================================================
+   TABLE ROWS
+   ========================================================= */
+
+.transactions-page .transactions-table tbody td {
+  padding: 18px 22px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #eeeef3;
+
+  vertical-align: middle;
+
+  color: var(--text-secondary);
+
+  font-size: 13.5px;
+}
+
+.transactions-page .transactions-table tbody tr {
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.transactions-page .transactions-table tbody tr:hover td {
+  background: #fbfaff;
+}
+
+.transactions-page .transactions-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   TRANSACTION NAME
+   ========================================================= */
+
+.transactions-page .transaction-name {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 155px;
+}
+
+.transactions-page .transaction-emoji {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f0ebff,
+      #f7f3ff
+    );
+
+  border: 1px solid #e7e0fa;
+
+  font-size: 18px;
+
+  box-shadow:
+    0 3px 8px rgba(128, 100, 223, 0.08);
+}
+
+.transactions-page .transaction-name span {
+  color: var(--text);
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   CATEGORY BADGES
+   ========================================================= */
+
+.transactions-page .transaction-category {
+  display: inline-flex;
+
+  align-items: center;
+
+  min-height: 28px;
+
+  padding: 5px 11px;
+
+  border-radius: 8px;
+
+  border: 1px solid transparent;
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   DATE + METHOD
+   ========================================================= */
+
+.transactions-page .transaction-secondary {
+  color: #5f6a80;
+
+  font-size: 13px;
+
+  font-weight: 550;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   AMOUNT
+   ========================================================= */
+
+.transactions-page .transaction-amount {
+  color: var(--coral);
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.transactions-page .transaction-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+.transactions-page .transaction-action-btn {
+  width: 35px;
+  height: 35px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.transactions-page .transaction-action-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.transactions-page .edit-action {
+  border: 1px solid #ddd5f7;
+
+  color: var(--purple);
+}
+
+.transactions-page .edit-action:hover {
+  background: var(--purple-light);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 12px rgba(128, 100, 223, 0.15);
+}
+
+.transactions-page .delete-action {
+  border: 1px solid #f2d3cc;
+
+  color: var(--coral);
+}
+
+.transactions-page .delete-action:hover {
+  background: var(--coral-light);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 12px rgba(237, 121, 95, 0.15);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.transactions-page .transactions-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 15px 22px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #faf8ff,
+      #fffafa
+    );
+
+  border-top: 1px solid #e9e7ef;
+}
+
+.transactions-page .transactions-footer p {
+  margin: 0;
+
+  color: #7e8799;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.transactions-page .transaction-pagination {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.transactions-page .transaction-pagination button {
+  height: 35px;
+
+  min-width: 36px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e0e1e8;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #667085;
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.transactions-page .transaction-pagination button:hover {
+  border-color: #d3c9f3;
+
+  color: var(--purple);
+
+  transform: translateY(-1px);
+}
+
+.transactions-page .transaction-pagination .active-page {
+  border-color: transparent;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--purple),
+      #9b7deb
+    );
+
+  color: #ffffff;
+
+  font-weight: 750;
+
+  box-shadow:
+    0 5px 13px rgba(128, 100, 223, 0.22);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.transactions-page .transactions-empty {
+  padding: 65px 20px;
+
+  text-align: center;
+}
+
+.transactions-page .transactions-empty-icon {
+  width: 60px;
+  height: 60px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 14px;
+
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f0ecff,
+      #fff0eb
+    );
+
+  font-size: 25px;
+}
+
+.transactions-page .transactions-empty h4 {
+  margin: 0 0 6px;
+
+  color: var(--text);
+
+  font-size: 17px;
+
+  font-weight: 700;
+}
+
+.transactions-page .transactions-empty p {
+  margin: 0;
+
+  color: var(--text-muted);
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   EDIT EXPENSE FORM
+   ========================================================= */
+
+.transactions-page > .card {
+  margin-bottom: 24px !important;
+
+  padding: 24px !important;
+
+  background: #ffffff;
+
+  border: 1px solid var(--border) !important;
+
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 7px 25px rgba(44, 39, 70, 0.06);
+}
+
+.transactions-page > .card h4 {
+  margin-bottom: 20px !important;
+
+  color: var(--text);
+
+  font-size: 18px;
+
+  font-weight: 750;
+}
+
+.transactions-page > .card .form-label {
+  margin-bottom: 7px;
+
+  color: var(--text);
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.transactions-page > .card .form-control,
+.transactions-page > .card .form-select {
+  min-height: 44px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 11px;
+
+  color: var(--text);
+
+  font-size: 13px;
+
+  box-shadow: none;
+}
+
+.transactions-page > .card .form-control:focus,
+.transactions-page > .card .form-select:focus {
+  border-color: var(--purple);
+
+  box-shadow:
+    0 0 0 3px rgba(128, 100, 223, 0.10);
+}
+
+.transactions-page > .card .btn {
+  min-height: 40px;
+
+  padding: 8px 18px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .transactions-page {
+    padding: 24px 22px 40px;
+  }
+
+  .transactions-page .transactions-filter-card {
+    flex-wrap: wrap;
+  }
+
+  .transactions-page .transaction-search {
+    flex: 1 1 100%;
+
+    min-width: 100%;
+  }
+
+  .transactions-page .transaction-select {
+    flex: 1;
+
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 767px) {
+  .transactions-page {
+    padding: 18px 14px 30px;
+  }
+
+  .transactions-page .transactions-title {
+    font-size: 24px;
+  }
+
+  .transactions-page .transactions-subtitle {
+    font-size: 12.5px;
+  }
+
+  .transactions-page .transactions-filter-card {
+    padding: 12px;
+
+    gap: 9px;
+
+    border-radius: 16px;
+  }
+
+  .transactions-page .transaction-search {
+    flex: 1 1 100%;
+  }
+
+  .transactions-page .transaction-search input {
+    height: 52px;
+
+    padding-left: 62px;
+  }
+
+  .transactions-page .transaction-search-icon {
+    width: 39px;
+    height: 39px;
+
+    padding: 8px;
+  }
+
+  .transactions-page .transaction-select {
+    height: 52px;
+
+    flex: 1 1 calc(50% - 5px);
+
+    min-width: 0;
+
+    font-size: 13px;
+  }
+
+  .transactions-page .transactions-table {
+    min-width: 800px;
+  }
+
+  .transactions-page .transactions-table thead th {
+    padding: 14px 15px;
+
+    font-size: 10px;
+  }
+
+  .transactions-page .transactions-table tbody td {
+    padding: 15px;
+
+    font-size: 12.5px;
+  }
+
+  .transactions-page .transaction-name span {
+    font-size: 13px;
+  }
+
+  .transactions-page .transaction-amount {
+    font-size: 13px;
+  }
+
+  .transactions-page .transaction-action-btn {
+    width: 31px;
+    height: 31px;
+  }
+}
+
+@media (max-width: 480px) {
+  .transactions-page {
+    padding: 15px 10px 25px;
+  }
+
+  .transactions-page .transactions-title {
+    font-size: 22px;
+  }
+
+  .transactions-page .transaction-select {
+    flex: 1 1 100%;
+  }
+
+  .transactions-page .transactions-footer {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  .transactions-page .transaction-pagination {
+    width: 100%;
+
+    justify-content: flex-end;
+  }
+}
+
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
+
+@keyframes expensePageIn {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transactions-page *,
+  .transactions-page *::before,
+  .transactions-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

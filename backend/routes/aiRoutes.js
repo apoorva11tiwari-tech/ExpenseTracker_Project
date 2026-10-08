@@ -1,7 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { getAIBudgetRecommendations } = require("../controllers/aiController");
+const {
+  getAiInsights,
+  getBudgetRecommendations,
+  allocateSavingsWithAI
+} = require("../controllers/aiController");
 
-router.post("/budget-recommendations", getAIBudgetRecommendations);
+router.get("/insights", getAiInsights);
+router.post("/recommendations", getBudgetRecommendations);
+router.post("/allocate", allocateSavingsWithAI);
 
 module.exports = router;

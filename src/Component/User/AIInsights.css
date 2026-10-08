@@ -12,7 +12,12 @@
   max-width: 1100px;
 }
 
-/* Custom Utility Color Classes */
+/* Page Background Depth */
+body {
+  background-color: #f4f6f9 !important;
+}
+
+/* Utility Text Colors */
 .text-coral { color: var(--coral) !important; }
 .text-lavender { color: var(--lavender) !important; }
 .text-mint { color: var(--mint) !important; }
@@ -24,36 +29,57 @@
 .bg-mint { background-color: var(--mint) !important; }
 .bg-peach { background-color: var(--peach) !important; }
 
-/* Theme-specific Subtles for Recommendations */
-.bg-coral-subtle { background-color: rgba(232, 93, 46, 0.1) !important; }
+/* Colorful Interactive Card Styling */
+.card {
+  background: linear-gradient(145deg, #ffffff, #fdfbf7);
+  border: 1px solid rgba(232, 93, 46, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 1.25rem !important;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -8px rgba(232, 93, 46, 0.15) !important;
+  border-color: rgba(232, 93, 46, 0.2) !important;
+}
+
+/* Vibrant Recommendation Cards Accent */
+.col-md-6 .card {
+  border-left: 4px solid var(--coral) !important;
+  background: linear-gradient(135deg, #ffffff 60%, rgba(232, 93, 46, 0.03) 100%);
+}
+
+/* Theme Subtles */
+.bg-coral-subtle { background-color: rgba(232, 93, 46, 0.12) !important; }
 .btn-outline-coral { color: var(--coral); border-color: var(--coral); }
 .btn-outline-coral:hover { background-color: var(--coral); color: #fff; }
 
-.bg-mint-subtle { background-color: rgba(16, 185, 129, 0.1) !important; }
+.bg-mint-subtle { background-color: rgba(16, 185, 129, 0.12) !important; }
 .btn-outline-mint { color: var(--mint); border-color: var(--mint); }
 .btn-outline-mint:hover { background-color: var(--mint); color: #fff; }
 
-.bg-lavender-subtle { background-color: rgba(139, 92, 246, 0.1) !important; }
+.bg-lavender-subtle { background-color: rgba(139, 92, 246, 0.12) !important; }
 .btn-outline-lavender { color: var(--lavender); border-color: var(--lavender); }
 .btn-outline-lavender:hover { background-color: var(--lavender); color: #fff; }
-
-.bg-peach-subtle { background-color: rgba(249, 115, 22, 0.1) !important; }
-.btn-outline-peach { color: var(--peach); border-color: var(--peach); }
-.btn-outline-peach:hover { background-color: var(--peach); color: #fff; }
 
 /* Custom Gradient & Buttons */
 .bg-gradient-brand {
   background: linear-gradient(135deg, var(--coral), var(--lavender)) !important;
+  box-shadow: 0 4px 15px rgba(232, 93, 46, 0.3);
 }
 
 .btn-brand {
-  background: linear-gradient(135deg, var(--coral), var(--lavender));
+  background: linear-gradient(135deg, var(--coral), var(--peach));
   border: none;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 15px rgba(232, 93, 46, 0.35);
+  transition: all 0.2s ease;
 }
 
 .btn-brand:hover {
-  opacity: 0.9;
+  opacity: 0.95;
+  box-shadow: 0 6px 20px rgba(232, 93, 46, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn-brand:active {
@@ -66,13 +92,14 @@
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   display: inline-block;
+  box-shadow: 0 0 8px rgba(0,0,0,0.15);
 }
 
-/* Spinner Animation for Refresh Button */
+/* Spinner Animation */
 .spin {
   animation: rotate 1s linear infinite;
 }

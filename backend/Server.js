@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+require('dotenv').config();
 
 const connectDB = require("./config/db");
 const expenseRoutes = require("./routes/expenseRoutes");
@@ -8,8 +8,14 @@ const incomeRoutes = require("./routes/incomeRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const aiRoutes = require("./routes/aiRoutes");
+const goalRoutes = require("./routes/goalRoute");
+const notificationRoutes = require("./routes/notificationRoutes");
+const reminderRoutes = require("./routes/reminderRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const userRoutes = require("./routes/adminRoutes"); // Agar login adminRoutes me hai toh ise bhi same path do
 
 const app = express();
+
 
 // Connect to MongoDB
 connectDB();
@@ -23,16 +29,23 @@ app.get("/", (req, res) => {
     res.send("Expense Tracker Backend is running!");
 });
 
-// Expense routes
+// Server par route mount karo
+app.use('/api/admin', adminRoutes);
+app.use('/api/users', userRoutes);
+
+// Routes
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/income", incomeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/budgets", budgetRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/goals", goalRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/reminders", reminderRoutes);
 
 // Start server
 const PORT = 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:5000`);
 });

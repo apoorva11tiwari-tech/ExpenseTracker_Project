@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase"; 
 import "./Settings.css";
 
 const fonts = [
@@ -27,6 +29,7 @@ const warmThemes = [
   { name: "Ocean", coral: "#0077B6", peach: "#48CAE4" },
   { name: "Forest", coral: "#2D6A4F", peach: "#74C69D" },
 ];
+
 function Toggle({ checked, onChange }) {
   return (
     <button
@@ -41,12 +44,29 @@ function Toggle({ checked, onChange }) {
     </button>
   );
 }
+
 export default function Settings() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [activeSection, setActiveSection] = useState(
+    location.state?.activeTab || "appearance"
+  );
+
+  const [currentUser, setCurrentUser] = useState(null);
   const [font, setFont] = useState("Plus Jakarta Sans");
   const [themeMode, setThemeMode] = useState("light");
   const [animation, setAnimation] = useState("full");
   const [activeTheme, setActiveTheme] = useState("Terracotta");
-  const [activeSection, setActiveSection] = useState("appearance");
+
+  // Profile Form States
+  const [fullName, setFullName] = useState("");
+  const [monthlyIncome, setMonthlyIncome] = useState(
+    localStorage.getItem("userIncome") || "50000"
+  );
+  const [currency, setCurrency] = useState(
+    localStorage.getItem("userCurrency") || "INR (₹)"
+  );
 
   const [notifs, setNotifs] = useState({
     budgetAlert: true,
@@ -55,6 +75,62 @@ export default function Settings() {
     weeklyReport: false,
     unusualSpending: true,
   });
+
+  // Listen for navigation state updates to switch tabs dynamically
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveSection(location.state.activeTab);
+    }
+  }, [location.state]);
+
+  // Sync active logged-in Firebase user
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+        setFullName(user.displayName || "");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      // Save locally for quick retrieval
+      localStorage.setItem("userIncome", monthlyIncome);
+      localStorage.setItem("userCurrency", currency);
+
+      // Post the monthly income to your backend API so Dashboard updates
+      const response = await fetch("http://localhost:5000/api/income", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Monthly Salary / Baseline",
+          amount: Number(monthlyIncome),
+          source: "Salary",
+          date: new Date().toISOString(),
+        }),
+      });
+
+      if (response.ok) {
+        alert("Monthly income saved successfully to database!");
+      } else {
+        alert("Failed to save income to database.");
+      }
+    } catch (error) {
+      console.error("Error saving income:", error);
+      alert("Error connecting to server.");
+    }
+  };
 
   const handleThemeChange = (theme) => {
     setActiveTheme(theme.name);
@@ -305,7 +381,7 @@ export default function Settings() {
 
               <div className="d-flex align-items-center gap-3 mb-4">
                 <div
-                  className="rounded-4 d-flex align-items-center justify-content-center fs-2"
+                  className="rounded-4 d-flex align-items-center justify-content-center fs-2 text-white overflow-hidden"
                   style={{
                     width: "60px",
                     height: "60px",
@@ -313,11 +389,23 @@ export default function Settings() {
                       "linear-gradient(135deg, var(--coral), var(--peach))",
                   }}
                 >
-                  👩
+                  {currentUser?.photoURL ? (
+                    <img
+                      src={currentUser.photoURL}
+                      alt="Profile"
+                      className="w-100 h-100 object-fit-cover"
+                    />
+                  ) : (
+                    "👤"
+                  )}
                 </div>
                 <div>
-                  <div className="fw-bold">Priya Sharma</div>
-                  <div className="text-muted small">priya@example.com</div>
+                  <div className="fw-bold">
+                    {currentUser?.displayName || "User"}
+                  </div>
+                  <div className="text-muted small">
+                    {currentUser?.email || "No email connected"}
+                  </div>
                   <button className="btn btn-link p-0 text-decoration-none extra-small fw-bold style-coral">
                     Change photo
                   </button>
@@ -325,26 +413,56 @@ export default function Settings() {
               </div>
 
               <div className="row g-3 mb-4">
-                {[
-                  { label: "Full Name", value: "Priya Sharma" },
-                  { label: "Email", value: "priya@example.com" },
-                  { label: "Monthly Income (₹)", value: "35000" },
-                  { label: "Currency", value: "INR (₹)" },
-                ].map((field) => (
-                  <div key={field.label} className="col-12 col-md-6">
-                    <label className="form-label small fw-bold mb-1">
-                      {field.label}
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control input-custom"
-                      defaultValue={field.value}
-                    />
-                  </div>
-                ))}
+                <div className="col-12 col-md-6">
+                  <label className="form-label small fw-bold mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control input-custom"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <label className="form-label small fw-bold mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control input-custom"
+                    defaultValue={currentUser?.email || ""}
+                    disabled
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <label className="form-label small fw-bold mb-1">
+                    Monthly Income (₹)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control input-custom"
+                    value={monthlyIncome}
+                    onChange={(e) => setMonthlyIncome(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <label className="form-label small fw-bold mb-1">
+                    Currency
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control input-custom"
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                  />
+                </div>
               </div>
 
-              <button className="btn btn-primary-gradient">
+              <button onClick={handleSaveProfile} className="btn btn-primary-gradient">
                 💾 Save Changes
               </button>
             </div>
@@ -395,7 +513,7 @@ export default function Settings() {
 
           {/* Logout Button */}
           <button
-            onClick={() => alert("Logout button clicked")}
+            onClick={handleLogout}
             className="btn w-100 py-3 fw-bold rounded-4 border-2"
             style={{
               borderColor: "rgba(232, 93, 46, 0.3)",

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :root {
   --coral: #e85d2e;
   --peach: #f4a261;
@@ -10,9 +11,31 @@ body {
   background: #fffaf7;
   color: var(--text-main);
   font-family: "Inter", sans-serif;
+=======
+/* =====================================================
+   CASHMATE SETTINGS & PROFILE - MODERN DESIGN
+   ===================================================== */
+
+:root {
+  --indigo-primary: #6366f1;
+  --violet-accent: #8b5cf6;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
 }
 
+/* Page Wrapper */
+.settings-page {
+  padding: 0;
+  background-color: var(--bg-main);
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
+}
+
+/* Settings Cards & Containers */
 .settings-card {
+<<<<<<< HEAD
   background: white;
   border: 1px solid var(--border-color);
   border-radius: 18px;
@@ -25,10 +48,53 @@ body {
   color: var(--text-main) !important;
   border-radius: 12px !important;
   padding: 12px 14px !important;
+=======
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.04);
+  transition: all 0.3s ease;
+  padding: 24px;
+}
+
+.settings-card:hover {
+  box-shadow: 0 14px 35px rgba(99, 102, 241, 0.08);
+}
+
+/* Left Navigation Sidebar inside Settings */
+.settings-nav-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.03);
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-btn:hover {
+  background-color: #f1f5f9;
+  color: var(--text-main);
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }
 
 .sidebar-btn:hover,
 .sidebar-btn.active {
+<<<<<<< HEAD
   background: rgba(232, 93, 46, 0.1) !important;
   color: var(--coral) !important;
 }
@@ -59,21 +125,113 @@ body {
   padding: 3px;
   display: flex;
   align-items: center;
+=======
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.12));
+  color: var(--indigo-primary);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+}
+
+/* Theme Option Cards & Selectors */
+.theme-option-btn {
+  border: 1px solid var(--border-color);
+  background-color: #fff;
+  border-radius: 14px;
+  color: var(--text-main);
+  padding: 14px;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.theme-option-btn:hover {
+  border-color: var(--indigo-primary);
+  background-color: #f8fafc;
+}
+
+.theme-option-btn.selected {
+  border-color: var(--indigo-primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(139, 92, 246, 0.06));
+  color: var(--indigo-primary);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.12);
+}
+
+/* Form Inputs & Fields */
+.input-custom {
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  background-color: #f8fafc;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.input-custom:focus {
+  border-color: var(--indigo-primary);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+  outline: none;
+}
+
+/* Gradient Action Button */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  transition: all 0.25s ease;
+}
+
+.btn-primary-gradient:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  color: #fff;
+}
+
+/* Toggle Switches */
+.custom-switch-btn {
+  width: 48px;
+  height: 26px;
+  border-radius: 13px;
+  border: none;
+  background-color: #cbd5e1;
+  position: relative;
+  transition: background-color 0.2s ease;
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
   cursor: pointer;
   transition: 0.2s;
+}
+
+.custom-switch-btn.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
 }
 
 .custom-switch-thumb {
   width: 20px;
   height: 20px;
+<<<<<<< HEAD
   background: white;
   border-radius: 50%;
   transition: 0.2s;
   transform: translateX(0);
+=======
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }
 
 .custom-switch-btn.active .custom-switch-thumb {
   transform: translateX(22px);
+<<<<<<< HEAD
 }
 
 .input-custom {
@@ -109,4 +267,6 @@ body {
 
 .max-w-lg {
   max-width: 1100px;
+=======
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }

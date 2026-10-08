@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// Public Components
 import Landing from "./LandingPage";
 import Login from "./Login";
 import SignUp from "./SignUp";
+
+// User Components
 import Dashboard from "./Component/User/Dashboard";
 import AddExpense from "./Component/User/AddExpense";
 import Expenses from "./Component/User/Expenses";
@@ -16,14 +19,20 @@ import Reminders from "./Component/User/Reminders";
 import Budget from "./Component/User/Budget";
 import UserIncome from "./Component/User/UserIncome";
 
+// Admin Components (Agar aapne add kiye hain)
+import AdminDashboard from "./Component/Admin/src/components/Dashboard";
+import AdminUsers from "./Component/Admin/src/components/adminUsers"
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
+        {/* User Dashboard Routes */}
         <Route path="/app/dashboard" element={<Dashboard />} />
         <Route path="/app/add-expense" element={<AddExpense />} />
         <Route path="/app/settings" element={<Settings />} />
@@ -36,6 +45,11 @@ function App() {
         <Route path="/app/budget" element={<Budget />} />
         <Route path="/app/userincome" element={<UserIncome />} />
 
+        {/* Admin Routes (Agar aap build kar rahe hain) */}
+        <Route path="/admin/src/components/dashboard" element={<Dashboard />} /> 
+         <Route path="/admin /src/components/adminusers" element={<AdminUsers />} /> 
+
+        {/* 404 Fallback Route */}
         <Route
           path="*"
           element={

@@ -139,7 +139,7 @@ export default function Budget() {
       .catch((err) => console.error("Error saving budget:", err));
   };
 
-  // Delete budget category
+  // Delete single budget category
   const handleDelete = (id, categoryName) => {
     if (!window.confirm(`Are you sure you want to delete the budget for ${categoryName}?`)) return;
 
@@ -151,6 +151,20 @@ export default function Budget() {
         fetchBudgets();
       })
       .catch((err) => console.error("Error deleting budget:", err));
+  };
+
+  // Delete all budgets at once
+  const handleDeleteAllBudgets = () => {
+    if (!window.confirm("Are you sure you want to delete all budgets?")) return;
+
+    fetch("http://localhost:5000/api/budgets", {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setBudgets([]);
+      })
+      .catch((err) => console.error("Error deleting all budgets:", err));
   };
 
   // AI Auto Customization Trigger
@@ -214,7 +228,13 @@ export default function Budget() {
         </div>
 
         <div className="d-flex gap-2">
-          {/* AI Customize Button */}
+          <button
+            onClick={handleDeleteAllBudgets}
+            className="btn btn-outline-danger d-flex align-items-center gap-2 rounded-pill px-3 py-2 fw-bold shadow-sm"
+          >
+            <Trash2 size={16} /> Delete All
+          </button>
+
           <button
             onClick={() => setShowAIModal(true)}
             className="btn btn-ai d-flex align-items-center gap-2 rounded-pill px-3 py-2 text-white fw-bold shadow-sm"
@@ -222,7 +242,6 @@ export default function Budget() {
             <Sparkles size={16} /> AI Customize
           </button>
 
-          {/* Manual Add Budget Button */}
           <button
             onClick={() => setShowModal(true)}
             className="btn btn-gradient d-flex align-items-center gap-2 rounded-pill px-3 py-2 text-white fw-bold shadow-sm"

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../../config/api";
 import "./Analytics.css";
 import {
   BarChart,
@@ -25,20 +26,27 @@ function Analytics() {
   const tabs = ["Daily", "Weekly", "Monthly", "Yearly"];
 
   useEffect(() => {
-    Promise.all([
-      fetch("http://localhost:5000/api/analytics").then((res) => res.json()),
-      fetch("http://localhost:5000/api/expenses").then((res) => res.json()),
-    ])
-      .then(([analyticsRes, expensesRes]) => {
-        setAnalyticsData(analyticsRes);
-        setExpenses(Array.isArray(expensesRes) ? expensesRes : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error loading analytics:", err);
-        setLoading(false);
-      });
-  }, []);
+  const period = activeTab.toLowerCase();
+
+  setLoading(true);
+
+  Promise.all([
+   fetch(`${API_URL}/api/analytics?period=${period}`).then((res) =>
+      res.json()
+    ),
+   fetch(`${API_URL}/api/expenses`).then((res) => res.json()),
+  ])
+    .then(([analyticsRes, expensesRes]) => {
+      setAnalyticsData(analyticsRes);
+      setExpenses(Array.isArray(expensesRes) ? expensesRes : []);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error("Error loading analytics:", err);
+      setLoading(false);
+    });
+}, [activeTab]);
+
 
   const totalIncome = analyticsData?.summary?.totalIncome || 0;
   const totalExpense = analyticsData?.summary?.totalExpense || 0;
@@ -90,14 +98,7 @@ function Analytics() {
         </div>
       </div>
 
-      {/* Security Banner */}
-      <div className="analytics-security mb-4">
-        <div className="security-icon">🔐</div>
-        <div>
-          <h5>Encrypted Private Analytics</h5>
-          <p>Insights are calculated directly from your MongoDB records and updated live.</p>
-        </div>
-      </div>
+      
 
       {/* STAT CARDS */}
       <div className="row g-4 mb-4">

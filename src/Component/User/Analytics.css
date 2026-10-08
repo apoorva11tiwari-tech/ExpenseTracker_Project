@@ -1,120 +1,831 @@
-/* =====================================================
-   UPGRADED ANALYTICS STYLES
-===================================================== */
+/* =========================================================
+   CASHMATE ANALYTICS PAGE
+   Clean • Modern • Colorful • Balanced
+========================================================= */
 
 .analytics-page {
-  padding: 28px;
-  background-color: #f8fafc;
+  --analytics-text: #1c2538;
+  --analytics-text-soft: #68758b;
+  --analytics-muted: #9aa5b8;
+
+  --analytics-purple: #7658e8;
+  --analytics-purple-dark: #5f46c8;
+  --analytics-purple-light: #f1edff;
+
+  --analytics-coral: #ed7659;
+  --analytics-coral-light: #fff0eb;
+
+  --analytics-mint: #20b58a;
+  --analytics-mint-light: #eaf9f4;
+
+  --analytics-yellow: #dfa22d;
+  --analytics-yellow-light: #fff7e5;
+
   min-height: calc(100vh - 65px);
+
+  padding: 24px 30px 40px;
+
+  color: var(--analytics-text);
+
+  background:
+    radial-gradient(
+      circle at 8% 5%,
+      rgba(118, 88, 232, 0.07),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(237, 118, 89, 0.07),
+      transparent 25%
+    ),
+    linear-gradient(
+      135deg,
+      #faf9fd 0%,
+      #fffaf8 52%,
+      #f8fcfb 100%
+    );
+
+  animation: analyticsPageIn 0.4s ease;
 }
 
-.analytics-title {
-  font-size: 28px;
+
+/* =========================================================
+   TOP HEADER
+========================================================= */
+
+.analytics-page .analytics-header {
+  margin-bottom: 22px !important;
+
+  min-height: 76px;
+}
+
+
+/* Hide the old small security label.
+   The security banner has already been removed from JSX.
+*/
+
+.analytics-page .secure-label {
+  display: none !important;
+}
+
+
+/* =========================================================
+   MAIN HEADING
+========================================================= */
+
+.analytics-page .analytics-title {
+  margin: 0;
+
+  color: var(--analytics-text);
+
+  font-size: 26px;
+
+  line-height: 1.2;
+
   font-weight: 800;
-  color: #0f172a;
+
+  letter-spacing: -0.5px;
 }
 
-.analytics-subtitle {
-  color: #64748b;
-  font-size: 14px;
+.analytics-page .analytics-subtitle {
+  margin: 5px 0 0;
+
+  color: var(--analytics-text-soft);
+
+  font-size: 12.5px;
+
+  line-height: 1.5;
+
+  font-weight: 500;
 }
 
-/* Security Banner */
-.analytics-security {
+
+/* =========================================================
+   TIME FILTER
+========================================================= */
+
+.analytics-page .analytics-tabs {
   display: flex;
+
   align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
-  border-radius: 16px;
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
+
+  gap: 3px;
+
+  padding: 4px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid #e5e1ed;
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 5px 16px rgba(65, 52, 100, 0.06);
 }
 
-.analytics-security h5 {
-  margin: 0;
-  color: #312e81;
-  font-size: 14px;
-  font-weight: 700;
-}
+.analytics-page .analytics-tabs button {
+  height: 34px;
 
-.analytics-security p {
-  margin: 2px 0 0;
-  color: #4338ca;
-  font-size: 12px;
-}
+  min-width: 66px;
 
-/* Analytics Cards */
-.analytics-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 22px;
-  position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+  padding: 0 12px;
 
-.analytics-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-}
+  border: none;
 
-.card-badge {
-  position: absolute;
-  top: 18px;
-  right: 18px;
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #727d91;
+
+  font-family: inherit;
+
   font-size: 11px;
+
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* Badge Tints */
-.bg-coral-light { background: #fff1f2; }
-.text-coral { color: #ff6b52; }
+.analytics-page .analytics-tabs button:hover {
+  background: #f4f1ff;
 
-.bg-mint-light { background: #ecfdf5; }
-.text-mint { color: #10b981; }
-
-.bg-lavender-light { background: #eef2ff; }
-.text-lavender { color: #6366f1; }
-
-.bg-peach-light { background: #fffbeb; }
-.text-peach { color: #f59e0b; }
-
-/* Stat Card Accents */
-.card-daily { border-top: 4px solid #ff6b52; }
-.card-savings { border-top: 4px solid #10b981; }
-.card-topcat { border-top: 4px solid #6366f1; }
-.card-net { border-top: 4px solid #f59e0b; }
-
-.summary-icon {
-  font-size: 26px;
-  display: inline-block;
-  margin-bottom: 8px;
+  color: var(--analytics-purple);
 }
 
-.summary-card h3 {
-  font-size: 26px;
+.analytics-page .analytics-tabs button.active {
+  background:
+    linear-gradient(
+      135deg,
+      #7658e8,
+      #9675ed
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 4px 10px rgba(118, 88, 232, 0.22);
+}
+
+
+/* =========================================================
+   BOOTSTRAP ROW SPACING
+========================================================= */
+
+.analytics-page .row.g-4 {
+  --bs-gutter-x: 20px;
+  --bs-gutter-y: 20px;
+}
+
+
+/* =========================================================
+   GENERAL ANALYTICS CARD
+========================================================= */
+
+.analytics-page .analytics-card {
+  position: relative;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 19px;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  border: 1px solid #e4e5eb;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 5px 18px rgba(48, 43, 70, 0.045);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.analytics-page .analytics-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #ddd9e7;
+
+  box-shadow:
+    0 9px 24px rgba(48, 43, 70, 0.075);
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.analytics-page .summary-card {
+  min-height: 158px;
+
+  padding: 18px;
+}
+
+
+/* Colored top borders */
+
+.analytics-page .card-daily {
+  border-top: 3px solid var(--analytics-coral);
+}
+
+.analytics-page .card-savings {
+  border-top: 3px solid var(--analytics-mint);
+}
+
+.analytics-page .card-topcat {
+  border-top: 3px solid var(--analytics-purple);
+}
+
+.analytics-page .card-net {
+  border-top: 3px solid var(--analytics-yellow);
+}
+
+
+/* Soft decorative circles */
+
+.analytics-page .summary-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -42px;
+
+  bottom: -58px;
+
+  width: 125px;
+
+  height: 125px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  opacity: 0.48;
+}
+
+.analytics-page .card-daily::after {
+  background: #ffe6de;
+}
+
+.analytics-page .card-savings::after {
+  background: #dcf5ec;
+}
+
+.analytics-page .card-topcat::after {
+  background: #ebe5ff;
+}
+
+.analytics-page .card-net::after {
+  background: #fff0c9;
+}
+
+
+/* =========================================================
+   CARD BADGES
+========================================================= */
+
+.analytics-page .card-badge {
+  position: absolute;
+
+  top: 15px;
+
+  right: 15px;
+
+  z-index: 2;
+
+  padding: 5px 9px;
+
+  border-radius: 14px;
+
+  font-size: 9px;
+
+  line-height: 1;
+
   font-weight: 800;
-  color: #0f172a;
-  margin-bottom: 2px;
+
+  white-space: nowrap;
 }
 
-.summary-card p {
-  font-size: 13px;
-  font-weight: 700;
-  color: #475569;
-  margin: 0;
+.analytics-page .bg-coral-light {
+  background: var(--analytics-coral-light);
+}
+
+.analytics-page .text-coral {
+  color: var(--analytics-coral);
+}
+
+.analytics-page .bg-mint-light {
+  background: var(--analytics-mint-light);
+}
+
+.analytics-page .text-mint {
+  color: var(--analytics-mint);
+}
+
+.analytics-page .bg-lavender-light {
+  background: var(--analytics-purple-light);
+}
+
+.analytics-page .text-lavender {
+  color: var(--analytics-purple);
+}
+
+.analytics-page .bg-peach-light {
+  background: var(--analytics-yellow-light);
+}
+
+.analytics-page .text-peach {
+  color: #c18a1c;
+}
+
+
+/* =========================================================
+   SUMMARY ICON
+========================================================= */
+
+.analytics-page .summary-icon {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 37px;
+
+  height: 37px;
+
+  margin-bottom: 10px;
+
+  border-radius: 10px;
+
+  background: #f5f2ff;
+
+  border: 1px solid #e8e2fa;
+
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   SUMMARY CARD TYPOGRAPHY
+========================================================= */
+
+.analytics-page .summary-card h3 {
+  position: relative;
+
+  z-index: 2;
+
+  margin: 0 0 4px;
+
+  color: var(--analytics-text);
+
+  font-size: 23px;
+
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing: -0.4px;
+}
+
+.analytics-page .summary-card p {
+  position: relative;
+
+  z-index: 2;
+
+  margin: 0 0 5px;
+
+  color: #566177;
+
+  font-size: 9.5px;
+
+  line-height: 1.3;
+
+  font-weight: 800;
+
+  letter-spacing: 0.45px;
+
   text-transform: uppercase;
 }
 
-.summary-card small {
-  color: #94a3b8;
-  font-size: 12px;
+.analytics-page .summary-card small {
+  position: relative;
+
+  z-index: 2;
+
+  color: #98a3b5;
+
+  font-size: 10px;
+
+  line-height: 1.3;
+
+  font-weight: 500;
 }
 
-/* Category Progress List */
-.category-progress-list {
-  padding-top: 5px;
+
+/* =========================================================
+   CHART CARDS
+========================================================= */
+
+.analytics-page .chart-card {
+  min-height: 360px;
+
+  padding: 20px;
+}
+
+.analytics-page .card-header-simple {
+  margin-bottom: 12px !important;
+}
+
+.analytics-page .card-header-simple h4 {
+  margin: 0;
+
+  color: var(--analytics-text);
+
+  font-size: 17px;
+
+  line-height: 1.3;
+
+  font-weight: 750;
+
+  letter-spacing: -0.2px;
+}
+
+.analytics-page .card-header-simple p {
+  margin-top: 4px;
+
+  color: var(--analytics-text-soft);
+
+  font-size: 10.5px;
+
+  line-height: 1.4;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   CATEGORY INSIGHTS BADGE
+========================================================= */
+
+.analytics-page .chart-security {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 5px 9px;
+
+  border-radius: 8px;
+
+  background: var(--analytics-purple-light);
+
+  color: var(--analytics-purple-dark);
+
+  font-size: 9px;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   RECHARTS
+========================================================= */
+
+.analytics-page .recharts-wrapper {
+  font-family: inherit;
+}
+
+.analytics-page .recharts-cartesian-axis-tick-value {
+  fill: #818b9d;
+
+  font-size: 9px;
+}
+
+.analytics-page .recharts-cartesian-grid-horizontal line {
+  stroke: #e9eaf0;
+
+  stroke-dasharray: 4 5;
+}
+
+.analytics-page .recharts-cartesian-grid-vertical line {
+  display: none;
+}
+
+.analytics-page .recharts-legend-item-text {
+  color: #69758a !important;
+
+  font-size: 9.5px;
+
+  font-weight: 650;
+}
+
+.analytics-page .recharts-default-tooltip {
+  padding: 8px 10px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e1ddea !important;
+
+  border-radius: 9px !important;
+
+  box-shadow:
+    0 7px 18px rgba(50, 43, 76, 0.11) !important;
+}
+
+.analytics-page .recharts-tooltip-label {
+  color: var(--analytics-text) !important;
+
+  font-size: 10px !important;
+
+  font-weight: 750 !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.analytics-page .analytics-empty {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 210px;
+
+  text-align: center;
+}
+
+.analytics-page .empty-chart-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 52px;
+
+  height: 52px;
+
+  margin-bottom: 10px;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f0ecff,
+      #fff0eb
+    );
+
+  font-size: 22px;
+}
+
+.analytics-page .analytics-empty h5 {
+  margin: 0 0 5px;
+
+  color: var(--analytics-text);
+
+  font-size: 13px;
+
+  font-weight: 750;
+}
+
+.analytics-page .analytics-empty p {
+  margin: 0;
+
+  color: var(--analytics-muted);
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   CATEGORY BREAKDOWN
+========================================================= */
+
+.analytics-page .category-progress-list {
+  padding-top: 1px;
+}
+
+.analytics-page .category-progress-list > div {
+  margin-bottom: 14px !important;
+}
+
+.analytics-page .category-progress-list .fw-bold {
+  color: var(--analytics-text);
+
+  font-size: 11.5px;
+
+  font-weight: 700;
+}
+
+.analytics-page .category-progress-list .progress {
+  height: 7px !important;
+
+  margin-top: 6px;
+
+  overflow: hidden;
+
+  background: #edf0f4;
+
+  border-radius: 20px !important;
+}
+
+.analytics-page .category-progress-list .progress-bar {
+  min-width: 3px;
+
+  border-radius: 20px !important;
+
+  transition: width 0.6s ease;
+}
+
+
+/* =========================================================
+   FORCE CONSISTENT FONT INSIDE ANALYTICS
+========================================================= */
+
+.analytics-page,
+.analytics-page button,
+.analytics-page input,
+.analytics-page select,
+.analytics-page textarea {
+  font-family:
+    Inter,
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .analytics-page {
+    padding: 22px 24px 35px;
+  }
+
+  .analytics-page .analytics-title {
+    font-size: 25px;
+  }
+
+  .analytics-page .analytics-tabs button {
+    min-width: 60px;
+
+    padding: 0 9px;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .analytics-page {
+    padding: 20px 15px 32px;
+  }
+
+  .analytics-page .analytics-header {
+    flex-direction: column;
+
+    align-items: flex-start !important;
+
+    gap: 15px;
+
+    min-height: auto;
+  }
+
+  .analytics-page .analytics-title {
+    font-size: 23px;
+  }
+
+  .analytics-page .analytics-subtitle {
+    font-size: 11.5px;
+  }
+
+  .analytics-page .analytics-tabs {
+    width: 100%;
+  }
+
+  .analytics-page .analytics-tabs button {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 10.5px;
+  }
+
+  .analytics-page .summary-card {
+    min-height: 155px;
+  }
+
+  .analytics-page .chart-card {
+    min-height: 350px;
+  }
+
+  .analytics-page .chart-security {
+    display: none;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .analytics-page {
+    padding: 17px 11px 28px;
+  }
+
+  .analytics-page .analytics-title {
+    font-size: 21px;
+  }
+
+  .analytics-page .analytics-subtitle {
+    font-size: 11px;
+  }
+
+  .analytics-page .analytics-tabs {
+    gap: 2px;
+
+    padding: 3px;
+  }
+
+  .analytics-page .analytics-tabs button {
+    height: 32px;
+
+    font-size: 9.5px;
+  }
+
+  .analytics-page .analytics-card {
+    padding: 16px;
+
+    border-radius: 15px;
+  }
+
+  .analytics-page .summary-card {
+    min-height: 150px;
+  }
+
+  .analytics-page .summary-card h3 {
+    font-size: 21px;
+  }
+
+  .analytics-page .summary-card p {
+    font-size: 9px;
+  }
+
+  .analytics-page .summary-card small {
+    font-size: 9.5px;
+  }
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes analyticsPageIn {
+  from {
+    opacity: 0;
+
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics-page,
+  .analytics-page *,
+  .analytics-page *::before,
+  .analytics-page *::after {
+    animation: none !important;
+
+    transition: none !important;
+  }
 }

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 :root {
   --bg-alt: #f8fafc;
   --card: #ffffff;
@@ -131,221 +132,1102 @@
   border-radius: 50%;
   filter: blur(20px);
   pointer-events: none;
-=======
 /* =====================================================
    VIBRANT PURPLE / PINK / INDIGO SAVINGS GOALS THEME
-===================================================== */
+===================================================== *
+/* =========================================================
+   CASHMATE — SAVINGS GOALS
+   Clean • Colorful • Modern • Consistent
+========================================================= */
+
 
 .goals-page {
-  animation: fadeIn 0.4s ease-in-out;
+  --navy: #182033;
+  --navy-soft: #39445c;
+
+  --muted: #73809a;
+  --muted-light: #98a3b7;
+
+  --purple: #8165e8;
+  --purple-dark: #6f53d4;
+  --purple-soft: #eeeaff;
+
+  --coral: #ed8067;
+  --coral-soft: #fff0eb;
+
+  --pink: #e86698;
+  --pink-soft: #fff0f6;
+
+  --mint: #39b98c;
+  --mint-soft: #e8f8f2;
+
+  --blue: #6877e7;
+  --blue-soft: #edf0ff;
+
+  --yellow: #dfa53e;
+  --yellow-soft: #fff6e4;
+
+  --page-bg: #f4f5fb;
+  --card-bg: #ffffff;
+  --border: #e2e5ef;
+
+  color: var(--navy);
+  animation: goalsFadeIn 0.35s ease;
+
+}}
+@keyframes goalsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+/* =========================================================
+   PAGE BACKGROUND
+========================================================= */
+
+.goals-page::before {
+  content: "";
+
+  position: fixed;
+  z-index: -1;
+
+  top: 177px;
+  left: 278px;
+  right: 0;
+  bottom: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 8% 10%,
+      rgba(129, 101, 232, 0.08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(237, 128, 103, 0.07),
+      transparent 27%
+    );
+
+  opacity: 1;
 }
 
-@keyframes animatePop {
-  0% { transform: scale(0.92); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
 
-.animate-pop {
-  animation: animatePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
+/* =========================================================
+   MAIN HEADING
+========================================================= */
 
 .goals-title {
-  color: #0f172a;
+  color: var(--navy) !important;
+
+  font-size: 28px !important;
+  font-weight: 800 !important;
+
+  line-height: 1.2 !important;
+  letter-spacing: -0.5px;
+
+  margin-bottom: 5px !important;
 }
 
-/* Custom Cards */
-.custom-card {
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  transition: all 0.2s ease-in-out;
+.goals-page > .d-flex:first-of-type {
+  margin-bottom: 26px !important;
 }
 
-.custom-card:hover {
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.12);
+.goals-page > .d-flex:first-of-type > div:first-child p {
+  color: var(--muted) !important;
+
+  font-size: 13px !important;
+  font-weight: 500 !important;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   TOP BUTTONS
+========================================================= */
+
+.btn-gradient-purple {
+  min-height: 41px;
+
+  padding: 9px 17px !important;
+
+  border: none !important;
+  border-radius: 11px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8063e4 0%,
+      #936fe8 100%
+    ) !important;
+
+  color: #ffffff !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+
+  box-shadow:
+    0 7px 18px rgba(117, 88, 215, 0.20) !important;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-gradient-purple:hover {
+  color: #ffffff !important;
+
   transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 23px rgba(117, 88, 215, 0.27) !important;
 }
 
-.border-purple-custom {
-  border: 2px solid #8b5cf6 !important;
+.btn-ai-sparkle {
+  min-height: 41px;
+
+  padding: 9px 16px !important;
+
+  border: none !important;
+  border-radius: 11px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6d6ee1,
+      #8c6ce8
+    ) !important;
+
+  color: #ffffff !important;
+
+  font-size: 12px !important;
+  font-weight: 700 !important;
+
+  box-shadow:
+    0 7px 17px rgba(111, 91, 218, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/* Icon & Emoji Containers */
+.btn-ai-sparkle:hover {
+  color: #ffffff !important;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 22px rgba(111, 91, 218, 0.25);
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.goals-page .row.g-3.mb-4 {
+  margin-bottom: 22px !important;
+}
+
+.goals-page .row.g-3.mb-4 > div {
+  display: flex;
+}
+
+.goals-page .row.g-3.mb-4 .custom-card {
+  width: 100%;
+
+  min-height: 91px;
+
+  padding: 15px 18px !important;
+
+  border: 1px solid var(--border) !important;
+  border-radius: 17px !important;
+
+  background: #ffffff !important;
+
+  box-shadow:
+    0 5px 18px rgba(27, 35, 57, 0.045) !important;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+
+/* Different subtle backgrounds */
+
+.goals-page .row.g-3.mb-4 > div:nth-child(1) .custom-card {
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #faf8ff 100%
+    ) !important;
+
+  border-top: 3px solid #9a83eb !important;
+}
+
+.goals-page .row.g-3.mb-4 > div:nth-child(2) .custom-card {
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f7f8ff 100%
+    ) !important;
+
+  border-top: 3px solid #7180e7 !important;
+}
+
+.goals-page .row.g-3.mb-4 > div:nth-child(3) .custom-card {
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #fff8fb 100%
+    ) !important;
+
+  border-top: 3px solid #e66a9a !important;
+}
+
+
+/* =========================================================
+   SUMMARY ICONS
+========================================================= */
+
 .icon-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 43px;
+  height: 43px;
+
+  border-radius: 13px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   flex-shrink: 0;
 }
+
+.bg-purple-subtle {
+  background: #eeeaff !important;
+}
+
+.bg-indigo-subtle {
+  background: #edf0ff !important;
+}
+
+.bg-pink-subtle {
+  background: #fff0f6 !important;
+}
+
+.bg-violet-subtle {
+  background: #f0ecff !important;
+}
+
+.bg-lavender-subtle {
+  background: #f4f1ff !important;
+}
+
+.text-purple {
+  color: var(--purple) !important;
+}
+
+.text-indigo {
+  color: var(--blue) !important;
+}
+
+.text-pink {
+  color: var(--pink) !important;
+}
+
+.text-violet {
+  color: #795dd6 !important;
+}
+
+
+/* =========================================================
+   SUMMARY TYPOGRAPHY
+========================================================= */
+
+.goals-page .row.g-3.mb-4 .small.text-muted {
+  color: var(--muted) !important;
+
+  font-size: 11px !important;
+  font-weight: 600 !important;
+
+  line-height: 1.3;
+
+  margin-bottom: 3px !important;
+}
+
+.goals-page .row.g-3.mb-4 h3 {
+  margin: 0 !important;
+
+  font-size: 20px !important;
+  font-weight: 800 !important;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.3px;
+}
+
+
+/* =========================================================
+   GOALS GRID
+========================================================= */
+
+.goals-page > .row.g-3:not(.mb-4) {
+  row-gap: 17px !important;
+}
+
+.goals-page > .row.g-3:not(.mb-4) > .col-12 {
+  display: flex;
+}
+
+.goals-page > .row.g-3:not(.mb-4) > .col-12 > .custom-card {
+  width: 100%;
+}
+
+
+/* =========================================================
+   GOAL CARD
+========================================================= */
+
+.goals-page > .row.g-3:not(.mb-4) .custom-card {
+  position: relative;
+
+  min-height: 178px;
+
+  padding: 17px 20px !important;
+
+  border: 1px solid var(--border) !important;
+
+  border-left: 4px solid var(--coral) !important;
+
+  border-radius: 18px !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #fcfcff 100%
+    ) !important;
+
+  box-shadow:
+    0 6px 20px rgba(26, 34, 55, 0.045) !important;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease !important;
+}
+
+.goals-page > .row.g-3:not(.mb-4) .custom-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 28px rgba(26, 34, 55, 0.075) !important;
+}
+
+
+/* Soft corner decoration */
+
+.goals-page > .row.g-3:not(.mb-4) .custom-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 100px;
+  height: 100px;
+
+  right: -48px;
+  bottom: -53px;
+
+  border-radius: 50%;
+
+  background: #f2eeff;
+
+  opacity: 0.9;
+
+  pointer-events: none;
+}
+
+.goals-page > .row.g-3:not(.mb-4) .custom-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* =========================================================
+   GOAL EMOJI
+========================================================= */
 
 .goal-emoji-box {
   width: 46px;
   height: 46px;
-  border-radius: 14px;
+
+  border-radius: 13px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+
   flex-shrink: 0;
+
+  font-size: 22px;
+
+  background: #f1eeff !important;
+
+  border: 1px solid #e8e3fb;
 }
 
-/* Rich Subtitle Pastel Backgrounds */
-.bg-purple-subtle { background-color: #f3e8ff !important; }
-.bg-indigo-subtle { background-color: #e0e7ff !important; }
-.bg-pink-subtle { background-color: #fce7f3 !important; }
-.bg-violet-subtle { background-color: #ede9fe !important; }
-.bg-lavender-subtle { background-color: #f5f3ff !important; }
 
-/* Progress Bar Options */
-.goal-progress-bar {
-  height: 10px;
-  border-radius: 10px;
-  background-color: #f1f5f9;
-  overflow: hidden;
+/* =========================================================
+   GOAL TITLE
+========================================================= */
+
+.goals-page .custom-card h3.fs-6 {
+  color: var(--navy) !important;
+
+  font-size: 15px !important;
+  font-weight: 750 !important;
+
+  line-height: 1.25 !important;
+
+  margin-bottom: 3px !important;
+
+  letter-spacing: -0.1px;
 }
 
-.bg-purple { background-color: #8b5cf6 !important; }
-.bg-indigo { background-color: #6366f1 !important; }
-.bg-pink { background-color: #ec4899 !important; }
-.bg-violet { background-color: #7c3aed !important; }
-.bg-lavender { background-color: #a78bfa !important; }
+.goals-page .custom-card .small.text-muted {
+  color: #7b879e !important;
 
-/* Text Color Palette */
-.text-purple { color: #8b5cf6 !important; }
-.text-indigo { color: #6366f1 !important; }
-.text-pink { color: #ec4899 !important; }
-.text-violet { color: #7c3aed !important; }
+  font-size: 11px !important;
+  font-weight: 500 !important;
 
-/* Gradient Action Buttons */
-.btn-gradient-purple {
-  background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
-  border: none !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  line-height: 1.4;
 }
 
-.btn-gradient-purple:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45) !important;
-  color: #ffffff !important;
+
+/* =========================================================
+   PRIORITY BADGES
+========================================================= */
+
+.badge-priority-high,
+.badge-priority-med,
+.badge-priority-low {
+  border-radius: 20px !important;
+
+  padding: 4px 7px !important;
+
+  font-size: 8px !important;
+  font-weight: 700 !important;
+
+  line-height: 1 !important;
+
+  letter-spacing: 0.1px;
 }
 
-.btn-purple {
-  background-color: #8b5cf6 !important;
-  border: none !important;
-  color: #ffffff !important;
-}
-
-.btn-purple:hover {
-  background-color: #7c3aed !important;
-  color: #ffffff !important;
-}
-
-/* Priority Badges */
 .badge-priority-high {
-  background-color: #ffe4e6 !important;
-  color: #e11d48 !important;
-  font-size: 10px !important;
-  border-radius: 6px !important;
-  padding: 3px 6px !important;
+  background: #fff0f3 !important;
+  color: #d95672 !important;
 }
 
 .badge-priority-med {
-  background-color: #fef3c7 !important;
-  color: #d97706 !important;
-  font-size: 10px !important;
-  border-radius: 6px !important;
-  padding: 3px 6px !important;
+  background: #fff6e5 !important;
+  color: #c38a2b !important;
 }
 
 .badge-priority-low {
-  background-color: #d1fae5 !important;
-  color: #059669 !important;
-  font-size: 10px !important;
-  border-radius: 6px !important;
-  padding: 3px 6px !important;
+  background: #eaf8f2 !important;
+  color: #38a47e !important;
 }
 
-/* Quick Deposit Buttons */
-.btn-outline-purple {
-  border: 1px solid #8b5cf6 !important;
-  color: #8b5cf6 !important;
-  background-color: #ffffff !important;
-  border-radius: 8px !important;
-  transition: all 0.2s ease-in-out !important;
-}
 
-.btn-outline-purple:hover {
-  background-color: #8b5cf6 !important;
-  color: #ffffff !important;
-}
+/* =========================================================
+   EDIT / DELETE ICONS
+========================================================= */
 
-/* Modal Popups */
-.modal-backdrop-custom {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
+.goals-page .custom-card .btn-sm.text-muted,
+.goals-page .custom-card .btn-sm.text-danger {
+  width: 29px;
+  height: 29px;
+
+  padding: 0 !important;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1050;
+
+  border-radius: 8px !important;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.modal-dialog-custom {
-  width: 100%;
-  max-width: 420px;
-  border-radius: 20px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+.goals-page .custom-card .btn-sm.text-muted {
+  color: #7d879b !important;
 }
+
+.goals-page .custom-card .btn-sm.text-muted:hover {
+  color: var(--purple) !important;
+  background: var(--purple-soft) !important;
+
+  transform: translateY(-1px);
+}
+
+.goals-page .custom-card .btn-sm.text-danger {
+  color: #e47b83 !important;
+}
+
+.goals-page .custom-card .btn-sm.text-danger:hover {
+  color: #d95661 !important;
+  background: #fff0f1 !important;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SAVED / TARGET ROW
+========================================================= */
+
+.goals-page .custom-card .d-flex.justify-content-between.small {
+  color: #7d899f !important;
+
+  font-size: 10px !important;
+  font-weight: 500 !important;
+
+  line-height: 1.3;
+
+  margin-bottom: 6px !important;
+}
+
+.goals-page .custom-card .d-flex.justify-content-between.small strong {
+  color: var(--navy) !important;
+
+  font-size: 11px !important;
+  font-weight: 750 !important;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
+
+.goal-progress-bar {
+  height: 8px !important;
+
+  border-radius: 20px !important;
+
+  background: #edf0f5 !important;
+
+  overflow: hidden;
+
+  box-shadow:
+    inset 0 1px 2px rgba(25, 32, 50, 0.04);
+}
+
+.goal-progress-bar .progress-bar {
+  height: 100%;
+
+  border-radius: 20px !important;
+
+  transition:
+    width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+
+  box-shadow:
+    0 2px 6px rgba(100, 90, 190, 0.16);
+}
+
+
+/* Progress colors */
+
+.bg-purple {
+  background:
+    linear-gradient(
+      90deg,
+      #8063e3,
+      #9679eb
+    ) !important;
+}
+
+.bg-indigo {
+  background:
+    linear-gradient(
+      90deg,
+      #6876df,
+      #7e8be9
+    ) !important;
+}
+
+.bg-pink {
+  background:
+    linear-gradient(
+      90deg,
+      #df6391,
+      #ec7baa
+    ) !important;
+}
+
+.bg-violet {
+  background:
+    linear-gradient(
+      90deg,
+      #755bd0,
+      #9277e1
+    ) !important;
+}
+
+.bg-lavender {
+  background:
+    linear-gradient(
+      90deg,
+      #9580d8,
+      #af9be6
+    ) !important;
+}
+
+
+/* =========================================================
+   BOTTOM ACTION AREA
+========================================================= */
+
+.goals-page .custom-card .pt-2 {
+  padding-top: 7px !important;
+}
+
+.goals-page .custom-card .fw-bold.small {
+  font-size: 11px !important;
+
+  font-weight: 750 !important;
+}
+
+.goals-page .custom-card .text-pink.fw-bold {
+  color: var(--pink) !important;
+}
+
+.goals-page .custom-card .text-purple.fw-bold {
+  color: var(--purple) !important;
+}
+
+
+/* Add Money */
+
+.goals-page .custom-card button.text-purple {
+  color: var(--purple) !important;
+
+  font-size: 11px !important;
+  font-weight: 700 !important;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.goals-page .custom-card button.text-purple:hover {
+  color: var(--purple-dark) !important;
+
+  transform: translateX(2px);
+}
+
+
+/* =========================================================
+   COMPLETED GOAL
+========================================================= */
+
+.border-purple-custom {
+  border-left-color: var(--purple) !important;
+
+  border-color: #ddd7f5 !important;
+
+  box-shadow:
+    0 7px 23px rgba(129, 101, 232, 0.09) !important;
+}
+
+.border-purple-custom::after {
+  background: #f1edff !important;
+}
+
+
+/* =========================================================
+   QUICK ADD MONEY
+========================================================= */
+
+.goals-page .bg-light.p-2.rounded-3 {
+  background: #f7f7fb !important;
+
+  border: 1px solid #e7e7f0;
+
+  border-radius: 11px !important;
+
+  padding: 9px !important;
+}
+
+.btn-outline-purple {
+  border: 1px solid #d8cff6 !important;
+
+  color: var(--purple) !important;
+
+  background: #ffffff !important;
+
+  border-radius: 8px !important;
+
+  font-size: 10px !important;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-outline-purple:hover {
+  background: var(--purple-soft) !important;
+
+  border-color: #c5b7ee !important;
+
+  color: var(--purple-dark) !important;
+}
+
+.btn-purple {
+  background: var(--purple) !important;
+
+  border: none !important;
+
+  color: #ffffff !important;
+
+  border-radius: 8px !important;
+}
+
+.btn-purple:hover {
+  background: var(--purple-dark) !important;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
 
 .custom-input {
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  padding: 10px 14px;
+  border-radius: 10px !important;
+
+  border: 1px solid #dfe3ec !important;
+
+  background: #ffffff !important;
+
+  color: var(--navy) !important;
+
+  padding: 9px 12px !important;
+
+  font-size: 12px !important;
+
+  box-shadow: none !important;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.custom-input::placeholder {
+  color: #a1aabd !important;
 }
 
 .custom-input:focus {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  border-color: #a798e9 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(129, 101, 232, 0.10) !important;
+
+  outline: none !important;
 }
 
-.btn-ai-sparkle {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  border: none;
-  transition: all 0.2s ease-in-out;
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.goals-page > .row.g-3:not(.mb-4) .custom-card.text-center {
+  min-height: 230px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #faf9ff
+    ) !important;
 }
 
-.btn-ai-sparkle:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+.goals-page > .row.g-3:not(.mb-4) .custom-card.text-center .fs-1 {
+  font-size: 38px !important;
+
+  margin-bottom: 8px !important;
+}
+
+.goals-page > .row.g-3:not(.mb-4) .custom-card.text-center h4 {
+  font-size: 16px !important;
+
+  color: var(--navy) !important;
+}
+
+
+/* =========================================================
+   MODAL BACKDROP
+========================================================= */
+
+.modal-backdrop-custom {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(20, 27, 45, 0.43);
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  z-index: 1050;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-dialog-custom {
+  width: 100%;
+
+  max-width: 430px;
+
+  max-height: calc(100vh - 40px);
+
+  overflow-y: auto;
+
+  padding: 22px !important;
+
+  border-radius: 19px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e2e4ed !important;
+
+  box-shadow:
+    0 25px 70px rgba(20, 27, 45, 0.20) !important;
+}
+
+.modal-dialog-custom h2 {
+  color: var(--navy) !important;
+
+  font-size: 17px !important;
+
+  font-weight: 800 !important;
+}
+
+.modal-dialog-custom .form-label {
+  color: #4f5b72 !important;
+
+  font-size: 11px !important;
+
+  font-weight: 700 !important;
+
+  margin-bottom: 5px !important;
+}
+
+.modal-dialog-custom .btn.text-muted {
+  color: #8791a4 !important;
+
+  width: 29px;
+  height: 29px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px !important;
+}
+
+.modal-dialog-custom .btn.text-muted:hover {
+  color: var(--navy) !important;
+
+  background: #f2f3f7 !important;
+}
+
+.modal-dialog-custom .btn-outline-secondary {
+  min-height: 39px;
+
+  border-color: #dfe2e9 !important;
+
+  color: #5c6678 !important;
+
+  font-size: 12px !important;
+}
+
+.modal-dialog-custom .btn-outline-secondary:hover {
+  background: #f5f6f9 !important;
+}
+
+
+/* =========================================================
+   MODAL ANIMATION
+========================================================= */
+
+@keyframes animatePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-pop {
+  animation:
+    animatePop
+    0.25s
+    cubic-bezier(0.175, 0.885, 0.32, 1.1)
+    forwards;
+}
+
+
+/* =========================================================
+   SPINNER
+========================================================= */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin {
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+  .goals-title {
+    font-size: 26px !important;
   }
-  to {
-    transform: rotate(360deg);
+
+  .goals-page > .row.g-3:not(.mb-4) .custom-card {
+    min-height: 175px;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .goals-page {
+    margin-top: 18px !important;
+  }
+
+  .goals-page > .d-flex:first-of-type {
+    align-items: flex-start !important;
+  }
+
+  .goals-title {
+    font-size: 24px !important;
+  }
+
+  .goals-page > .d-flex:first-of-type > div:last-child {
+    width: 100%;
+  }
+
+  .goals-page > .d-flex:first-of-type > div:last-child button {
+    flex: 1;
+
+    justify-content: center;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .goals-page {
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+
+  .goals-title {
+    font-size: 22px !important;
+  }
+
+  .goals-page > .d-flex:first-of-type > div:last-child {
+    flex-direction: column;
+  }
+
+  .goals-page > .d-flex:first-of-type > div:last-child button {
+    width: 100%;
+  }
+
+  .goals-page .row.g-3.mb-4 h3 {
+    font-size: 18px !important;
+  }
+
+  .modal-dialog-custom {
+    max-width: 100%;
+
+    border-radius: 17px !important;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .goals-page,
+  .custom-card,
+  .btn-gradient-purple,
+  .btn-ai-sparkle,
+  .animate-pop {
+    animation: none !important;
+
+    transition: none !important;
+  }
+
+  .goal-progress-bar .progress-bar {
+    transition: none !important;
   }
 >>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }

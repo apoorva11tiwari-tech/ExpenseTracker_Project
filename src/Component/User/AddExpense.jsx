@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import API_URL from "../../config/api";
 import { useNavigate } from "react-router-dom";
 import { PlusCircle, Calendar, CreditCard, FileText, Upload, CheckCircle2 } from "lucide-react";
 import "./AddExpense.css";
@@ -53,7 +54,7 @@ export default function AddExpense() {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/expenses", {
+      const response = await fetch(`${API_URL}/api/expenses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

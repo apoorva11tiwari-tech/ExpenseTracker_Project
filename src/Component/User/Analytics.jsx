@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../../config/api";
 import "./Analytics.css";
 import {
   BarChart,
@@ -30,10 +31,10 @@ function Analytics() {
   setLoading(true);
 
   Promise.all([
-    fetch(`http://localhost:5000/api/analytics?period=${period}`).then((res) =>
+   fetch(`${API_URL}/api/analytics?period=${period}`).then((res) =>
       res.json()
     ),
-    fetch("http://localhost:5000/api/expenses").then((res) => res.json()),
+   fetch(`${API_URL}/api/expenses`).then((res) => res.json()),
   ])
     .then(([analyticsRes, expensesRes]) => {
       setAnalyticsData(analyticsRes);

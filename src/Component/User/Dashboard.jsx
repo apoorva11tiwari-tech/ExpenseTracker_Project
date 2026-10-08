@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import API_URL from "../../config/api";
 import "./Dashboard.css";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -51,10 +52,10 @@ export default function Dashboard() {
           budgetResponse,
           goalResponse,
         ] = await Promise.all([
-          fetch("http://localhost:5000/api/expenses"),
-          fetch("http://localhost:5000/api/income"),
-          fetch("http://localhost:5000/api/budgets"),
-          fetch("http://localhost:5000/api/goals"),
+          fetch(`${API_URL}/api/expenses`),
+          fetch(`${API_URL}/api/income`),
+          fetch(`${API_URL}/api/budgets`),
+          fetch(`${API_URL}/api/goals`),
         ]);
 
         if (expenseResponse.ok) {

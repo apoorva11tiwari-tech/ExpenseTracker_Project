@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
+
+import API_URL from "../../config/api";
+
 import { Search, Edit2, Trash2 } from "lucide-react";
+
 import "./Expenses.css";
 
 const categories = [
@@ -74,7 +78,7 @@ function Expenses() {
 
   // Load expenses from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/expenses")
+    fetch(`${API_URL}/api/expenses`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch expenses");
@@ -102,7 +106,8 @@ function Expenses() {
       return (
         (cat === "All" || t.category === cat) &&
         (method === "All" || t.paymentMethod === method) &&
-        (title.includes(searchText) || category.includes(searchText))
+        (title.includes(searchText) ||
+          category.includes(searchText))
       );
     })
     .sort((a, b) => {
@@ -126,7 +131,7 @@ function Expenses() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/expenses/${id}`,
+        `${API_URL}/api/expenses/${id}`,
         {
           method: "DELETE",
         }
@@ -178,7 +183,10 @@ function Expenses() {
           <div className="row g-3">
             {/* Title */}
             <div className="col-md-6">
-              <label className="form-label">Expense Title</label>
+              <label className="form-label">
+                Expense Title
+              </label>
+
               <input
                 type="text"
                 className="form-control"
@@ -195,6 +203,7 @@ function Expenses() {
             {/* Amount */}
             <div className="col-md-6">
               <label className="form-label">Amount</label>
+
               <input
                 type="number"
                 className="form-control"
@@ -210,7 +219,10 @@ function Expenses() {
 
             {/* Category */}
             <div className="col-md-6">
-              <label className="form-label">Category</label>
+              <label className="form-label">
+                Category
+              </label>
+
               <select
                 className="form-select"
                 value={editingExpense.category || ""}
@@ -234,6 +246,7 @@ function Expenses() {
             {/* Date */}
             <div className="col-md-6">
               <label className="form-label">Date</label>
+
               <input
                 type="date"
                 className="form-control"
@@ -253,7 +266,10 @@ function Expenses() {
 
             {/* Payment Method */}
             <div className="col-md-6">
-              <label className="form-label">Payment Method</label>
+              <label className="form-label">
+                Payment Method
+              </label>
+
               <select
                 className="form-select"
                 value={editingExpense.paymentMethod || ""}
@@ -276,7 +292,10 @@ function Expenses() {
 
             {/* Description */}
             <div className="col-12">
-              <label className="form-label">Description</label>
+              <label className="form-label">
+                Description
+              </label>
+
               <textarea
                 className="form-control"
                 rows="3"
@@ -293,55 +312,72 @@ function Expenses() {
             {/* Action Buttons */}
             <div className="col-12 d-flex gap-2">
               <button
-  type="button"
-  className="btn btn-primary"
-  onClick={async () => {
-    try {
-      // Ensure date is formatted properly before sending to backend
-      const formattedDate = new Date(editingExpense.date).toISOString();
+                type="button"
+                className="btn btn-primary"
+                onClick={async () => {
+                  try {
+                    // Ensure date is formatted properly before sending to backend
+                    const formattedDate = new Date(
+                      editingExpense.date
+                    ).toISOString();
 
-      const response = await fetch(
-        `http://localhost:5000/api/expenses/${editingExpense._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: editingExpense.title,
-            amount: Number(editingExpense.amount),
-            category: editingExpense.category,
-            date: formattedDate,
-            paymentMethod: editingExpense.paymentMethod,
-            description: editingExpense.description,
-          }),
-        }
-      );
+                    const response = await fetch(
+                      `${API_URL}/api/expenses/${editingExpense._id}`,
+                      {
+                        method: "PUT",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          title: editingExpense.title,
+                          amount: Number(
+                            editingExpense.amount
+                          ),
+                          category: editingExpense.category,
+                          date: formattedDate,
+                          paymentMethod:
+                            editingExpense.paymentMethod,
+                          description:
+                            editingExpense.description,
+                        }),
+                      }
+                    );
 
-      const result = await response.json();
+                    const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(
-          result.message || "Failed to update expense"
-        );
-      }
+                    if (!response.ok) {
+                      throw new Error(
+                        result.message ||
+                          "Failed to update expense"
+                      );
+                    }
 
-      setData((currentData) =>
-        currentData.map((item) =>
-          item._id === editingExpense._id ? result.expense : item
-        )
-      );
+                    setData((currentData) =>
+                      currentData.map((item) =>
+                        item._id === editingExpense._id
+                          ? result.expense
+                          : item
+                      )
+                    );
 
-      setEditingExpense(null);
-      alert("Expense updated successfully!");
-    } catch (error) {
-      console.error("Error updating expense:", error);
-      alert(error.message || "Failed to update expense.");
-    }
-  }}
->
-  Save Changes
-</button>
+                    setEditingExpense(null);
+
+                    alert("Expense updated successfully!");
+                  } catch (error) {
+                    console.error(
+                      "Error updating expense:",
+                      error
+                    );
+
+                    alert(
+                      error.message ||
+                        "Failed to update expense."
+                    );
+                  }
+                }}
+              >
+                Save Changes
+              </button>
 
               <button
                 type="button"
@@ -427,8 +463,11 @@ function Expenses() {
                   <td>
                     <div className="transaction-name">
                       <div className="transaction-emoji">
-                        {categoryEmoji[transaction.category] || "💵"}
+                        {categoryEmoji[
+                          transaction.category
+                        ] || "💵"}
                       </div>
+
                       <span>{transaction.title}</span>
                     </div>
                   </td>
@@ -439,9 +478,13 @@ function Expenses() {
                       className="transaction-category"
                       style={{
                         background:
-                          catColors[transaction.category] || catColors.Other,
+                          catColors[
+                            transaction.category
+                          ] || catColors.Other,
                         color:
-                          catText[transaction.category] || "var(--muted)",
+                          catText[
+                            transaction.category
+                          ] || "var(--muted)",
                       }}
                     >
                       {transaction.category}
@@ -451,14 +494,13 @@ function Expenses() {
                   {/* Date */}
                   <td>
                     <span className="transaction-secondary">
-                      {new Date(transaction.date).toLocaleDateString(
-                        "en-IN",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }
-                      )}
+                      {new Date(
+                        transaction.date
+                      ).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </span>
                   </td>
 
@@ -473,7 +515,9 @@ function Expenses() {
                   <td className="text-end">
                     <span className="transaction-amount">
                       -₹
-                      {Math.abs(transaction.amount).toLocaleString("en-IN")}
+                      {Math.abs(
+                        transaction.amount
+                      ).toLocaleString("en-IN")}
                     </span>
                   </td>
 
@@ -485,7 +529,9 @@ function Expenses() {
                         type="button"
                         className="transaction-action-btn edit-action"
                         title="Edit transaction"
-                        onClick={() => setEditingExpense(transaction)}
+                        onClick={() =>
+                          setEditingExpense(transaction)
+                        }
                       >
                         <Edit2 size={14} />
                       </button>
@@ -495,7 +541,9 @@ function Expenses() {
                         type="button"
                         className="transaction-action-btn delete-action"
                         title="Delete transaction"
-                        onClick={() => deleteItem(transaction._id)}
+                        onClick={() =>
+                          deleteItem(transaction._id)
+                        }
                       >
                         <Trash2 size={14} />
                       </button>
@@ -509,9 +557,15 @@ function Expenses() {
           {/* Empty State */}
           {filtered.length === 0 && (
             <div className="transactions-empty">
-              <div className="transactions-empty-icon">🔍</div>
+              <div className="transactions-empty-icon">
+                🔍
+              </div>
+
               <h4>No transactions found</h4>
-              <p>Try changing your search or filters.</p>
+
+              <p>
+                Try changing your search or filters.
+              </p>
             </div>
           )}
         </div>
@@ -520,14 +574,21 @@ function Expenses() {
         <div className="transactions-footer">
           <p>
             {filtered.length}{" "}
-            {filtered.length === 1 ? "transaction" : "transactions"}
+            {filtered.length === 1
+              ? "transaction"
+              : "transactions"}
           </p>
 
           <div className="transaction-pagination">
             <button type="button">Previous</button>
-            <button type="button" className="active-page">
+
+            <button
+              type="button"
+              className="active-page"
+            >
               1
             </button>
+
             <button type="button">Next</button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import API_URL from "../../config/api";
 
 import {
   AreaChart,
@@ -164,7 +165,7 @@ export default function AIInsights() {
         ------------------------------------------------ */
 
         const aiRes = await fetch(
-          "http://localhost:5000/api/ai/recommendations",
+          `${API_URL}/api/ai/recommendations`,
           {
             method: "POST",
             headers: {
@@ -206,7 +207,7 @@ export default function AIInsights() {
         ------------------------------------------------ */
 
         const expRes = await fetch(
-          "http://localhost:5000/api/expenses"
+          `${API_URL}/api/expenses`
         );
 
         const expData = await expRes.json();

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+
+import API_URL from "../../config/api";
+
 import {
   Plus,
   X,
@@ -9,11 +12,18 @@ import {
   Target,
   Sparkles,
   TrendingUp,
-  Loader2
+  Loader2,
 } from "lucide-react";
+
 import "./GoalSavings.css";
 
-const colorThemes = ["indigo", "purple", "pink", "violet", "lavender"];
+const colorThemes = [
+  "indigo",
+  "purple",
+  "pink",
+  "violet",
+  "lavender",
+];
 
 export default function GoalSavings() {
   const [goals, setGoals] = useState([]);
@@ -25,7 +35,8 @@ export default function GoalSavings() {
   const [celebrating, setCelebrating] = useState(null);
 
   // AI Allocation Modal States
-  const [showAllocateModal, setShowAllocateModal] = useState(false);
+  const [showAllocateModal, setShowAllocateModal] =
+    useState(false);
   const [allocateAmount, setAllocateAmount] = useState("");
   const [isAllocating, setIsAllocating] = useState(false);
 
@@ -35,11 +46,11 @@ export default function GoalSavings() {
     target: "",
     saved: "0",
     priority: "Medium",
-    deadline: ""
+    deadline: "",
   });
 
   const fetchGoals = () => {
-    fetch("http://localhost:5000/api/goals")
+    fetch(`${API_URL}/api/goals`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -51,17 +62,24 @@ export default function GoalSavings() {
             saved: g.savedAmount,
             priority: g.priority || "Medium",
             deadline: g.targetDate
-              ? new Date(g.targetDate).toLocaleDateString("en-IN", {
-                  month: "short",
-                  year: "numeric"
-                })
+              ? new Date(g.targetDate).toLocaleDateString(
+                  "en-IN",
+                  {
+                    month: "short",
+                    year: "numeric",
+                  }
+                )
               : "No deadline",
-            theme: colorThemes[index % colorThemes.length]
+            theme:
+              colorThemes[index % colorThemes.length],
           }));
+
           setGoals(formatted);
         }
       })
-      .catch((err) => console.error("Error fetching goals:", err));
+      .catch((err) =>
+        console.error("Error fetching goals:", err)
+      );
   };
 
   useEffect(() => {
@@ -70,23 +88,37 @@ export default function GoalSavings() {
 
   const handleAIAllocate = async (e) => {
     e.preventDefault();
-    if (!allocateAmount || Number(allocateAmount) <= 0) return;
+
+    if (!allocateAmount || Number(allocateAmount) <= 0)
+      return;
 
     setIsAllocating(true);
+
     try {
-      const res = await fetch("http://localhost:5000/api/ai/allocate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ availableSavings: Number(allocateAmount) })
-      });
+      const res = await fetch(
+        `${API_URL}/api/ai/allocate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            availableSavings: Number(allocateAmount),
+          }),
+        }
+      );
 
       const data = await res.json();
+
       if (data.success) {
         setShowAllocateModal(false);
         setAllocateAmount("");
         fetchGoals();
       } else {
-        alert(data.message || "Could not complete allocation.");
+        alert(
+          data.message ||
+            "Could not complete allocation."
+        );
       }
     } catch (err) {
       console.error("AI Allocation error:", err);
@@ -97,37 +129,49 @@ export default function GoalSavings() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const openCreateModal = () => {
     setEditingGoalId(null);
+
     setFormData({
       name: "",
       emoji: "🎯",
       target: "",
       saved: "0",
       priority: "Medium",
-      deadline: ""
+      deadline: "",
     });
+
     setShowModal(true);
   };
 
   const openEditModal = (goal) => {
     setEditingGoalId(goal.id);
+
     setFormData({
       name: goal.name,
       emoji: goal.emoji,
       target: goal.target.toString(),
       saved: goal.saved.toString(),
       priority: goal.priority || "Medium",
-      deadline: goal.deadline === "No deadline" ? "" : goal.deadline
+      deadline:
+        goal.deadline === "No deadline"
+          ? ""
+          : goal.deadline,
     });
+
     setShowModal(true);
   };
 
   const handleSaveGoal = (e) => {
     e.preventDefault();
+
     if (!formData.name || !formData.target) return;
 
     const targetNum = Number(formData.target);
@@ -139,74 +183,125 @@ export default function GoalSavings() {
       savedAmount: Math.min(savedNum, targetNum),
       category: formData.emoji || "🎯",
       priority: formData.priority,
-      targetDate: formData.deadline || null
+      targetDate: formData.deadline || null,
     };
 
     if (editingGoalId) {
-      fetch(`http://localhost:5000/api/goals/${editingGoalId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
+      fetch(
+        `${API_URL}/api/goals/${editingGoalId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      )
         .then((res) => res.json())
         .then(() => {
           setShowModal(false);
           fetchGoals();
         })
-        .catch((err) => console.error("Error updating goal:", err));
+        .catch((err) =>
+          console.error("Error updating goal:", err)
+        );
     } else {
-      fetch("http://localhost:5000/api/goals", {
+      fetch(`${API_URL}/api/goals`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       })
         .then((res) => res.json())
         .then((newGoalData) => {
-          if (savedNum >= targetNum && targetNum > 0) {
+          if (
+            savedNum >= targetNum &&
+            targetNum > 0
+          ) {
             setCelebrating(newGoalData._id);
           }
+
           setShowModal(false);
           fetchGoals();
         })
-        .catch((err) => console.error("Error creating goal:", err));
+        .catch((err) =>
+          console.error("Error creating goal:", err)
+        );
     }
   };
 
   const deleteGoal = (id) => {
-    if (!window.confirm("Are you sure you want to delete this savings goal?")) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this savings goal?"
+      )
+    )
+      return;
 
-    fetch(`http://localhost:5000/api/goals/${id}`, {
-      method: "DELETE"
+    fetch(`${API_URL}/api/goals/${id}`, {
+      method: "DELETE",
     })
       .then((res) => res.json())
       .then(() => fetchGoals())
-      .catch((err) => console.error("Error deleting goal:", err));
+      .catch((err) =>
+        console.error("Error deleting goal:", err)
+      );
   };
 
   const addMoney = (customVal) => {
-    const amt = customVal !== undefined ? Number(customVal) : Number(addAmount);
-    if (!amt || amt <= 0 || addMoneyId === null) return;
+    const amt =
+      customVal !== undefined
+        ? Number(customVal)
+        : Number(addAmount);
 
-    fetch(`http://localhost:5000/api/goals/${addMoneyId}`, {
+    if (!amt || amt <= 0 || addMoneyId === null)
+      return;
+
+    fetch(`${API_URL}/api/goals/${addMoneyId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ addAmount: amt })
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        addAmount: amt,
+      }),
     })
       .then((res) => res.json())
       .then((updated) => {
-        if (updated.savedAmount >= updated.targetAmount) {
+        if (
+          updated.savedAmount >=
+          updated.targetAmount
+        ) {
           setCelebrating(addMoneyId);
         }
+
         setAddMoneyId(null);
         setAddAmount("");
         fetchGoals();
       })
-      .catch((err) => console.error("Error adding funds to goal:", err));
+      .catch((err) =>
+        console.error(
+          "Error adding funds to goal:",
+          err
+        )
+      );
   };
 
-  const totalSaved = goals.reduce((s, g) => s + g.saved, 0);
-  const totalTarget = goals.reduce((s, g) => s + g.target, 0);
-  const completion = totalTarget > 0 ? Math.round((totalSaved / totalTarget) * 100) : 0;
+  const totalSaved = goals.reduce(
+    (s, g) => s + g.saved,
+    0
+  );
+
+  const totalTarget = goals.reduce(
+    (s, g) => s + g.target,
+    0
+  );
+
+  const completion =
+    totalTarget > 0
+      ? Math.round((totalSaved / totalTarget) * 100)
+      : 0;
 
   return (
     <div className="container my-4 goals-page">
@@ -215,10 +310,16 @@ export default function GoalSavings() {
         <div className="modal-backdrop-custom">
           <div className="modal-dialog-custom card p-4 text-center shadow-lg animate-pop">
             <div className="fs-1 mb-2">🎉</div>
-            <h2 className="fs-4 fw-bold text-dark mb-1">Goal Achieved!</h2>
+
+            <h2 className="fs-4 fw-bold text-dark mb-1">
+              Goal Achieved!
+            </h2>
+
             <p className="text-muted small mb-4">
-              Awesome work! You smashed your savings goal! 🚀
+              Awesome work! You smashed your savings goal!
+              🚀
             </p>
+
             <button
               onClick={() => setCelebrating(null)}
               className="btn btn-purple text-white fw-bold w-100 rounded-pill py-2"
@@ -235,8 +336,10 @@ export default function GoalSavings() {
           <h1 className="fw-bold fs-3 mb-1 goals-title">
             Savings Goals 🏆
           </h1>
+
           <p className="text-muted small mb-0">
-            Give your hard-earned money something awesome to work toward
+            Give your hard-earned money something awesome
+            to work toward
           </p>
         </div>
 
@@ -262,10 +365,17 @@ export default function GoalSavings() {
         <div className="col-12 col-md-4">
           <div className="card custom-card p-3 d-flex flex-row align-items-center gap-3">
             <div className="icon-circle bg-purple-subtle">
-              <TrendingUp size={20} className="text-purple" />
+              <TrendingUp
+                size={20}
+                className="text-purple"
+              />
             </div>
+
             <div>
-              <span className="small text-muted d-block fw-medium">Total Saved</span>
+              <span className="small text-muted d-block fw-medium">
+                Total Saved
+              </span>
+
               <h3 className="fs-5 fw-bold text-purple mb-0">
                 ₹{totalSaved.toLocaleString("en-IN")}
               </h3>
@@ -276,10 +386,17 @@ export default function GoalSavings() {
         <div className="col-12 col-md-4">
           <div className="card custom-card p-3 d-flex flex-row align-items-center gap-3">
             <div className="icon-circle bg-indigo-subtle">
-              <Target size={20} className="text-indigo" />
+              <Target
+                size={20}
+                className="text-indigo"
+              />
             </div>
+
             <div>
-              <span className="small text-muted d-block fw-medium">Total Target</span>
+              <span className="small text-muted d-block fw-medium">
+                Total Target
+              </span>
+
               <h3 className="fs-5 fw-bold text-dark mb-0">
                 ₹{totalTarget.toLocaleString("en-IN")}
               </h3>
@@ -290,11 +407,20 @@ export default function GoalSavings() {
         <div className="col-12 col-md-4">
           <div className="card custom-card p-3 d-flex flex-row align-items-center gap-3">
             <div className="icon-circle bg-pink-subtle">
-              <Sparkles size={20} className="text-pink" />
+              <Sparkles
+                size={20}
+                className="text-pink"
+              />
             </div>
+
             <div>
-              <span className="small text-muted d-block fw-medium">Overall Progress</span>
-              <h3 className="fs-5 fw-bold text-pink mb-0">{completion}%</h3>
+              <span className="small text-muted d-block fw-medium">
+                Overall Progress
+              </span>
+
+              <h3 className="fs-5 fw-bold text-pink mb-0">
+                {completion}%
+              </h3>
             </div>
           </div>
         </div>
@@ -305,8 +431,16 @@ export default function GoalSavings() {
         {goals.length === 0 ? (
           <div className="col-12 text-center text-muted py-5 card custom-card">
             <div className="fs-1 mb-2">🏆</div>
-            <h4 className="fw-bold fs-5 text-dark">No savings goals created yet</h4>
-            <p className="small text-muted mb-3">Set up a target to track your progress automatically.</p>
+
+            <h4 className="fw-bold fs-5 text-dark">
+              No savings goals created yet
+            </h4>
+
+            <p className="small text-muted mb-3">
+              Set up a target to track your progress
+              automatically.
+            </p>
+
             <div>
               <button
                 onClick={openCreateModal}
@@ -318,7 +452,11 @@ export default function GoalSavings() {
           </div>
         ) : (
           goals.map((g) => {
-            const pct = Math.min(Math.round((g.saved / g.target) * 100), 100);
+            const pct = Math.min(
+              Math.round((g.saved / g.target) * 100),
+              100
+            );
+
             const done = pct >= 100;
 
             const priorityBadge =
@@ -329,21 +467,39 @@ export default function GoalSavings() {
                 : "badge-priority-med";
 
             return (
-              <div className="col-12 col-md-6" key={g.id}>
-                <div className={`card custom-card p-3 ${done ? "border-purple-custom" : ""}`}>
+              <div
+                className="col-12 col-md-6"
+                key={g.id}
+              >
+                <div
+                  className={`card custom-card p-3 ${
+                    done ? "border-purple-custom" : ""
+                  }`}
+                >
                   <div className="d-flex align-items-center justify-content-between mb-3">
                     <div className="d-flex align-items-center gap-3">
-                      <div className={`goal-emoji-box bg-${g.theme}-subtle`}>
+                      <div
+                        className={`goal-emoji-box bg-${g.theme}-subtle`}
+                      >
                         {g.emoji}
                       </div>
+
                       <div>
                         <div className="d-flex align-items-center gap-2">
-                          <h3 className="fs-6 fw-bold mb-0 text-dark">{g.name}</h3>
-                          <span className={`badge ${priorityBadge}`}>
+                          <h3 className="fs-6 fw-bold mb-0 text-dark">
+                            {g.name}
+                          </h3>
+
+                          <span
+                            className={`badge ${priorityBadge}`}
+                          >
                             {g.priority}
                           </span>
                         </div>
-                        <span className="small text-muted">Target: {g.deadline}</span>
+
+                        <span className="small text-muted">
+                          Target: {g.deadline}
+                        </span>
                       </div>
                     </div>
 
@@ -355,6 +511,7 @@ export default function GoalSavings() {
                       >
                         <Edit2 size={14} />
                       </button>
+
                       <button
                         onClick={() => deleteGoal(g.id)}
                         className="btn btn-sm text-danger p-1"
@@ -368,15 +525,32 @@ export default function GoalSavings() {
                   {/* Progress Bar */}
                   <div className="mb-2">
                     <div className="d-flex justify-content-between small text-muted mb-1">
-                      <span>Saved: <strong className="text-dark">₹{g.saved.toLocaleString("en-IN")}</strong></span>
-                      <span>Target: <strong className="text-dark">₹{g.target.toLocaleString("en-IN")}</strong></span>
+                      <span>
+                        Saved:{" "}
+                        <strong className="text-dark">
+                          ₹{g.saved.toLocaleString("en-IN")}
+                        </strong>
+                      </span>
+
+                      <span>
+                        Target:{" "}
+                        <strong className="text-dark">
+                          ₹{g.target.toLocaleString("en-IN")}
+                        </strong>
+                      </span>
                     </div>
 
                     <div className="progress goal-progress-bar">
                       <div
-                        className={`progress-bar ${done ? "bg-purple" : `bg-${g.theme}`}`}
+                        className={`progress-bar ${
+                          done
+                            ? "bg-purple"
+                            : `bg-${g.theme}`
+                        }`}
                         role="progressbar"
-                        style={{ width: `${pct}%` }}
+                        style={{
+                          width: `${pct}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -388,21 +562,29 @@ export default function GoalSavings() {
                         <button
                           onClick={() => addMoney(500)}
                           className="btn btn-sm btn-outline-purple flex-fill py-1 fw-bold"
-                          style={{ fontSize: "11px" }}
+                          style={{
+                            fontSize: "11px",
+                          }}
                         >
                           +₹500
                         </button>
+
                         <button
                           onClick={() => addMoney(1000)}
                           className="btn btn-sm btn-outline-purple flex-fill py-1 fw-bold"
-                          style={{ fontSize: "11px" }}
+                          style={{
+                            fontSize: "11px",
+                          }}
                         >
                           +₹1k
                         </button>
+
                         <button
                           onClick={() => addMoney(5000)}
                           className="btn btn-sm btn-outline-purple flex-fill py-1 fw-bold"
-                          style={{ fontSize: "11px" }}
+                          style={{
+                            fontSize: "11px",
+                          }}
                         >
                           +₹5k
                         </button>
@@ -412,19 +594,27 @@ export default function GoalSavings() {
                         <input
                           type="number"
                           value={addAmount}
-                          onChange={(e) => setAddAmount(e.target.value)}
+                          onChange={(e) =>
+                            setAddAmount(e.target.value)
+                          }
                           placeholder="Custom ₹"
                           className="form-control form-control-sm custom-input py-1 px-2"
-                          style={{ fontSize: "12px" }}
+                          style={{
+                            fontSize: "12px",
+                          }}
                         />
+
                         <button
                           onClick={() => addMoney()}
                           className="btn btn-sm btn-purple text-white fw-bold py-1 px-3"
                         >
                           Add
                         </button>
+
                         <button
-                          onClick={() => setAddMoneyId(null)}
+                          onClick={() =>
+                            setAddMoneyId(null)
+                          }
                           className="btn btn-sm text-muted p-1"
                         >
                           <X size={14} />
@@ -433,20 +623,30 @@ export default function GoalSavings() {
                     </div>
                   ) : (
                     <div className="d-flex align-items-center justify-content-between pt-2">
-                      <span className={`fw-bold small ${done ? "text-purple" : "text-pink"}`}>
+                      <span
+                        className={`fw-bold small ${
+                          done
+                            ? "text-purple"
+                            : "text-pink"
+                        }`}
+                      >
                         {pct}% Achieved
                       </span>
 
                       {done ? (
                         <span className="badge bg-purple-subtle text-purple fw-bold d-flex align-items-center gap-1 px-2 py-1 rounded-pill">
-                          <Award size={12} /> Goal Achieved!
+                          <Award size={12} />
+                          Goal Achieved!
                         </span>
                       ) : (
                         <button
-                          onClick={() => setAddMoneyId(g.id)}
+                          onClick={() =>
+                            setAddMoneyId(g.id)
+                          }
                           className="btn btn-sm text-purple fw-bold p-0 d-flex align-items-center gap-1"
                         >
-                          <PlusCircle size={14} /> Add Money
+                          <PlusCircle size={14} />
+                          Add Money
                         </button>
                       )}
                     </div>
@@ -464,10 +664,17 @@ export default function GoalSavings() {
           <div className="modal-dialog-custom card p-4 shadow-lg animate-pop">
             <div className="d-flex align-items-center justify-content-between mb-3">
               <h2 className="fs-5 fw-bold mb-0 text-dark d-flex align-items-center gap-2">
-                <Sparkles size={18} className="text-purple" /> AI Smart Allocation
+                <Sparkles
+                  size={18}
+                  className="text-purple"
+                />
+                AI Smart Allocation
               </h2>
+
               <button
-                onClick={() => setShowAllocateModal(false)}
+                onClick={() =>
+                  setShowAllocateModal(false)
+                }
                 className="btn btn-sm text-muted p-0"
               >
                 <X size={18} />
@@ -475,17 +682,25 @@ export default function GoalSavings() {
             </div>
 
             <p className="small text-muted mb-3">
-              Enter your available monthly savings or bonus. The AI will distribute it across active goals based on their priority level and target date proximity.
+              Enter your available monthly savings or
+              bonus. The AI will distribute it across active
+              goals based on their priority level and target
+              date proximity.
             </p>
 
             <form onSubmit={handleAIAllocate}>
               <div className="mb-4">
-                <label className="form-label small fw-bold">Amount to Distribute (₹)</label>
+                <label className="form-label small fw-bold">
+                  Amount to Distribute (₹)
+                </label>
+
                 <input
                   type="number"
                   required
                   value={allocateAmount}
-                  onChange={(e) => setAllocateAmount(e.target.value)}
+                  onChange={(e) =>
+                    setAllocateAmount(e.target.value)
+                  }
                   placeholder="e.g. 10000"
                   className="form-control custom-input"
                 />
@@ -494,22 +709,31 @@ export default function GoalSavings() {
               <div className="d-flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowAllocateModal(false)}
+                  onClick={() =>
+                    setShowAllocateModal(false)
+                  }
                   className="btn btn-outline-secondary w-50 rounded-pill fw-bold"
                 >
                   Cancel
                 </button>
+
                 <button
                   type="submit"
                   disabled={isAllocating}
                   className="btn btn-ai-sparkle w-50 rounded-pill text-white fw-bold d-flex align-items-center justify-content-center gap-2"
                 >
                   {isAllocating ? (
-                    <Loader2 size={16} className="animate-spin" />
+                    <Loader2
+                      size={16}
+                      className="animate-spin"
+                    />
                   ) : (
                     <Sparkles size={16} />
                   )}
-                  {isAllocating ? "Allocating..." : "Distribute ✨"}
+
+                  {isAllocating
+                    ? "Allocating..."
+                    : "Distribute ✨"}
                 </button>
               </div>
             </form>
@@ -523,8 +747,11 @@ export default function GoalSavings() {
           <div className="modal-dialog-custom card p-4 shadow-lg animate-pop">
             <div className="d-flex align-items-center justify-content-between mb-3">
               <h2 className="fs-5 fw-bold mb-0 text-dark">
-                {editingGoalId ? "Edit Goal ✏️️" : "Create Savings Goal 🏆"}
+                {editingGoalId
+                  ? "Edit Goal ✏️️"
+                  : "Create Savings Goal 🏆"}
               </h2>
+
               <button
                 onClick={() => setShowModal(false)}
                 className="btn btn-sm text-muted p-0"
@@ -535,7 +762,10 @@ export default function GoalSavings() {
 
             <form onSubmit={handleSaveGoal}>
               <div className="mb-3">
-                <label className="form-label small fw-bold">Emoji Icon</label>
+                <label className="form-label small fw-bold">
+                  Emoji Icon
+                </label>
+
                 <input
                   type="text"
                   name="emoji"
@@ -547,7 +777,10 @@ export default function GoalSavings() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label small fw-bold">Goal Name</label>
+                <label className="form-label small fw-bold">
+                  Goal Name
+                </label>
+
                 <input
                   type="text"
                   name="name"
@@ -560,7 +793,10 @@ export default function GoalSavings() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label small fw-bold">Target Amount (₹)</label>
+                <label className="form-label small fw-bold">
+                  Target Amount (₹)
+                </label>
+
                 <input
                   type="number"
                   name="target"
@@ -573,7 +809,10 @@ export default function GoalSavings() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label small fw-bold">Current Saved (₹)</label>
+                <label className="form-label small fw-bold">
+                  Current Saved (₹)
+                </label>
+
                 <input
                   type="number"
                   name="saved"
@@ -585,21 +824,35 @@ export default function GoalSavings() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label small fw-bold">Priority Level</label>
+                <label className="form-label small fw-bold">
+                  Priority Level
+                </label>
+
                 <select
                   name="priority"
                   value={formData.priority}
                   onChange={handleInputChange}
                   className="form-select custom-input"
                 >
-                  <option value="High">🔴 High Priority</option>
-                  <option value="Medium">🟡 Medium Priority</option>
-                  <option value="Low">🟢 Low Priority</option>
+                  <option value="High">
+                    🔴 High Priority
+                  </option>
+
+                  <option value="Medium">
+                    🟡 Medium Priority
+                  </option>
+
+                  <option value="Low">
+                    🟢 Low Priority
+                  </option>
                 </select>
               </div>
 
               <div className="mb-4">
-                <label className="form-label small fw-bold">Target Date</label>
+                <label className="form-label small fw-bold">
+                  Target Date
+                </label>
+
                 <input
                   type="date"
                   name="deadline"
@@ -617,11 +870,14 @@ export default function GoalSavings() {
                 >
                   Cancel
                 </button>
+
                 <button
                   type="submit"
                   className="btn btn-gradient-purple w-50 rounded-pill text-white fw-bold"
                 >
-                  {editingGoalId ? "Update Goal 🚀" : "Create Goal 🚀"}
+                  {editingGoalId
+                    ? "Update Goal 🚀"
+                    : "Create Goal 🚀"}
                 </button>
               </div>
             </form>

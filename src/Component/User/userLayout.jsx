@@ -116,8 +116,8 @@ export default function UserLayout() {
 
   /* Find current page title */
   const currentPage =
-    navItems.find((item) => location.pathname.startsWith(item.to))?.label ||
-    "Dashboard";
+  navItems.find((item) => location.pathname === item.to)?.label ||
+  "Dashboard";
 
   return (
     <div className="layout-container">

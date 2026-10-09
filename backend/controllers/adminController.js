@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 exports.adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+     console.log("Login body:", req.body);
     // Check email and password are provided
     if (!email || !password) {
       return res.status(400).json({

@@ -1,13 +1,43 @@
-const express = require('express');
+
+const express = require("express");
 const router = express.Router();
-const { getAllUsers, getAdminStats, adminLogin } = require('../controllers/adminController');
-const { protect, isAdmin } = require('../middleware/authmiddleware');
 
-// Login Route
-router.post('/login', adminLogin);
+const adminController = require("../controllers/adminController");
+const loginRequestController = require("../controllers/loginRequest");
+const authMiddleware = require("../middleware/authmiddleware");
 
-// Admin routes
-router.get('/users', protect, isAdmin, getAllUsers);
-router.get('/stats', protect, isAdmin, getAdminStats);
+console.log("Admin controller:", Object.keys(adminController));
+console.log("Login request controller:", Object.keys(loginRequestController));
+console.log("Auth middleware:", Object.keys(authMiddleware));
+
+router.post("/login", adminController.adminLogin);
+
+router.get(
+  "/users",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  adminController.getAllUsers
+);
+
+router.get(
+  "/stats",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  adminController.getAdminStats
+);
+
+router.get(
+  "/login-requests",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  loginRequestController.getLoginRequests
+);
+
+router.patch(
+  "/login-requests/:id",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  loginRequestController.updateLoginRequest
+);
 
 module.exports = router;

@@ -1,20 +1,26 @@
-const express = require("express");
 
+const express = require("express");
 const router = express.Router();
 
 const {
-    addExpense,
-    getExpenses,
-    deleteExpense,
-    updateExpense
+  addExpense,
+  getExpenses,
+  deleteExpense,
+  updateExpense,
 } = require("../controllers/expenseController.js");
 
-router.post("/", addExpense);
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
-router.get("/", getExpenses);
+// Create an expense
+router.post("/", verifyUser, addExpense);
 
-router.delete("/:id", deleteExpense);
+// Get expenses
+router.get("/", verifyUser, getExpenses);
 
-router.put("/:id", updateExpense);
+// Delete an expense
+router.delete("/:id", verifyUser, deleteExpense);
+
+// Update an expense
+router.put("/:id", verifyUser, updateExpense);
 
 module.exports = router;

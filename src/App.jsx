@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import UserLayout from "./Component/User/userLayout";
 
 // Public Components
 import Landing from "./LandingPage";
@@ -33,17 +34,22 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
 
         {/* User Dashboard Routes */}
-        <Route path="/app/dashboard" element={<Dashboard />} />
-        <Route path="/app/add-expense" element={<AddExpense />} />
-        <Route path="/app/settings" element={<Settings />} />
-        <Route path="/app/goals" element={<GoalSavings />} />
-        <Route path="/app/expenses" element={<Expenses />} />
-        <Route path="/app/analytics" element={<Analytics />} />
-        <Route path="/app/aiinsights" element={<AIInsights />} />
-        <Route path="/app/notification" element={<Notifications />} />
-        <Route path="/app/reminders" element={<Reminders />} />
-        <Route path="/app/budget" element={<Budget />} />
-        <Route path="/app/userincome" element={<UserIncome />} />
+        
+{/* User Dashboard Routes */}
+<Route path="/app" element={<UserLayout />}>
+  <Route path="dashboard" element={<Dashboard />} />
+  <Route path="add-expense" element={<AddExpense />} />
+  <Route path="settings" element={<Settings />} />
+  <Route path="goals" element={<GoalSavings />} />
+  <Route path="expenses" element={<Expenses />} />
+  <Route path="analytics" element={<Analytics />} />
+  <Route path="aiinsights" element={<AIInsights />} />
+  <Route path="notification" element={<Notifications />} />
+  <Route path="reminders" element={<Reminders />} />
+  <Route path="budget" element={<Budget />} />
+  <Route path="userincome" element={<UserIncome />} />
+</Route>
+
 
         {/* Admin Routes (Agar aap build kar rahe hain) */}
         <Route path="/admin/src/components/dashboard" element={<Dashboard />} /> 

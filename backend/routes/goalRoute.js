@@ -1,5 +1,7 @@
+
 const express = require("express");
 const router = express.Router();
+
 const {
   getGoals,
   createGoal,
@@ -7,12 +9,15 @@ const {
   deleteGoal,
 } = require("../controllers/goalController");
 
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
+
+// Protect all Goals endpoints with Firebase authentication
 router.route("/")
-  .get(getGoals)
-  .post(createGoal);
+  .get(verifyUser, getGoals)
+  .post(verifyUser, createGoal);
 
 router.route("/:id")
-  .put(updateGoal)
-  .delete(deleteGoal);
+  .put(verifyUser, updateGoal)
+  .delete(verifyUser, deleteGoal);
 
 module.exports = router;

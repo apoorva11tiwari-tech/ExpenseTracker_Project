@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
 
-import API_URL from "../../config/api";
-
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus,
   X,
@@ -11,10 +9,9 @@ import {
   Trash2,
 } from "lucide-react";
 
+import apiFetch from "../../config/apiFetch";
 import { useFadeIn } from "../../hooks/useCountUp";
-
 import { getAIBudgetRecommendations } from "./aiService";
-
 import "./Budget.css";
 
 const categoryMeta = {
@@ -66,54 +63,62 @@ export default function Budget() {
   const [showModal, setShowModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
 
-  // Form & AI States
   const [newCat, setNewCat] = useState("Food");
   const [newLimit, setNewLimit] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [financialGoal, setFinancialGoal] =
     useState("Balanced Spending");
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
 
-  // Manual Edit State
   const [editId, setEditId] = useState(null);
   const [editVal, setEditVal] = useState("");
 
   const visible = useFadeIn(100);
 
-  // Fetch Live Budgets from Backend API
-  const fetchBudgets = () => {
-    fetch(`${API_URL}/api/budgets`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const formatted = data.map((b) => {
-            const meta =
-              categoryMeta[b.category] || {
-                emoji: "🎯",
-                color: "lavender",
-              };
+  // Fetch only the authenticated user's budgets.
+  const fetchBudgets = useCallback(async () => {
+    try {
+      const response = await apiFetch("/api/budgets");
 
-            return {
-              id: b._id,
-              cat: b.category,
-              emoji: meta.emoji,
-              budget: b.budgetedAmount,
-              used: b.spentAmount,
-              color: meta.color,
-            };
-          });
+      const data = await response.json();
 
-          setBudgets(formatted);
-        }
-      })
-      .catch((err) =>
-        console.error("Error loading budgets:", err)
-      );
-  };
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to load budgets.");
+      }
+
+      if (!Array.isArray(data)) {
+        setBudgets([]);
+        return;
+      }
+
+      const formatted = data.map((b) => {
+        const meta = categoryMeta[b.category] || {
+          emoji: "🎯",
+          color: "lavender",
+        };
+
+        return {
+          id: b._id,
+          cat: b.category,
+          emoji: meta.emoji,
+          budget: Number(b.budgetedAmount ?? b.amount ?? 0),
+          used: Number(b.spentAmount ?? 0),
+          color: meta.color,
+        };
+      });
+
+      setBudgets(formatted);
+    } catch (error) {
+      console.error("Error loading budgets:", error);
+      setBudgets([]);
+    }
+  }, []);
 
   useEffect(() => {
     fetchBudgets();
-  }, []);
+  }, [fetchBudgets]);
 
   const totalBudget = budgets.reduce(
     (sum, item) => sum + item.budget,
@@ -130,159 +135,218 @@ export default function Budget() {
       ? Math.round((totalUsed / totalBudget) * 100)
       : 0;
 
-  // Save manual edit to MongoDB
-  const saveEdit = () => {
-    if (editId !== null && editVal !== "") {
-      const targetItem = budgets.find((b) => b.id === editId);
+  // Add or update a budget through the authenticated API.
+  const saveBudget = async (category, amount) => {
+    const response = await apiFetch("/api/budgets", {
+      method: "POST",
+      body: JSON.stringify({ category, amount }),
+    });
 
-      if (!targetItem) return;
+    const result = await response.json();
 
-      fetch(`${API_URL}/api/budgets`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          category: targetItem.cat,
-          amount: Number(editVal),
-        }),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          setEditId(null);
-          setEditVal("");
-          fetchBudgets();
-        })
-        .catch((err) =>
-          console.error("Error updating budget:", err)
-        );
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to save budget.");
     }
+
+    return result;
   };
 
-  // Add/Update Single Category Budget
-  const handleAddBudget = () => {
-    if (!newLimit || Number(newLimit) <= 0) {
-      alert("Please enter a valid monthly limit!");
+  // Edit a budget.
+  const saveEdit = async () => {
+    if (editId === null || editVal === "") {
+      alert("Please enter a budget amount.");
       return;
     }
 
-    fetch(`${API_URL}/api/budgets`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        category: newCat,
-        amount: Number(newLimit),
-      }),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setShowModal(false);
-        setNewLimit("");
-        fetchBudgets();
-      })
-      .catch((err) =>
-        console.error("Error saving budget:", err)
-      );
+    const amount = Number(editVal);
+
+    if (!Number.isFinite(amount) || amount < 0) {
+      alert("Please enter a valid, non-negative budget amount.");
+      return;
+    }
+
+    const targetItem = budgets.find((b) => b.id === editId);
+
+    if (!targetItem) return;
+
+    setIsSaving(true);
+
+    try {
+      await saveBudget(targetItem.cat, amount);
+
+      setEditId(null);
+      setEditVal("");
+
+      await fetchBudgets();
+    } catch (error) {
+      console.error("Error updating budget:", error);
+      alert(error.message || "Could not update the budget.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // Delete single budget category
-  const handleDelete = (id, categoryName) => {
+  // Add a new budget or update the selected category.
+  const handleAddBudget = async () => {
+    if (
+      newLimit === "" ||
+      !Number.isFinite(Number(newLimit)) ||
+      Number(newLimit) <= 0
+    ) {
+      alert("Please enter a valid monthly limit greater than zero.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      await saveBudget(newCat, Number(newLimit));
+
+      setShowModal(false);
+      setNewLimit("");
+
+      await fetchBudgets();
+    } catch (error) {
+      console.error("Error saving budget:", error);
+      alert(error.message || "Could not save the budget.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Delete one budget belonging to the current user.
+  const handleDelete = async (id, categoryName) => {
     if (
       !window.confirm(
         `Are you sure you want to delete the budget for ${categoryName}?`
       )
-    )
+    ) {
       return;
+    }
 
-    fetch(`${API_URL}/api/budgets/${id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then(() => {
-        fetchBudgets();
-      })
-      .catch((err) =>
-        console.error("Error deleting budget:", err)
-      );
+    try {
+      const response = await apiFetch(`/api/budgets/${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to delete budget.");
+      }
+
+      await fetchBudgets();
+    } catch (error) {
+      console.error("Error deleting budget:", error);
+      alert(error.message || "Could not delete the budget.");
+    }
   };
 
-  // Delete all budgets at once
-  const handleDeleteAllBudgets = () => {
+  // Delete all budgets displayed for the authenticated user only.
+  // The backend's unsafe DELETE /api/budgets route is not used.
+  const handleDeleteAllBudgets = async () => {
+    if (budgets.length === 0) {
+      alert("There are no budgets to delete.");
+      return;
+    }
+
     if (
       !window.confirm(
-        "Are you sure you want to delete all budgets?"
+        "Are you sure you want to delete all your budgets?"
       )
-    )
+    ) {
       return;
+    }
 
-    fetch(`${API_URL}/api/budgets`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setBudgets([]);
-      })
-      .catch((err) =>
-        console.error("Error deleting all budgets:", err)
+    setIsDeletingAll(true);
+
+    try {
+      const results = await Promise.all(
+        budgets.map((budget) =>
+          apiFetch(`/api/budgets/${budget.id}`, {
+            method: "DELETE",
+          })
+        )
       );
+
+      const failedResponses = results.filter(
+        (response) => !response.ok
+      );
+
+      if (failedResponses.length > 0) {
+        await fetchBudgets();
+        throw new Error(
+          "Some budgets could not be deleted. Please refresh and try again."
+        );
+      }
+
+      setBudgets([]);
+      setEditId(null);
+      setEditVal("");
+    } catch (error) {
+      console.error("Error deleting budgets:", error);
+      alert(error.message || "Could not delete all budgets.");
+      await fetchBudgets();
+    } finally {
+      setIsDeletingAll(false);
+    }
   };
 
-  // AI Auto Customization Trigger
+  // Generate and save AI-recommended budgets.
   const handleAICustomize = async () => {
-    if (!monthlyIncome || Number(monthlyIncome) <= 0) {
+    if (
+      !monthlyIncome ||
+      !Number.isFinite(Number(monthlyIncome)) ||
+      Number(monthlyIncome) <= 0
+    ) {
       alert("Please enter your valid monthly income!");
       return;
     }
 
     setIsAiLoading(true);
 
-    let aiSuggestions = null;
-
     try {
-      aiSuggestions = await getAIBudgetRecommendations(
-        monthlyIncome,
+      const aiSuggestions = await getAIBudgetRecommendations(
+        Number(monthlyIncome),
         financialGoal,
         []
       );
-    } catch (e) {
-      console.error(e);
-    }
 
-    if (aiSuggestions && Array.isArray(aiSuggestions)) {
-      try {
-        for (const s of aiSuggestions) {
-          await fetch(`${API_URL}/api/budgets`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              category: s.cat,
-              amount: Number(s.suggestedBudget),
-            }),
-          });
+      if (
+        !Array.isArray(aiSuggestions) ||
+        aiSuggestions.length === 0
+      ) {
+        throw new Error(
+          "No AI recommendations were generated. Please try again."
+        );
+      }
+
+      for (const suggestion of aiSuggestions) {
+        const category = suggestion.cat;
+        const amount = Number(suggestion.suggestedBudget);
+
+        if (
+          !category ||
+          !Number.isFinite(amount) ||
+          amount <= 0
+        ) {
+          continue;
         }
 
-        setIsAiLoading(false);
-        setShowAIModal(false);
-        setMonthlyIncome("");
-        fetchBudgets();
-      } catch (err) {
-        console.error(
-          "Error saving AI budget allocations:",
-          err
-        );
-
-        setIsAiLoading(false);
-        alert("Failed to save AI budget allocations.");
+        await saveBudget(category, amount);
       }
-    } else {
+
+      setShowAIModal(false);
+      setMonthlyIncome("");
+
+      await fetchBudgets();
+
+      alert("Your AI budget plan has been saved successfully!");
+    } catch (error) {
+      console.error("Error saving AI budget allocations:", error);
+      alert(error.message || "Failed to save AI budget allocations.");
+    } finally {
       setIsAiLoading(false);
-      alert(
-        "Oops, the AI recommendation engine stalled. Tap retry."
-      );
     }
   };
 
@@ -292,7 +356,7 @@ export default function Budget() {
         visible ? "fade-in" : ""
       }`}
     >
-      {/* Header with AI & Manual Action Buttons */}
+      {/* Header and action buttons */}
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
         <div>
           <h1 className="fw-bold fs-3 mb-1 budget-title">
@@ -304,13 +368,14 @@ export default function Budget() {
           </p>
         </div>
 
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap">
           <button
             onClick={handleDeleteAllBudgets}
+            disabled={isDeletingAll || budgets.length === 0}
             className="btn btn-outline-danger d-flex align-items-center gap-2 rounded-pill px-3 py-2 fw-bold shadow-sm"
           >
             <Trash2 size={16} />
-            Delete All
+            {isDeletingAll ? "Deleting..." : "Delete All"}
           </button>
 
           <button
@@ -331,7 +396,7 @@ export default function Budget() {
         </div>
       </div>
 
-      {/* Monthly Overview Card */}
+      {/* Monthly overview */}
       <div
         className={`card custom-card p-4 mb-4 ${
           totalPct >= 90 ? "border-danger-custom" : ""
@@ -383,7 +448,7 @@ export default function Budget() {
                 style={{
                   width: `${Math.min(totalPct, 100)}%`,
                 }}
-              ></div>
+              />
             </div>
 
             <div className="d-flex justify-content-between mb-3">
@@ -421,7 +486,7 @@ export default function Budget() {
         </div>
       </div>
 
-      {/* Category Grid */}
+      {/* Budget category cards */}
       <div className="row g-3">
         {budgets.length === 0 ? (
           <div className="col-12 text-center text-muted py-4">
@@ -476,6 +541,7 @@ export default function Budget() {
                             <div className="d-flex align-items-center gap-1 edit-actions-wrapper">
                               <input
                                 type="number"
+                                min="0"
                                 value={editVal}
                                 onChange={(e) =>
                                   setEditVal(e.target.value)
@@ -489,13 +555,17 @@ export default function Budget() {
 
                               <button
                                 onClick={saveEdit}
+                                disabled={isSaving}
                                 className="btn btn-sm btn-save-custom fw-bold py-1 px-2"
                               >
-                                Save
+                                {isSaving ? "Saving..." : "Save"}
                               </button>
 
                               <button
-                                onClick={() => setEditId(null)}
+                                onClick={() => {
+                                  setEditId(null);
+                                  setEditVal("");
+                                }}
                                 className="btn btn-sm text-muted p-1"
                                 title="Cancel Edit"
                               >
@@ -537,15 +607,13 @@ export default function Budget() {
                       <div className="progress category-progress-bar mb-1">
                         <div
                           className={`progress-bar ${
-                            over
-                              ? "bg-coral"
-                              : `bg-${b.color}`
+                            over ? "bg-coral" : `bg-${b.color}`
                           }`}
                           role="progressbar"
                           style={{
                             width: `${Math.min(pct, 100)}%`,
                           }}
-                        ></div>
+                        />
                       </div>
 
                       <div className="d-flex justify-content-between">
@@ -565,14 +633,10 @@ export default function Budget() {
                           {over
                             ? `₹${(
                                 b.used - b.budget
-                              ).toLocaleString(
-                                "en-IN"
-                              )} over!`
+                              ).toLocaleString("en-IN")} over!`
                             : `₹${(
                                 b.budget - b.used
-                              ).toLocaleString(
-                                "en-IN"
-                              )} left`}
+                              ).toLocaleString("en-IN")} left`}
                         </span>
                       </div>
                     </div>
@@ -590,16 +654,14 @@ export default function Budget() {
           <div className="modal-dialog-custom card p-4 shadow-lg">
             <div className="d-flex align-items-center justify-content-between mb-3">
               <h2 className="fs-5 fw-bold mb-0 d-flex align-items-center gap-2">
-                <Sparkles
-                  className="text-ai"
-                  size={20}
-                />
+                <Sparkles className="text-ai" size={20} />
                 AI Smart Planner
               </h2>
 
               <button
                 onClick={() => setShowAIModal(false)}
                 className="btn btn-sm text-muted p-0"
+                disabled={isAiLoading}
               >
                 <X size={18} />
               </button>
@@ -612,6 +674,7 @@ export default function Budget() {
 
               <input
                 type="number"
+                min="1"
                 placeholder="e.g. 50000"
                 value={monthlyIncome}
                 onChange={(e) =>
@@ -654,6 +717,7 @@ export default function Budget() {
             <div className="d-flex gap-2">
               <button
                 onClick={() => setShowAIModal(false)}
+                disabled={isAiLoading}
                 className="btn btn-outline-secondary w-50 rounded-pill fw-bold"
               >
                 Cancel
@@ -664,16 +728,14 @@ export default function Budget() {
                 disabled={isAiLoading}
                 className="btn btn-ai w-50 rounded-pill text-white fw-bold d-flex align-items-center justify-content-center gap-2"
               >
-                {isAiLoading
-                  ? "Generating..."
-                  : "Apply AI Plan"}
+                {isAiLoading ? "Generating..." : "Apply AI Plan"}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Manual Add/Update Budget Modal */}
+      {/* Add Budget Modal */}
       {showModal && (
         <div className="modal-backdrop-custom">
           <div className="modal-dialog-custom card p-4 shadow-lg">
@@ -685,6 +747,7 @@ export default function Budget() {
               <button
                 onClick={() => setShowModal(false)}
                 className="btn btn-sm text-muted p-0"
+                disabled={isSaving}
               >
                 <X size={18} />
               </button>
@@ -697,22 +760,14 @@ export default function Budget() {
 
               <select
                 value={newCat}
-                onChange={(e) =>
-                  setNewCat(e.target.value)
-                }
+                onChange={(e) => setNewCat(e.target.value)}
                 className="form-select custom-input"
               >
-                {Object.keys(categoryMeta).map(
-                  (catName) => (
-                    <option
-                      key={catName}
-                      value={catName}
-                    >
-                      {categoryMeta[catName].emoji}{" "}
-                      {catName}
-                    </option>
-                  )
-                )}
+                {Object.keys(categoryMeta).map((catName) => (
+                  <option key={catName} value={catName}>
+                    {categoryMeta[catName].emoji} {catName}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -723,11 +778,10 @@ export default function Budget() {
 
               <input
                 type="number"
+                min="1"
                 placeholder="e.g. 5000"
                 value={newLimit}
-                onChange={(e) =>
-                  setNewLimit(e.target.value)
-                }
+                onChange={(e) => setNewLimit(e.target.value)}
                 className="form-control custom-input"
               />
             </div>
@@ -735,6 +789,7 @@ export default function Budget() {
             <div className="d-flex gap-2">
               <button
                 onClick={() => setShowModal(false)}
+                disabled={isSaving}
                 className="btn btn-outline-secondary w-50 rounded-pill fw-bold"
               >
                 Cancel
@@ -742,9 +797,10 @@ export default function Budget() {
 
               <button
                 onClick={handleAddBudget}
+                disabled={isSaving}
                 className="btn btn-gradient w-50 rounded-pill text-white fw-bold"
               >
-                Save Budget
+                {isSaving ? "Saving..." : "Save Budget"}
               </button>
             </div>
           </div>

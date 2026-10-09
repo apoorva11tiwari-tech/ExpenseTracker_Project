@@ -1,14 +1,9 @@
-
 const express = require("express");
 const router = express.Router();
 
 const adminController = require("../controllers/adminController");
 const loginRequestController = require("../controllers/loginRequest");
 const authMiddleware = require("../middleware/authmiddleware");
-
-console.log("Admin controller:", Object.keys(adminController));
-console.log("Login request controller:", Object.keys(loginRequestController));
-console.log("Auth middleware:", Object.keys(authMiddleware));
 
 router.post("/login", adminController.adminLogin);
 

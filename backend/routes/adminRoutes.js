@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllUsers, getAdminStats, adminLogin } = require('../controllers/adminController');
-const { protect, isAdmin } = require('../middleware/authmiddleware');
+const { protect, isAdmin } = require('../middleware/authMiddleware');
 
 // Login Route
 router.post('/login', adminLogin);

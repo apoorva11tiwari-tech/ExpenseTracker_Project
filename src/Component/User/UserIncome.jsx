@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import { Search, Trash2 } from "lucide-react";
 
-import API_URL from "../../config/api";
+import apiFetch from "../../config/apiFetch";
 
 function UserIncome() {
   const [incomes, setIncomes] = useState([]);
@@ -12,6 +13,11 @@ function UserIncome() {
   const [description, setDescription] = useState("");
   const [search, setSearch] = useState("");
 
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [error, setError] = useState("");
+
   const sources = [
     "Salary",
     "Freelance",
@@ -21,75 +27,94 @@ function UserIncome() {
     "Other",
   ];
 
-  // Fetch incomes from backend
-  useEffect(() => {
-    fetch(`${API_URL}/api/income`)
-      .then((res) => {
-        if (!res.ok)
-          throw new Error("Failed to fetch income records");
+  // Fetch income records belonging to the authenticated user.
+  const fetchIncomes = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-        return res.json();
-      })
-      .then((data) => setIncomes(data))
-      .catch((err) =>
-        console.error("Error fetching income:", err)
-      );
+    try {
+      const response = await apiFetch("/api/income");
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Failed to fetch income records."
+        );
+      }
+
+      setIncomes(Array.isArray(result) ? result : []);
+    } catch (err) {
+      console.error("Error fetching income:", err);
+      setError(err.message || "Could not load income records.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Handle Form Submission
+  useEffect(() => {
+    fetchIncomes();
+  }, [fetchIncomes]);
+
+  // Add income.
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !amount || !date || !source) {
+    if (!title.trim() || amount === "" || !date || !source) {
       alert("Please fill in all required fields.");
       return;
     }
 
+    const numericAmount = Number(amount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount < 0) {
+      alert("Please enter a valid, non-negative income amount.");
+      return;
+    }
+
     const incomeData = {
-      title,
-      amount: Number(amount),
+      title: title.trim(),
+      amount: numericAmount,
       source,
       date,
-      description,
+      description: description.trim(),
     };
 
+    setSaving(true);
+
     try {
-      const response = await fetch(
-        `${API_URL}/api/income`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(incomeData),
-        }
-      );
+      const response = await apiFetch("/api/income", {
+        method: "POST",
+        body: JSON.stringify(incomeData),
+      });
 
       const result = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          result.message || "Failed to add income"
+          result.message || "Failed to add income."
         );
       }
 
-      setIncomes([result.income, ...incomes]);
+      // Monthly Salary may update an existing record instead
+      // of creating a new one, so reload the authoritative list.
+      await fetchIncomes();
 
-      alert("Income added successfully!");
-
-      // Reset form
       setTitle("");
       setAmount("");
       setSource("Salary");
       setDate("");
       setDescription("");
-    } catch (error) {
-      console.error("Error adding income:", error);
-      alert("Failed to add income.");
+
+      alert(result.message || "Income saved successfully!");
+    } catch (err) {
+      console.error("Error adding income:", err);
+      alert(err.message || "Failed to save income.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  // Delete Income Record
+  // Delete only the selected user's income record.
   const handleDelete = async (id) => {
     if (
       !window.confirm(
@@ -99,42 +124,47 @@ function UserIncome() {
       return;
     }
 
+    setDeletingId(id);
+
     try {
-      const response = await fetch(
-        `${API_URL}/api/income/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await apiFetch(`/api/income/${id}`, {
+        method: "DELETE",
+      });
 
-      if (!response.ok)
-        throw new Error("Failed to delete income");
+      const result = await response.json();
 
-      setIncomes(
-        incomes.filter((item) => item._id !== id)
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Failed to delete income."
+        );
+      }
+
+      setIncomes((previous) =>
+        previous.filter((item) => item._id !== id)
       );
-    } catch (error) {
-      console.error("Error deleting income:", error);
-      alert("Failed to delete income.");
+    } catch (err) {
+      console.error("Error deleting income:", err);
+      alert(err.message || "Failed to delete income.");
+    } finally {
+      setDeletingId(null);
     }
   };
 
-  // Filtered incomes based on search
-  const filteredIncomes = incomes.filter(
-    (item) =>
-      item.title
-        ?.toLowerCase()
-        .includes(search.toLowerCase()) ||
-      item.source
-        ?.toLowerCase()
-        .includes(search.toLowerCase())
-  );
+  // Search by title or source.
+  const filteredIncomes = incomes.filter((item) => {
+    const searchTerm = search.toLowerCase();
+
+    return (
+      item.title?.toLowerCase().includes(searchTerm) ||
+      item.source?.toLowerCase().includes(searchTerm)
+    );
+  });
 
   return (
     <div className="container py-4">
       <h2 className="mb-4">Income Tracker 💰</h2>
 
-      {/* Add Income Form Card */}
+      {/* Add Income Form */}
       <div className="card p-4 mb-4 shadow-sm">
         <h4 className="mb-3">Add New Income</h4>
 
@@ -150,26 +180,22 @@ function UserIncome() {
                 className="form-control"
                 placeholder="e.g. Monthly Salary, Freelance Project"
                 value={title}
-                onChange={(e) =>
-                  setTitle(e.target.value)
-                }
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </div>
 
             <div className="col-md-6">
-              <label className="form-label">
-                Amount (₹)
-              </label>
+              <label className="form-label">Amount (₹)</label>
 
               <input
                 type="number"
+                min="0"
+                step="0.01"
                 className="form-control"
                 placeholder="e.g. 15000"
                 value={amount}
-                onChange={(e) =>
-                  setAmount(e.target.value)
-                }
+                onChange={(e) => setAmount(e.target.value)}
                 required
               />
             </div>
@@ -182,9 +208,8 @@ function UserIncome() {
               <select
                 className="form-select"
                 value={source}
-                onChange={(e) =>
-                  setSource(e.target.value)
-                }
+                onChange={(e) => setSource(e.target.value)}
+                required
               >
                 {sources.map((item) => (
                   <option key={item} value={item}>
@@ -201,9 +226,7 @@ function UserIncome() {
                 type="date"
                 className="form-control"
                 value={date}
-                onChange={(e) =>
-                  setDate(e.target.value)
-                }
+                onChange={(e) => setDate(e.target.value)}
                 required
               />
             </div>
@@ -228,18 +251,19 @@ function UserIncome() {
               <button
                 type="submit"
                 className="btn btn-success"
+                disabled={saving}
               >
-                + Add Income
+                {saving ? "Saving..." : "+ Add Income"}
               </button>
             </div>
           </div>
         </form>
       </div>
 
-      {/* Income Records List Card */}
+      {/* Income History */}
       <div className="card p-4 shadow-sm">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4>Income History</h4>
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+          <h4 className="mb-0">Income History</h4>
 
           <div
             className="input-group"
@@ -254,12 +278,24 @@ function UserIncome() {
               className="form-control"
               placeholder="Search income..."
               value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
+
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-danger ms-3"
+              onClick={fetchIncomes}
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         <div className="table-responsive">
           <table className="table table-hover">
@@ -274,47 +310,16 @@ function UserIncome() {
             </thead>
 
             <tbody>
-              {filteredIncomes.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.title}</td>
-
-                  <td>
-                    <span className="badge bg-success-subtle text-success border border-success-subtle">
-                      {item.source}
-                    </span>
-                  </td>
-
-                  <td>
-                    {new Date(
-                      item.date
-                    ).toLocaleDateString("en-IN", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </td>
-
-                  <td className="text-end text-success fw-bold">
-                    +₹
-                    {Number(item.amount).toLocaleString(
-                      "en-IN"
-                    )}
-                  </td>
-
-                  <td className="text-end">
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() =>
-                        handleDelete(item._id)
-                      }
-                    >
-                      <Trash2 size={14} />
-                    </button>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-center text-muted py-4"
+                  >
+                    Loading income records...
                   </td>
                 </tr>
-              ))}
-
-              {filteredIncomes.length === 0 && (
+              ) : filteredIncomes.length === 0 ? (
                 <tr>
                   <td
                     colSpan="5"
@@ -323,6 +328,54 @@ function UserIncome() {
                     No income records found.
                   </td>
                 </tr>
+              ) : (
+                filteredIncomes.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.title}</td>
+
+                    <td>
+                      <span className="badge bg-success-subtle text-success border border-success-subtle">
+                        {item.source || "Other"}
+                      </span>
+                    </td>
+
+                    <td>
+                      {item.date
+                        ? new Date(item.date).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : "—"}
+                    </td>
+
+                    <td className="text-end text-success fw-bold">
+                      +₹
+                      {Number(item.amount || 0).toLocaleString(
+                        "en-IN"
+                      )}
+                    </td>
+
+                    <td className="text-end">
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => handleDelete(item._id)}
+                        disabled={deletingId === item._id}
+                        title="Delete income"
+                      >
+                        {deletingId === item._id ? (
+                          "Deleting..."
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

@@ -1,28 +1,43 @@
+
 const Expense = require("../models/Expense");
 const Income = require("../models/Income");
 
-// @desc    Get aggregated financial analytics data
+// @desc    Get aggregated financial analytics for the logged-in user
 // @route   GET /api/analytics?period=daily
-// @access  Public
+// @access  Private
 const getAnalyticsSummary = async (req, res) => {
   try {
-    const period = (req.query.period || "monthly").toLowerCase();
+    // Firebase authentication middleware attaches the user to req
+    const userId = req.user?.uid;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authentication required.",
+      });
+    }
+
+    const allowedPeriods = ["daily", "weekly", "monthly", "yearly"];
+    const requestedPeriod = String(
+      req.query.period || "monthly"
+    ).toLowerCase();
+
+    const period = allowedPeriods.includes(requestedPeriod)
+      ? requestedPeriod
+      : "monthly";
 
     const now = new Date();
-
-    // Start and end date according to selected period
     let startDate;
     let endDate;
 
+    // Calculate the selected period's date range
     if (period === "daily") {
-      // Today
       startDate = new Date(now);
       startDate.setHours(0, 0, 0, 0);
 
       endDate = new Date(now);
       endDate.setHours(23, 59, 59, 999);
     } else if (period === "weekly") {
-      // Current week: Monday to Sunday
+      // Monday to Sunday
       startDate = new Date(now);
       startDate.setHours(0, 0, 0, 0);
 
@@ -32,17 +47,16 @@ const getAnalyticsSummary = async (req, res) => {
       startDate.setDate(startDate.getDate() - difference);
 
       endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
+      endDate.setDate(endDate.getDate() + 6);
       endDate.setHours(23, 59, 59, 999);
     } else if (period === "yearly") {
-      // Current year
       startDate = new Date(now.getFullYear(), 0, 1);
       startDate.setHours(0, 0, 0, 0);
 
       endDate = new Date(now.getFullYear(), 11, 31);
       endDate.setHours(23, 59, 59, 999);
     } else {
-      // Monthly - current month
+      // Current month
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       startDate.setHours(0, 0, 0, 0);
 
@@ -50,25 +64,25 @@ const getAnalyticsSummary = async (req, res) => {
       endDate.setHours(23, 59, 59, 999);
     }
 
-    // Get all records
-    const allExpenses = await Expense.find();
-    const allIncomes = await Income.find();
+    // Fetch only this user's records within the selected date range
+    const dateFilter = {
+      $gte: startDate,
+      $lte: endDate,
+    };
 
-    // Filter expenses according to selected period
-    const expenses = allExpenses.filter((item) => {
-      const itemDate = new Date(item.date || item.createdAt);
+    const [expenses, incomes] = await Promise.all([
+      Expense.find({
+        userId,
+        date: dateFilter,
+      }).lean(),
 
-      return itemDate >= startDate && itemDate <= endDate;
-    });
+      Income.find({
+        userId,
+        date: dateFilter,
+      }).lean(),
+    ]);
 
-    // Filter income according to selected period
-    const incomes = allIncomes.filter((item) => {
-      const itemDate = new Date(item.date || item.createdAt);
-
-      return itemDate >= startDate && itemDate <= endDate;
-    });
-
-    // Calculate total expense
+    // Calculate total expenses
     const totalExpense = expenses.reduce(
       (sum, item) => sum + Number(item.amount || 0),
       0
@@ -83,41 +97,47 @@ const getAnalyticsSummary = async (req, res) => {
     // Calculate net savings
     const netSavings = totalIncome - totalExpense;
 
-    // Aggregate expenses by category
+    // Group expenses by category
     const categoryTotals = {};
 
     expenses.forEach((item) => {
       const category = item.category || "Uncategorized";
 
       categoryTotals[category] =
-        (categoryTotals[category] || 0) + Number(item.amount || 0);
+        (categoryTotals[category] || 0) +
+        Number(item.amount || 0);
     });
 
-    const categoryBreakdown = Object.keys(categoryTotals).map((category) => ({
-      name: category,
-      value: categoryTotals[category],
-      percentage:
-        totalExpense > 0
-          ? ((categoryTotals[category] / totalExpense) * 100).toFixed(1)
-          : 0,
-    }));
+    const categoryBreakdown = Object.entries(categoryTotals).map(
+      ([category, amount]) => ({
+        name: category,
+        value: amount,
+        percentage:
+          totalExpense > 0
+            ? Number(((amount / totalExpense) * 100).toFixed(1))
+            : 0,
+      })
+    );
 
-    // Aggregate income by source
+    // Group income by source
     const sourceTotals = {};
 
     incomes.forEach((item) => {
       const source = item.source || "Other";
 
       sourceTotals[source] =
-        (sourceTotals[source] || 0) + Number(item.amount || 0);
+        (sourceTotals[source] || 0) +
+        Number(item.amount || 0);
     });
 
-    const sourceBreakdown = Object.keys(sourceTotals).map((source) => ({
-      name: source,
-      value: sourceTotals[source],
-    }));
+    const sourceBreakdown = Object.entries(sourceTotals).map(
+      ([source, amount]) => ({
+        name: source,
+        value: amount,
+      })
+    );
 
-    res.status(200).json({
+    return res.status(200).json({
       period,
       dateRange: {
         start: startDate,
@@ -132,11 +152,10 @@ const getAnalyticsSummary = async (req, res) => {
       sourceBreakdown,
     });
   } catch (error) {
-    console.error("Analytics error:", error);
+    console.error("Analytics error:", error.message);
 
-    res.status(500).json({
-      message: "Error fetching analytics data",
-      error: error.message,
+    return res.status(500).json({
+      message: "Error fetching analytics data.",
     });
   }
 };

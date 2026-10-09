@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API_URL from "../../config/api";
+import apiFetch from "../../config/apiFetch";
 import "./Dashboard.css";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -47,16 +47,16 @@ export default function Dashboard() {
     const fetchDashboardData = async () => {
       try {
         const [
-          expenseResponse,
-          incomeResponse,
-          budgetResponse,
-          goalResponse,
-        ] = await Promise.all([
-          fetch(`${API_URL}/api/expenses`),
-          fetch(`${API_URL}/api/income`),
-          fetch(`${API_URL}/api/budgets`),
-          fetch(`${API_URL}/api/goals`),
-        ]);
+  expenseResponse,
+  incomeResponse,
+  budgetResponse,
+  goalResponse,
+] = await Promise.all([
+  apiFetch("/api/expenses"),
+  apiFetch("/api/income"),
+  apiFetch("/api/budgets"),
+  apiFetch("/api/goals"),
+]);
 
         if (expenseResponse.ok) {
           const data = await expenseResponse.json();

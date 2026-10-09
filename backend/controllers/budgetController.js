@@ -1,81 +1,150 @@
+
 const Budget = require("../models/Budget");
 const Expense = require("../models/Expense");
 
-// @desc    Get all budgets with calculated spent amounts
-// @route   GET /api/budgets
-// @access  Public
+// Get budgets with spending calculated for the logged-in user
 const getBudgets = async (req, res) => {
   try {
-    const budgets = await Budget.find();
-    const expenses = await Expense.find();
+    const userId = req.user.uid;
 
-    // Aggregate spending per category (case-insensitive)
+    const budgets = await Budget.find({ userId });
+    const expenses = await Expense.find({ userId });
+
+    // Calculate spending per category, ignoring letter case
     const categoryExpenses = {};
+
     expenses.forEach((item) => {
       if (item.category) {
-        const cat = item.category.trim().toLowerCase();
-        categoryExpenses[cat] = (categoryExpenses[cat] || 0) + Number(item.amount || 0);
+        const category = item.category.trim().toLowerCase();
+
+        categoryExpenses[category] =
+          (categoryExpenses[category] || 0) +
+          Number(item.amount || 0);
       }
     });
 
-    // Merge spent amounts with target budgets
-    const budgetSummary = budgets.map((b) => {
-      const catKey = b.category.trim().toLowerCase();
-      const spent = categoryExpenses[catKey] || 0;
-      
+    // Combine the user's budgets with their spending
+    const budgetSummary = budgets.map((budget) => {
+      const categoryKey = budget.category.trim().toLowerCase();
+      const spent = categoryExpenses[categoryKey] || 0;
+
       return {
-        _id: b._id,
-        category: b.category,
-        budgetedAmount: b.amount,
+        _id: budget._id,
+        category: budget.category,
+        budgetedAmount: budget.amount,
         spentAmount: spent,
-        remainingAmount: Math.max(0, b.amount - spent),
-        percentageSpent: b.amount > 0 ? Math.round((spent / b.amount) * 100) : 0,
+        remainingAmount: Math.max(0, budget.amount - spent),
+        percentageSpent:
+          budget.amount > 0
+            ? Math.round((spent / budget.amount) * 100)
+            : 0,
       };
     });
 
-    res.status(200).json(budgetSummary);
+    return res.status(200).json(budgetSummary);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching budgets", error: error.message });
+    console.error("Fetch budgets error:", error);
+
+    return res.status(500).json({
+      message: "Error fetching budgets",
+      error: error.message,
+    });
   }
 };
 
-// @desc    Add or Update budget for a category
-// @route   POST /api/budgets
-// @access  Public
+
+// Add or update a budget for the logged-in user
 const addOrUpdateBudget = async (req, res) => {
-  const { category, amount } = req.body;
-
-  if (!category || amount === undefined) {
-    return res.status(400).json({ message: "Category and amount are required" });
-  }
-
   try {
+    const { category, amount } = req.body;
+    const userId = req.user.uid;
+
+    if (
+      typeof category !== "string" ||
+      !category.trim() ||
+      amount === undefined ||
+      amount === null ||
+      !Number.isFinite(Number(amount)) ||
+      Number(amount) < 0
+    ) {
+      return res.status(400).json({
+        message: "A valid category and non-negative amount are required",
+      });
+    }
+
     const trimmedCategory = category.trim();
 
-    // Upsert budget using case-insensitive search
-    const budget = await Budget.findOneAndUpdate(
-      { category: { $regex: new RegExp(`^${trimmedCategory}$`, "i") } },
-      { category: trimmedCategory, amount: Number(amount) },
-      { new: true, upsert: true }
+    // Escape special regex characters in the category name
+    const escapedCategory = trimmedCategory.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
     );
 
-    res.status(200).json({ message: "Budget saved successfully", budget });
+    // Find a matching category only within this user's budgets
+    const budget = await Budget.findOneAndUpdate(
+      {
+        userId,
+        category: {
+          $regex: new RegExp(`^${escapedCategory}$`, "i"),
+        },
+      },
+      {
+        $set: {
+          category: trimmedCategory,
+          amount: Number(amount),
+          userId,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      }
+    );
+
+    return res.status(200).json({
+      message: "Budget saved successfully",
+      budget,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error saving budget", error: error.message });
+    console.error("Save budget error:", error);
+
+    return res.status(500).json({
+      message: "Error saving budget",
+      error: error.message,
+    });
   }
 };
 
-// @desc    Delete a budget
-// @route   DELETE /api/budgets/:id
-// @access  Public
+
+// Delete only a budget owned by the logged-in user
 const deleteBudget = async (req, res) => {
   try {
-    await Budget.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Budget deleted successfully" });
+    const budget = await Budget.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.uid,
+    });
+
+    if (!budget) {
+      return res.status(404).json({
+        message: "Budget not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Budget deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting budget", error: error.message });
+    console.error("Delete budget error:", error);
+
+    return res.status(500).json({
+      message: "Error deleting budget",
+      error: error.message,
+    });
   }
 };
+
 
 module.exports = {
   getBudgets,

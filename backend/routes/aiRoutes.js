@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   getAiInsights,
   getBudgetRecommendations,
-  allocateSavingsWithAI
+  allocateSavingsWithAI,
 } = require("../controllers/aiController");
 
-router.get("/insights", getAiInsights);
-router.post("/recommendations", getBudgetRecommendations);
-router.post("/allocate", allocateSavingsWithAI);
+const verifyUser = require("../middleware/authMiddleware");
+
+// Protect all AI endpoints with Firebase authentication
+router.get("/insights", verifyUser, getAiInsights);
+router.post("/recommendations", verifyUser, getBudgetRecommendations);
+router.post("/allocate", verifyUser, allocateSavingsWithAI);
 
 module.exports = router;

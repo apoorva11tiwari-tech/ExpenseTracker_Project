@@ -1,25 +1,24 @@
+
 const express = require("express");
 const router = express.Router();
-const Budget = require("../models/budget");
+
 const {
   getBudgets,
   addOrUpdateBudget,
   deleteBudget,
 } = require("../controllers/budgetController");
 
-router.route("/")
-  .get(getBudgets)
-  .post(addOrUpdateBudget)
-  .delete(async (req, res) => {
-    try {
-      await Budget.deleteMany({});
-      res.status(200).json({ message: "All budgets deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete budgets" });
-    }
-  });
+const verifyUser = require("../middleware/authMiddleware");
 
-router.route("/:id")
-  .delete(deleteBudget);
+// Get the logged-in user's budgets or create/update a budget.
+router
+  .route("/")
+  .get(verifyUser, getBudgets)
+  .post(verifyUser, addOrUpdateBudget);
+
+// Delete one budget belonging to the logged-in user.
+router
+  .route("/:id")
+  .delete(verifyUser, deleteBudget);
 
 module.exports = router;

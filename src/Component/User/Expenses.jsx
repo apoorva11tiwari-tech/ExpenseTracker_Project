@@ -1,9 +1,7 @@
+
 import { useState, useEffect } from "react";
-
-import API_URL from "../../config/api";
-
+import apiFetch from "../../config/apiFetch";
 import { Search, Edit2, Trash2 } from "lucide-react";
-
 import "./Expenses.css";
 
 const categories = [
@@ -53,7 +51,6 @@ const catText = {
   Other: "var(--muted)",
 };
 
-// Emoji for each category
 const categoryEmoji = {
   Food: "🍔",
   Shopping: "🛍️",
@@ -72,91 +69,173 @@ function Expenses() {
   const [method, setMethod] = useState("All");
   const [sort, setSort] = useState("date");
 
-  // Data comes from MongoDB
   const [data, setData] = useState([]);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Load expenses from backend
+  // Load expenses for the authenticated user.
   useEffect(() => {
-    fetch(`${API_URL}/api/expenses`)
-      .then((response) => {
+    let cancelled = false;
+
+    const loadExpenses = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await apiFetch("/api/expenses");
+
         if (!response.ok) {
-          throw new Error("Failed to fetch expenses");
+          const result = await response.json().catch(() => ({}));
+          throw new Error(
+            result.message || "Failed to load expenses."
+          );
         }
 
-        return response.json();
-      })
-      .then((result) => {
-        console.log("Expenses loaded:", result);
-        setData(result);
-      })
-      .catch((error) => {
-        console.error("Error loading expenses:", error);
-      });
+        const result = await response.json();
+
+        if (!cancelled) {
+          setData(Array.isArray(result) ? result : []);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Error loading expenses:", err);
+          setError(err.message || "Unable to load expenses.");
+          setData([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadExpenses();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Filter and sort expenses
+  // Filter and sort transactions.
   const filtered = [...data]
-    .filter((t) => {
+    .filter((transaction) => {
       const searchText = search.toLowerCase();
-
-      const title = t.title?.toLowerCase() || "";
-      const category = t.category?.toLowerCase() || "";
+      const title = transaction.title?.toLowerCase() || "";
+      const category = transaction.category?.toLowerCase() || "";
 
       return (
-        (cat === "All" || t.category === cat) &&
-        (method === "All" || t.paymentMethod === method) &&
+        (cat === "All" || transaction.category === cat) &&
+        (method === "All" ||
+          transaction.paymentMethod === method) &&
         (title.includes(searchText) ||
           category.includes(searchText))
       );
     })
     .sort((a, b) => {
       if (sort === "amount") {
-        return Math.abs(b.amount) - Math.abs(a.amount);
+        return (
+          Math.abs(Number(b.amount) || 0) -
+          Math.abs(Number(a.amount) || 0)
+        );
       }
 
-      // Sort by date - newest first
       return new Date(b.date) - new Date(a.date);
     });
 
-  // Delete expense from MongoDB
+  // Delete an expense.
   const deleteItem = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this expense?"
     );
 
-    if (!confirmDelete) {
+    if (!confirmDelete) return;
+
+    try {
+      const response = await apiFetch(`/api/expenses/${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Failed to delete expense."
+        );
+      }
+
+      setData((currentData) =>
+        currentData.filter((transaction) => transaction._id !== id)
+      );
+
+      if (editingExpense?._id === id) {
+        setEditingExpense(null);
+      }
+    } catch (err) {
+      console.error("Error deleting expense:", err);
+      alert(err.message || "Failed to delete expense.");
+    }
+  };
+
+  // Update an expense.
+  const saveChanges = async () => {
+    if (!editingExpense) return;
+
+    const amount = Number(editingExpense.amount);
+
+    if (!editingExpense.title?.trim()) {
+      alert("Please enter an expense title.");
+      return;
+    }
+
+    if (!Number.isFinite(amount) || amount < 0) {
+      alert("Please enter a valid amount.");
       return;
     }
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/expenses/${id}`,
+      const formattedDate = editingExpense.date
+        ? new Date(editingExpense.date).toISOString()
+        : new Date().toISOString();
+
+      const response = await apiFetch(
+        `/api/expenses/${editingExpense._id}`,
         {
-          method: "DELETE",
+          method: "PUT",
+          body: JSON.stringify({
+            title: editingExpense.title.trim(),
+            amount,
+            category: editingExpense.category,
+            date: formattedDate,
+            paymentMethod: editingExpense.paymentMethod,
+            description: editingExpense.description || "",
+          }),
         }
       );
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
-          result.message || "Failed to delete expense"
+          result.message || "Failed to update expense."
         );
       }
 
-      console.log("Expense deleted:", result);
+      // Supports APIs returning either { expense: ... } or the
+      // updated expense document directly.
+      const updatedExpense = result.expense || result;
 
-      // Remove deleted expense from screen
       setData((currentData) =>
-        currentData.filter(
-          (transaction) => transaction._id !== id
+        currentData.map((item) =>
+          item._id === editingExpense._id ? updatedExpense : item
         )
       );
-    } catch (error) {
-      console.error("Error deleting expense:", error);
 
-      alert("Failed to delete expense.");
+      setEditingExpense(null);
+      alert("Expense updated successfully!");
+    } catch (err) {
+      console.error("Error updating expense:", err);
+      alert(err.message || "Failed to update expense.");
     }
   };
 
@@ -175,19 +254,38 @@ function Expenses() {
         </div>
       </div>
 
-      {/* EDIT FORM - Conditionally displayed when editingExpense is set */}
+      {/* Loading and error messages */}
+      {loading && (
+        <div className="transactions-empty">
+          <p>Loading your transactions...</p>
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-danger ms-3"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Edit form */}
       {editingExpense && (
         <div className="card p-4 mb-4">
           <h4 className="mb-3">Edit Expense ✏️</h4>
 
           <div className="row g-3">
-            {/* Title */}
             <div className="col-md-6">
-              <label className="form-label">
+              <label className="form-label" htmlFor="edit-title">
                 Expense Title
               </label>
-
               <input
+                id="edit-title"
                 type="text"
                 className="form-control"
                 value={editingExpense.title || ""}
@@ -200,14 +298,17 @@ function Expenses() {
               />
             </div>
 
-            {/* Amount */}
             <div className="col-md-6">
-              <label className="form-label">Amount</label>
-
+              <label className="form-label" htmlFor="edit-amount">
+                Amount
+              </label>
               <input
+                id="edit-amount"
                 type="number"
+                min="0"
+                step="0.01"
                 className="form-control"
-                value={editingExpense.amount || ""}
+                value={editingExpense.amount ?? ""}
                 onChange={(e) =>
                   setEditingExpense({
                     ...editingExpense,
@@ -217,15 +318,14 @@ function Expenses() {
               />
             </div>
 
-            {/* Category */}
             <div className="col-md-6">
-              <label className="form-label">
+              <label className="form-label" htmlFor="edit-category">
                 Category
               </label>
-
               <select
+                id="edit-category"
                 className="form-select"
-                value={editingExpense.category || ""}
+                value={editingExpense.category || "Other"}
                 onChange={(e) =>
                   setEditingExpense({
                     ...editingExpense,
@@ -243,11 +343,12 @@ function Expenses() {
               </select>
             </div>
 
-            {/* Date */}
             <div className="col-md-6">
-              <label className="form-label">Date</label>
-
+              <label className="form-label" htmlFor="edit-date">
+                Date
+              </label>
               <input
+                id="edit-date"
                 type="date"
                 className="form-control"
                 value={
@@ -264,15 +365,14 @@ function Expenses() {
               />
             </div>
 
-            {/* Payment Method */}
             <div className="col-md-6">
-              <label className="form-label">
+              <label className="form-label" htmlFor="edit-method">
                 Payment Method
               </label>
-
               <select
+                id="edit-method"
                 className="form-select"
-                value={editingExpense.paymentMethod || ""}
+                value={editingExpense.paymentMethod || "Cash"}
                 onChange={(e) =>
                   setEditingExpense({
                     ...editingExpense,
@@ -290,13 +390,15 @@ function Expenses() {
               </select>
             </div>
 
-            {/* Description */}
             <div className="col-12">
-              <label className="form-label">
+              <label
+                className="form-label"
+                htmlFor="edit-description"
+              >
                 Description
               </label>
-
               <textarea
+                id="edit-description"
                 className="form-control"
                 rows="3"
                 value={editingExpense.description || ""}
@@ -309,72 +411,11 @@ function Expenses() {
               />
             </div>
 
-            {/* Action Buttons */}
             <div className="col-12 d-flex gap-2">
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={async () => {
-                  try {
-                    // Ensure date is formatted properly before sending to backend
-                    const formattedDate = new Date(
-                      editingExpense.date
-                    ).toISOString();
-
-                    const response = await fetch(
-                      `${API_URL}/api/expenses/${editingExpense._id}`,
-                      {
-                        method: "PUT",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          title: editingExpense.title,
-                          amount: Number(
-                            editingExpense.amount
-                          ),
-                          category: editingExpense.category,
-                          date: formattedDate,
-                          paymentMethod:
-                            editingExpense.paymentMethod,
-                          description:
-                            editingExpense.description,
-                        }),
-                      }
-                    );
-
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                      throw new Error(
-                        result.message ||
-                          "Failed to update expense"
-                      );
-                    }
-
-                    setData((currentData) =>
-                      currentData.map((item) =>
-                        item._id === editingExpense._id
-                          ? result.expense
-                          : item
-                      )
-                    );
-
-                    setEditingExpense(null);
-
-                    alert("Expense updated successfully!");
-                  } catch (error) {
-                    console.error(
-                      "Error updating expense:",
-                      error
-                    );
-
-                    alert(
-                      error.message ||
-                        "Failed to update expense."
-                    );
-                  }
-                }}
+                onClick={saveChanges}
               >
                 Save Changes
               </button>
@@ -398,7 +439,6 @@ function Expenses() {
             size={16}
             className="transaction-search-icon"
           />
-
           <input
             type="text"
             value={search}
@@ -411,6 +451,7 @@ function Expenses() {
           value={cat}
           onChange={(e) => setCat(e.target.value)}
           className="transaction-select"
+          aria-label="Filter by category"
         >
           {categories.map((category) => (
             <option key={category} value={category}>
@@ -423,6 +464,7 @@ function Expenses() {
           value={method}
           onChange={(e) => setMethod(e.target.value)}
           className="transaction-select"
+          aria-label="Filter by payment method"
         >
           {methods.map((item) => (
             <option key={item} value={item}>
@@ -435,13 +477,14 @@ function Expenses() {
           value={sort}
           onChange={(e) => setSort(e.target.value)}
           className="transaction-select"
+          aria-label="Sort transactions"
         >
           <option value="date">Sort: Date</option>
           <option value="amount">Sort: Amount</option>
         </select>
       </div>
 
-      {/* Expense Table */}
+      {/* Expense table */}
       <div className="transactions-table-card">
         <div className="table-responsive">
           <table className="table transactions-table mb-0">
@@ -457,115 +500,99 @@ function Expenses() {
             </thead>
 
             <tbody>
-              {filtered.map((transaction) => (
-                <tr key={transaction._id}>
-                  {/* Transaction */}
-                  <td>
-                    <div className="transaction-name">
-                      <div className="transaction-emoji">
-                        {categoryEmoji[
-                          transaction.category
-                        ] || "💵"}
+              {!loading &&
+                !error &&
+                filtered.map((transaction) => (
+                  <tr key={transaction._id}>
+                    <td>
+                      <div className="transaction-name">
+                        <div className="transaction-emoji">
+                          {categoryEmoji[transaction.category] || "💵"}
+                        </div>
+                        <span>{transaction.title}</span>
                       </div>
+                    </td>
 
-                      <span>{transaction.title}</span>
-                    </div>
-                  </td>
-
-                  {/* Category */}
-                  <td>
-                    <span
-                      className="transaction-category"
-                      style={{
-                        background:
-                          catColors[
-                            transaction.category
-                          ] || catColors.Other,
-                        color:
-                          catText[
-                            transaction.category
-                          ] || "var(--muted)",
-                      }}
-                    >
-                      {transaction.category}
-                    </span>
-                  </td>
-
-                  {/* Date */}
-                  <td>
-                    <span className="transaction-secondary">
-                      {new Date(
-                        transaction.date
-                      ).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </td>
-
-                  {/* Payment Method */}
-                  <td>
-                    <span className="transaction-secondary">
-                      {transaction.paymentMethod || "—"}
-                    </span>
-                  </td>
-
-                  {/* Amount */}
-                  <td className="text-end">
-                    <span className="transaction-amount">
-                      -₹
-                      {Math.abs(
-                        transaction.amount
-                      ).toLocaleString("en-IN")}
-                    </span>
-                  </td>
-
-                  {/* Actions */}
-                  <td>
-                    <div className="transaction-actions">
-                      {/* Edit */}
-                      <button
-                        type="button"
-                        className="transaction-action-btn edit-action"
-                        title="Edit transaction"
-                        onClick={() =>
-                          setEditingExpense(transaction)
-                        }
+                    <td>
+                      <span
+                        className="transaction-category"
+                        style={{
+                          background:
+                            catColors[transaction.category] ||
+                            catColors.Other,
+                          color:
+                            catText[transaction.category] ||
+                            "var(--muted)",
+                        }}
                       >
-                        <Edit2 size={14} />
-                      </button>
+                        {transaction.category}
+                      </span>
+                    </td>
 
-                      {/* Delete */}
-                      <button
-                        type="button"
-                        className="transaction-action-btn delete-action"
-                        title="Delete transaction"
-                        onClick={() =>
-                          deleteItem(transaction._id)
-                        }
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    <td>
+                      <span className="transaction-secondary">
+                        {transaction.date
+                          ? new Date(
+                              transaction.date
+                            ).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "—"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className="transaction-secondary">
+                        {transaction.paymentMethod || "—"}
+                      </span>
+                    </td>
+
+                    <td className="text-end">
+                      <span className="transaction-amount">
+                        -₹
+                        {Math.abs(
+                          Number(transaction.amount) || 0
+                        ).toLocaleString("en-IN")}
+                      </span>
+                    </td>
+
+                    <td className="text-end">
+                      <div className="transaction-actions">
+                        <button
+                          type="button"
+                          className="transaction-action-btn edit-action"
+                          title="Edit transaction"
+                          aria-label={`Edit ${transaction.title}`}
+                          onClick={() =>
+                            setEditingExpense(transaction)
+                          }
+                        >
+                          <Edit2 size={14} />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="transaction-action-btn delete-action"
+                          title="Delete transaction"
+                          aria-label={`Delete ${transaction.title}`}
+                          onClick={() => deleteItem(transaction._id)}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
 
-          {/* Empty State */}
-          {filtered.length === 0 && (
+          {!loading && !error && filtered.length === 0 && (
             <div className="transactions-empty">
-              <div className="transactions-empty-icon">
-                🔍
-              </div>
-
+              <div className="transactions-empty-icon">🔍</div>
               <h4>No transactions found</h4>
-
-              <p>
-                Try changing your search or filters.
-              </p>
+              <p>Try changing your search or filters.</p>
             </div>
           )}
         </div>
@@ -574,22 +601,23 @@ function Expenses() {
         <div className="transactions-footer">
           <p>
             {filtered.length}{" "}
-            {filtered.length === 1
-              ? "transaction"
-              : "transactions"}
+            {filtered.length === 1 ? "transaction" : "transactions"}
           </p>
 
           <div className="transaction-pagination">
-            <button type="button">Previous</button>
-
+            <button type="button" disabled>
+              Previous
+            </button>
             <button
               type="button"
               className="active-page"
+              aria-current="page"
             >
               1
             </button>
-
-            <button type="button">Next</button>
+            <button type="button" disabled>
+              Next
+            </button>
           </div>
         </div>
       </div>

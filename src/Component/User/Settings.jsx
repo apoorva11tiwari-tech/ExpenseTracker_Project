@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase"; 
+import { auth } from "../../firebase";
+import apiFetch from "../../config/apiFetch";
 import "./Settings.css";
 
 const fonts = [
@@ -59,14 +61,11 @@ export default function Settings() {
   const [animation, setAnimation] = useState("full");
   const [activeTheme, setActiveTheme] = useState("Terracotta");
 
-  // Profile Form States
+  // Profile form states
   const [fullName, setFullName] = useState("");
-  const [monthlyIncome, setMonthlyIncome] = useState(
-    localStorage.getItem("userIncome") || "50000"
-  );
-  const [currency, setCurrency] = useState(
-    localStorage.getItem("userCurrency") || "INR (₹)"
-  );
+  const [monthlyIncome, setMonthlyIncome] = useState("50000");
+  const [currency, setCurrency] = useState("INR (₹)");
+  const [savingProfile, setSavingProfile] = useState(false);
 
   const [notifs, setNotifs] = useState({
     budgetAlert: true,
@@ -76,21 +75,35 @@ export default function Settings() {
     unusualSpending: true,
   });
 
-  // Listen for navigation state updates to switch tabs dynamically
+  // Listen for navigation state updates to switch tabs
   useEffect(() => {
     if (location.state?.activeTab) {
       setActiveSection(location.state.activeTab);
     }
   }, [location.state]);
 
-  // Sync active logged-in Firebase user
+  // Sync the logged-in Firebase user and load their preferences
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUser(user);
         setFullName(user.displayName || "");
+
+        setMonthlyIncome(
+          localStorage.getItem(`userIncome_${user.uid}`) || "50000"
+        );
+
+        setCurrency(
+          localStorage.getItem(`userCurrency_${user.uid}`) || "INR (₹)"
+        );
+      } else {
+        setCurrentUser(null);
+        setFullName("");
+        setMonthlyIncome("50000");
+        setCurrency("INR (₹)");
       }
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -100,35 +113,71 @@ export default function Settings() {
       navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
+      alert("Unable to log out. Please try again.");
     }
   };
 
+  // Save profile preferences and monthly salary
   const handleSaveProfile = async () => {
-    try {
-      // Save locally for quick retrieval
-      localStorage.setItem("userIncome", monthlyIncome);
-      localStorage.setItem("userCurrency", currency);
+    if (!currentUser) {
+      alert("Please log in before saving your profile.");
+      return;
+    }
 
-      // Post the monthly income to your backend API so Dashboard updates
-      const response = await fetch("http://localhost:5000/api/income", {
+    const amount = Number(monthlyIncome);
+
+    if (!Number.isFinite(amount) || amount < 0) {
+      alert("Please enter a valid monthly income.");
+      return;
+    }
+
+    try {
+      setSavingProfile(true);
+
+      // Save preferences separately for each logged-in user
+      localStorage.setItem(
+        `userIncome_${currentUser.uid}`,
+        String(amount)
+      );
+
+      localStorage.setItem(
+        `userCurrency_${currentUser.uid}`,
+        currency
+      );
+
+      // apiFetch adds the Firebase ID token to the request
+      const response = await apiFetch("/api/income", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: "Monthly Salary / Baseline",
-          amount: Number(monthlyIncome),
+          amount,
           source: "Salary",
           date: new Date().toISOString(),
         }),
       });
 
       if (response.ok) {
-        alert("Monthly income saved successfully to database!");
+        alert("Monthly income saved successfully!");
       } else {
-        alert("Failed to save income to database.");
+        const result = await response.json().catch(() => ({}));
+
+        console.error(
+          "Failed to save monthly income:",
+          response.status,
+          result
+        );
+
+        alert(
+          result.message ||
+            result.error ||
+            `Failed to save monthly income (${response.status}).`
+        );
       }
     } catch (error) {
       console.error("Error saving income:", error);
-      alert("Error connecting to server.");
+      alert(error.message || "Error connecting to server.");
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -150,25 +199,31 @@ export default function Settings() {
     <div className="container py-4 max-w-lg">
       {/* Page Title */}
       <div className="mb-4">
-        <h1 className="fw-bold h2 mb-1" style={{ color: "var(--text-main)" }}>
+        <h1
+          className="fw-bold h2 mb-1"
+          style={{ color: "var(--text-main)" }}
+        >
           Settings ⚙️
         </h1>
-        <p className="text-muted small">Customize your CashMate experience</p>
+        <p className="text-muted small">
+          Customize your CashMate experience
+        </p>
       </div>
 
       <div className="row g-4">
         {/* Sidebar */}
         <div className="col-12 col-md-3">
           <div className="settings-card p-2 d-flex flex-column gap-1">
-            {sections.map((s) => (
+            {sections.map((section) => (
               <button
-                key={s.id}
-                onClick={() => setActiveSection(s.id)}
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
                 className={`btn text-start sidebar-btn fw-bold text-nowrap ${
-                  activeSection === s.id ? "active" : ""
+                  activeSection === section.id ? "active" : ""
                 }`}
               >
-                <span className="me-2">{s.emoji}</span> {s.label}
+                <span className="me-2">{section.emoji}</span>
+                {section.label}
               </button>
             ))}
           </div>
@@ -176,7 +231,7 @@ export default function Settings() {
 
         {/* Main Content Area */}
         <div className="col-12 col-md-9">
-          {/* 1. Appearance Section */}
+          {/* Appearance Section */}
           {activeSection === "appearance" && (
             <div className="settings-card p-4 mb-3">
               <h2 className="h5 fw-bold mb-4">🎨 Appearance</h2>
@@ -186,6 +241,7 @@ export default function Settings() {
                 <label className="form-label text-muted small fw-semibold">
                   Theme Mode
                 </label>
+
                 <div className="row g-2">
                   {["light", "dark", "system"].map((mode) => (
                     <div key={mode} className="col-4">
@@ -199,9 +255,10 @@ export default function Settings() {
                           {mode === "light"
                             ? "☀️"
                             : mode === "dark"
-                            ? "🌙"
-                            : "💻"}
+                              ? "🌙"
+                              : "💻"}
                         </div>
+
                         <span className="text-capitalize small fw-bold d-block">
                           {mode}
                         </span>
@@ -216,13 +273,15 @@ export default function Settings() {
                 <label className="form-label text-muted small fw-semibold">
                   Color Theme
                 </label>
+
                 <div className="d-flex flex-wrap gap-2">
-                  {warmThemes.map((t) => {
-                    const isSelected = activeTheme === t.name;
+                  {warmThemes.map((theme) => {
+                    const isSelected = activeTheme === theme.name;
+
                     return (
                       <button
-                        key={t.name}
-                        onClick={() => handleThemeChange(t)}
+                        key={theme.name}
+                        onClick={() => handleThemeChange(theme)}
                         className={`btn theme-option-btn d-flex align-items-center gap-2 px-3 py-2 ${
                           isSelected ? "selected" : ""
                         }`}
@@ -232,10 +291,14 @@ export default function Settings() {
                           style={{
                             width: "14px",
                             height: "14px",
-                            background: `linear-gradient(135deg, ${t.coral}, ${t.peach})`,
+                            background: `linear-gradient(135deg, ${theme.coral}, ${theme.peach})`,
                           }}
                         />
-                        <span className="small fw-semibold">{t.name}</span>
+
+                        <span className="small fw-semibold">
+                          {theme.name}
+                        </span>
+
                         {isSelected && (
                           <span style={{ color: "var(--coral)" }}>✓</span>
                         )}
@@ -250,6 +313,7 @@ export default function Settings() {
                 <label className="form-label text-muted small fw-semibold">
                   Animation Level
                 </label>
+
                 <div className="row g-2">
                   {["full", "reduced", "off"].map((level) => (
                     <div key={level} className="col-4">
@@ -263,9 +327,10 @@ export default function Settings() {
                           {level === "full"
                             ? "✨"
                             : level === "reduced"
-                            ? "⚡"
-                            : "🔇"}
+                              ? "⚡"
+                              : "🔇"}
                         </div>
+
                         <span className="text-capitalize small fw-bold d-block">
                           {level}
                         </span>
@@ -277,37 +342,43 @@ export default function Settings() {
             </div>
           )}
 
-          {/* 2. Font Customization */}
+          {/* Font Customization */}
           {activeSection === "font" && (
             <div className="settings-card p-4 mb-3">
-              <h2 className="h5 fw-bold mb-2">✍️ Font Customization</h2>
+              <h2 className="h5 fw-bold mb-2">
+                ✍️ Font Customization
+              </h2>
+
               <p className="text-muted small mb-4">
                 Choose a font and the entire app updates instantly.
               </p>
+
               <div className="d-flex flex-column gap-2">
-                {fonts.map((f) => (
+                {fonts.map((fontName) => (
                   <button
-                    key={f}
-                    onClick={() => setFont(f)}
+                    key={fontName}
+                    onClick={() => setFont(fontName)}
                     className={`btn theme-option-btn text-start p-3 d-flex justify-content-between align-items-center ${
-                      font === f ? "selected" : ""
+                      font === fontName ? "selected" : ""
                     }`}
                   >
                     <div>
                       <div
                         className="fw-bold"
-                        style={{ fontFamily: `'${f}', sans-serif` }}
+                        style={{ fontFamily: `'${fontName}', sans-serif` }}
                       >
-                        {f}
+                        {fontName}
                       </div>
+
                       <div
                         className="small text-muted"
-                        style={{ fontFamily: `'${f}', sans-serif` }}
+                        style={{ fontFamily: `'${fontName}', sans-serif` }}
                       >
-                        {fontPreviews[f]} — ₹12,550 saved this month
+                        {fontPreviews[fontName]} — ₹12,550 saved this month
                       </div>
                     </div>
-                    {font === f && (
+
+                    {font === fontName && (
                       <span
                         className="badge rounded-circle p-2"
                         style={{ backgroundColor: "var(--coral)" }}
@@ -321,10 +392,13 @@ export default function Settings() {
             </div>
           )}
 
-          {/* 3. Notifications */}
+          {/* Notifications */}
           {activeSection === "notifications" && (
             <div className="settings-card p-4 mb-3">
-              <h2 className="h5 fw-bold mb-4">🔔 Notification Preferences</h2>
+              <h2 className="h5 fw-bold mb-4">
+                🔔 Notification Preferences
+              </h2>
+
               <div className="d-flex flex-column gap-3">
                 {[
                   {
@@ -350,7 +424,7 @@ export default function Settings() {
                   {
                     key: "unusualSpending",
                     label: "Unusual Spending",
-                    desc: "Alert on spending anomalies",
+                    desc: "Alert on unusual spending patterns",
                   },
                 ].map((item) => (
                   <div
@@ -359,13 +433,21 @@ export default function Settings() {
                     style={{ backgroundColor: "var(--bg-alt)" }}
                   >
                     <div>
-                      <div className="fw-semibold small">{item.label}</div>
-                      <div className="text-muted extra-small">{item.desc}</div>
+                      <div className="fw-semibold small">
+                        {item.label}
+                      </div>
+                      <div className="text-muted extra-small">
+                        {item.desc}
+                      </div>
                     </div>
+
                     <Toggle
                       checked={notifs[item.key]}
-                      onChange={(v) =>
-                        setNotifs((n) => ({ ...n, [item.key]: v }))
+                      onChange={(value) =>
+                        setNotifs((previous) => ({
+                          ...previous,
+                          [item.key]: value,
+                        }))
                       }
                     />
                   </div>
@@ -374,10 +456,12 @@ export default function Settings() {
             </div>
           )}
 
-          {/* 4. Profile Section */}
+          {/* Profile */}
           {activeSection === "profile" && (
             <div className="settings-card p-4 mb-3">
-              <h2 className="h5 fw-bold mb-4">👤 Profile Information</h2>
+              <h2 className="h5 fw-bold mb-4">
+                👤 Profile Information
+              </h2>
 
               <div className="d-flex align-items-center gap-3 mb-4">
                 <div
@@ -399,14 +483,20 @@ export default function Settings() {
                     "👤"
                   )}
                 </div>
+
                 <div>
                   <div className="fw-bold">
-                    {currentUser?.displayName || "User"}
+                    {currentUser?.displayName || fullName || "User"}
                   </div>
+
                   <div className="text-muted small">
                     {currentUser?.email || "No email connected"}
                   </div>
-                  <button className="btn btn-link p-0 text-decoration-none extra-small fw-bold style-coral">
+
+                  <button
+                    type="button"
+                    className="btn btn-link p-0 text-decoration-none extra-small fw-bold style-coral"
+                  >
                     Change photo
                   </button>
                 </div>
@@ -417,11 +507,12 @@ export default function Settings() {
                   <label className="form-label small fw-bold mb-1">
                     Full Name
                   </label>
+
                   <input
                     type="text"
                     className="form-control input-custom"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={(event) => setFullName(event.target.value)}
                   />
                 </div>
 
@@ -429,11 +520,13 @@ export default function Settings() {
                   <label className="form-label small fw-bold mb-1">
                     Email
                   </label>
+
                   <input
                     type="text"
                     className="form-control input-custom"
-                    defaultValue={currentUser?.email || ""}
+                    value={currentUser?.email || ""}
                     disabled
+                    readOnly
                   />
                 </div>
 
@@ -441,11 +534,15 @@ export default function Settings() {
                   <label className="form-label small fw-bold mb-1">
                     Monthly Income (₹)
                   </label>
+
                   <input
                     type="number"
+                    min="0"
                     className="form-control input-custom"
                     value={monthlyIncome}
-                    onChange={(e) => setMonthlyIncome(e.target.value)}
+                    onChange={(event) =>
+                      setMonthlyIncome(event.target.value)
+                    }
                   />
                 </div>
 
@@ -453,25 +550,34 @@ export default function Settings() {
                   <label className="form-label small fw-bold mb-1">
                     Currency
                   </label>
+
                   <input
                     type="text"
                     className="form-control input-custom"
                     value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
+                    onChange={(event) => setCurrency(event.target.value)}
                   />
                 </div>
               </div>
 
-              <button onClick={handleSaveProfile} className="btn btn-primary-gradient">
-                💾 Save Changes
+              <button
+                type="button"
+                onClick={handleSaveProfile}
+                className="btn btn-primary-gradient"
+                disabled={savingProfile}
+              >
+                {savingProfile ? "Saving..." : "💾 Save Changes"}
               </button>
             </div>
           )}
 
-          {/* 5. Security Section */}
+          {/* Security */}
           {activeSection === "security" && (
             <div className="settings-card p-4 mb-3">
-              <h2 className="h5 fw-bold mb-4">🔐 Security & Privacy</h2>
+              <h2 className="h5 fw-bold mb-4">
+                🔐 Security & Privacy
+              </h2>
+
               <div className="d-flex flex-column gap-3">
                 {[
                   {
@@ -496,14 +602,21 @@ export default function Settings() {
                   },
                 ].map((item) => (
                   <button
+                    type="button"
                     key={item.label}
                     className="btn theme-option-btn text-start p-3 d-flex align-items-center gap-3"
                   >
                     <span className="fs-4">{item.emoji}</span>
+
                     <div className="flex-grow-1">
-                      <div className="fw-semibold small">{item.label}</div>
-                      <div className="text-muted extra-small">{item.desc}</div>
+                      <div className="fw-semibold small">
+                        {item.label}
+                      </div>
+                      <div className="text-muted extra-small">
+                        {item.desc}
+                      </div>
                     </div>
+
                     <span className="text-muted">→</span>
                   </button>
                 ))}
@@ -511,8 +624,9 @@ export default function Settings() {
             </div>
           )}
 
-          {/* Logout Button */}
+          {/* Logout */}
           <button
+            type="button"
             onClick={handleLogout}
             className="btn w-100 py-3 fw-bold rounded-4 border-2"
             style={{

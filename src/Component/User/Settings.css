@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+:root {
+  --coral: #e85d2e;
+  --peach: #f4a261;
+  --text-main: #2d2926;
+  --bg-alt: #fff7f2;
+  --border-color: #e5ddd7;
+}
+
+body {
+  background: #fffaf7;
+  color: var(--text-main);
+  font-family: "Inter", sans-serif;
+=======
 /* =====================================================
    CASHMATE SETTINGS & PROFILE - MODERN DESIGN
    ===================================================== */
@@ -16,10 +30,25 @@
 .settings-page {
   padding: 0;
   background-color: var(--bg-main);
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }
 
 /* Settings Cards & Containers */
 .settings-card {
+<<<<<<< HEAD
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-btn {
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-main) !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+=======
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 20px;
@@ -60,9 +89,43 @@
 .sidebar-btn:hover {
   background-color: #f1f5f9;
   color: var(--text-main);
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }
 
+.sidebar-btn:hover,
 .sidebar-btn.active {
+<<<<<<< HEAD
+  background: rgba(232, 93, 46, 0.1) !important;
+  color: var(--coral) !important;
+}
+
+.theme-option-btn {
+  border: 1px solid var(--border-color) !important;
+  background: white !important;
+  color: var(--text-main) !important;
+  border-radius: 12px !important;
+  transition: 0.2s ease;
+}
+
+.theme-option-btn:hover {
+  border-color: var(--coral) !important;
+  transform: translateY(-1px);
+}
+
+.theme-option-btn.selected {
+  border: 2px solid var(--coral) !important;
+  background: rgba(232, 93, 46, 0.06) !important;
+}
+
+.custom-switch-btn {
+  width: 48px;
+  height: 26px;
+  border: none;
+  border-radius: 30px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+=======
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.12));
   color: var(--indigo-primary);
   font-weight: 700;
@@ -138,7 +201,9 @@
   background-color: #cbd5e1;
   position: relative;
   transition: background-color 0.2s ease;
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .custom-switch-btn.active {
@@ -148,6 +213,12 @@
 .custom-switch-thumb {
   width: 20px;
   height: 20px;
+<<<<<<< HEAD
+  background: white;
+  border-radius: 50%;
+  transition: 0.2s;
+  transform: translateX(0);
+=======
   background-color: #fff;
   border-radius: 50%;
   position: absolute;
@@ -155,8 +226,47 @@
   left: 3px;
   transition: transform 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }
 
 .custom-switch-btn.active .custom-switch-thumb {
   transform: translateX(22px);
+<<<<<<< HEAD
+}
+
+.input-custom {
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  padding: 10px 12px;
+}
+
+.input-custom:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(232, 93, 46, 0.1);
+}
+
+.btn-primary-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--coral),
+    var(--peach)
+  );
+  color: rgb(18, 10, 72);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.style-coral {
+  color: var(--coral) !important;
+}
+
+.extra-small {
+  font-size: 12px;
+}
+
+.max-w-lg {
+  max-width: 1100px;
+=======
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }

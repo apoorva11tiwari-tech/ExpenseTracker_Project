@@ -1,0 +1,110 @@
+.auth-logs-container {
+  padding: 24px;
+  background-color: transparent;
+  color: #ffffff;
+}
+
+.auth-logs-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.auth-logs-header .subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 24px 0;
+}
+
+/* Filters Layout Fix */
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* Search Box Fix */
+.search-box input,
+.filters-row input {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  width: 220px !important;
+  outline: none !important;
+}
+
+.search-box input::placeholder {
+  color: #64748b !important;
+}
+
+/* Filter Groups (Button Containers) */
+.filter-group {
+  display: flex;
+  background-color: #0f172a !important;
+  border-radius: 20px;
+  padding: 3px;
+  border: 1px solid #1e293b;
+}
+
+/* Filter Buttons Fix (White background hata diya gaya hai) */
+.filter-btn,
+.filter-group button {
+  background-color: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  padding: 6px 16px !important;
+  border-radius: 16px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+
+/* Active State Button */
+.filter-btn.active,
+.filter-group button.active {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Table Wrapper Fix */
+.table-wrapper {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.logs-table th {
+  padding: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.logs-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #1e293b;
+  font-size: 13px;
+}
+
+.no-data {
+  text-align: center;
+  color: #64748b;
+  padding: 32px;
+}

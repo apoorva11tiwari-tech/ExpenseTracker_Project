@@ -1,0 +1,18 @@
+.bg-light-card {
+  background-color: #ffffff;
+  border: 1px solid #f1f3f9;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.text-muted-custom {
+  color: #8c98a4;
+}
+
+.fs-7 {
+  font-size: 0.85rem;
+}
+
+.form-control:focus {
+  border-color: #805ad5;
+  box-shadow: 0 0 0 0.2rem rgba(128, 90, 213, 0.15);
+}

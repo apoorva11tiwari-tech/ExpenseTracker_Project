@@ -5,6 +5,8 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "
 import { auth, googleProvider } from "./firebase";
 
 export default function Signup() {
+
+  // Used to show/hide password
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   

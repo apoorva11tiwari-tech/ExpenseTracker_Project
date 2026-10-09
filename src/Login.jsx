@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "./Firebase";
+import { auth, googleProvider } from "./firebase";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);

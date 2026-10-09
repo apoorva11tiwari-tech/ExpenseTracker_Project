@@ -1,14 +1,12 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// Public Components
 import Landing from "./LandingPage";
 import Login from "./Login";
 import SignUp from "./SignUp";
 
-// Layout
-import UserLayout from "./Component/User/userLayout";
-
-// Components
+// User Components
 import Dashboard from "./Component/User/Dashboard";
 import AddExpense from "./Component/User/AddExpense";
 import Expenses from "./Component/User/Expenses";
@@ -21,70 +19,37 @@ import Reminders from "./Component/User/Reminders";
 import Budget from "./Component/User/Budget";
 import UserIncome from "./Component/User/UserIncome";
 
+// Admin Components (Agar aapne add kiye hain)
+import AdminDashboard from "./Component/Admin/src/components/Dashboard";
+import AdminUsers from "./Component/Admin/src/components/adminUsers"
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ========================================== */}
-        {/*              PUBLIC ROUTES                 */}
-        {/* ========================================== */}
-
-        {/* Landing Page */}
+        {/* Public Routes */}
         <Route path="/" element={<Landing />} />
-
-        {/* Login Page */}
         <Route path="/login" element={<Login />} />
-
-        {/* SignUp page */}
         <Route path="/signup" element={<SignUp />} />
 
-        {/* ========================================== */}
-        {/*             PROTECTED ROUTES               */}
-        {/* ========================================== */}
+        {/* User Dashboard Routes */}
+        <Route path="/app/dashboard" element={<Dashboard />} />
+        <Route path="/app/add-expense" element={<AddExpense />} />
+        <Route path="/app/settings" element={<Settings />} />
+        <Route path="/app/goals" element={<GoalSavings />} />
+        <Route path="/app/expenses" element={<Expenses />} />
+        <Route path="/app/analytics" element={<Analytics />} />
+        <Route path="/app/aiinsights" element={<AIInsights />} />
+        <Route path="/app/notification" element={<Notifications />} />
+        <Route path="/app/reminders" element={<Reminders />} />
+        <Route path="/app/budget" element={<Budget />} />
+        <Route path="/app/userincome" element={<UserIncome />} />
 
-        <Route path="/app" element={<UserLayout />}>
-          {/* User Dashboard */}
-          <Route path="dashboard" element={<Dashboard />} />
+        {/* Admin Routes (Agar aap build kar rahe hain) */}
+        <Route path="/admin/src/components/dashboard" element={<Dashboard />} /> 
+         <Route path="/admin /src/components/adminusers" element={<AdminUsers />} /> 
 
-          {/* Add Expense */}
-          <Route path="add-expense" element={<AddExpense />} />
-
-          {/* settings */}
-          <Route path="settings" element={<Settings />} />
-
-          {/* Goalsavings */}
-          <Route path="goals" element={<GoalSavings />} />
-          <Route path="savings" element={<GoalSavings />} />
-
-          {/* Expenses */}
-          <Route path="expenses" element={<Expenses />} />
-          <Route path="transactions" element={<Expenses />} />
-
-          {/* Analytics */}
-          <Route path="analytics" element={<Analytics />} />
-
-          {/* AiInsights */}
-          <Route path="insights" element={<AIInsights />} />
-          <Route path="ai-insights" element={<AIInsights />} />
-
-          {/* Notification */}
-          <Route path="notification" element={<Notifications />} />
-          <Route path="notifications" element={<Notifications />} />
-
-          {/* Reminders */}
-          <Route path="reminders" element={<Reminders />} />
-
-          {/* Budget */}
-          <Route path="budget" element={<Budget />} />
-
-          {/* User Income */}
-          <Route path="userincome" element={<UserIncome />} />
-        </Route>
-
-        {/* ========================================== */}
-        {/*               FALLBACK ROUTE               */}
-        {/* ========================================== */}
-
+        {/* 404 Fallback Route */}
         <Route
           path="*"
           element={

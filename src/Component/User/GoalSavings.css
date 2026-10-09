@@ -1,7 +1,145 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+:root {
+  --bg-alt: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-2: #475569;
+  --muted: #94a3b8;
+  --coral: #ff6b6b;
+  --peach: #ffa07a;
+  --lavender: #b8a9d9;
+  --mint: #4ecdc4;
+}
+
+/* Page Animations */
+.page-enter {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Card Hover Effects */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+/* Progress Bar Smooth Transition */
+.progress-animated {
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Confetti Piece Animation */
+.confetti-piece {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: confettiFall linear infinite;
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(120px) rotate(360deg);
+  }
+}
+
+/* Custom Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes celebratePop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.25;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-celebrate {
+  animation: celebratePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-bounce-soft {
+  animation: bounceSoft 2s infinite ease-in-out;
+}
+
+.animate-float {
+  animation: float 3s infinite ease-in-out;
+}
+
+.animate-glow {
+  animation: glow 3s infinite ease-in-out;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(20px);
+  pointer-events: none;
+/* =====================================================
+   VIBRANT PURPLE / PINK / INDIGO SAVINGS GOALS THEME
+===================================================== *
 /* =========================================================
    CASHMATE — SAVINGS GOALS
    Clean • Colorful • Modern • Consistent
 ========================================================= */
+
 
 .goals-page {
   --navy: #182033;
@@ -35,8 +173,8 @@
 
   color: var(--navy);
   animation: goalsFadeIn 0.35s ease;
-}
 
+}}
 @keyframes goalsFadeIn {
   from {
     opacity: 0;
@@ -48,7 +186,6 @@
     transform: translateY(0);
   }
 }
-
 
 /* =========================================================
    PAGE BACKGROUND
@@ -1092,4 +1229,5 @@
   .goal-progress-bar .progress-bar {
     transition: none !important;
   }
+>>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
 }

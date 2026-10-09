@@ -9,7 +9,7 @@ const {
   updateExpense,
 } = require("../controllers/expenseController.js");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Create an expense
 router.post("/", verifyUser, addExpense);

@@ -1,6 +1,5 @@
 
 const express = require("express");
-
 const router = express.Router();
 
 const {
@@ -10,12 +9,12 @@ const {
     updateIncome
 } = require("../controllers/incomeController.js");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Add income
 router.post("/", verifyUser, addIncome);
 
-// Get only authenticated user's incomes
+// Get logged-in user's income
 router.get("/", verifyUser, getIncomes);
 
 // Delete income

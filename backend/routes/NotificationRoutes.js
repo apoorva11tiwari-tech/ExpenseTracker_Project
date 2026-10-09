@@ -7,7 +7,7 @@ const {
     markAsRead
 } = require("../controllers/notificationController");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Protect all notification routes
 router.get("/", verifyUser, getNotifications);

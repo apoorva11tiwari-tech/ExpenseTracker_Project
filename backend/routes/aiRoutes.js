@@ -7,7 +7,7 @@ const {
   allocateSavingsWithAI,
 } = require("../controllers/aiController");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Protect all AI endpoints with Firebase authentication
 router.get("/insights", verifyUser, getAiInsights);

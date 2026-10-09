@@ -30,6 +30,7 @@ import { auth } from "../../Firebase";
 
 import "./userLayout.css";
 
+
 const navItems = [
   {
     to: "/app/dashboard",
@@ -37,7 +38,7 @@ const navItems = [
     label: "Dashboard",
   },
   {
-    to: "/app/transactions",
+    to: "/app/expenses",
     icon: Receipt,
     label: "Expenses",
   },
@@ -57,12 +58,12 @@ const navItems = [
     label: "Analytics",
   },
   {
-    to: "/app/savings",
+    to: "/app/goals",
     icon: Target,
     label: "Goals",
   },
   {
-    to: "/app/ai-insights",
+    to: "/app/aiinsights",
     icon: Brain,
     label: "AI Insights",
   },
@@ -72,7 +73,7 @@ const navItems = [
     label: "Reminders",
   },
   {
-    to: "/app/notifications",
+    to: "/app/notification",
     icon: Bell,
     label: "Notifications",
   },

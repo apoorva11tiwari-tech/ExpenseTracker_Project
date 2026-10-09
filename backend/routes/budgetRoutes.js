@@ -8,7 +8,7 @@ const {
   deleteBudget,
 } = require("../controllers/budgetController");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Get the logged-in user's budgets or create/update a budget.
 router

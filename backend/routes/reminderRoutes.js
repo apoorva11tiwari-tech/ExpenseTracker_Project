@@ -8,7 +8,7 @@ const {
     updateReminderStatus
 } = require("../controllers/reminderController");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 router.get("/", verifyUser, getReminders);
 router.post("/", verifyUser, addReminder);

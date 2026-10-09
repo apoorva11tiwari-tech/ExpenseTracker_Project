@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const { getAnalyticsSummary } = require("../controllers/analyticsController");
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Protect analytics with Firebase authentication
 router.get("/", verifyUser, getAnalyticsSummary);

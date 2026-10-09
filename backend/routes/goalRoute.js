@@ -9,7 +9,7 @@ const {
   deleteGoal,
 } = require("../controllers/goalController");
 
-const verifyUser = require("../middleware/authMiddleware");
+const verifyUser = require("../middleware/firebaseAuthMiddleware");
 
 // Protect all Goals endpoints with Firebase authentication
 router.route("/")

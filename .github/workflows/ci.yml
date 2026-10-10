@@ -21,11 +21,20 @@ jobs:
           node-version: 22
           cache: npm
 
+      
+      - name: Verify frontend files
+        run: |
+          pwd
+          ls -la
+          test -f package.json
+          test -f package-lock.json
+
       - name: Install frontend dependencies
-        run: npm ci
+        run: npm ci --prefix .
 
       - name: Build frontend
         run: npm run build
+
 
       - name: Install backend dependencies
         working-directory: backend

@@ -1,5 +1,4 @@
-
-const Budget = require("../models/Budget");
+const Budget = require("../models/budget");
 const Expense = require("../models/Expense");
 
 // Get budgets with spending calculated for the logged-in user

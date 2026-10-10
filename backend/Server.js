@@ -11,7 +11,7 @@ const analyticsRoutes = require("./routes/analyticsRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const goalRoutes = require("./routes/goalRoute");
-const notificationRoutes = require("./routes/notificationRoutes");
+const notificationRoutes =require("./routes/NotificationRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 

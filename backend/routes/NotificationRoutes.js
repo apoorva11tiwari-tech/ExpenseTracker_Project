@@ -5,7 +5,7 @@ const router = express.Router();
 const {
     getNotifications,
     markAsRead
-} = require("../controllers/notificationController");
+} = require("../controllers/NotificationController");
 
 const verifyUser = require("../middleware/firebaseAuthMiddleware");
 

@@ -1,99 +1,192 @@
-import React, { useState } from 'react'
-import './AuthenticationLogs.css'
+import React, { useState } from 'react';
+import './AccessManagement.css';
 
-export default function AuthenticationLogs({ logs = [] }) {
-  const [filterType, setFilterType] = useState('All')
-  const [searchQuery, setSearchQuery] = useState('')
+export default function AccessManagement() {
+const [users, setUsers] = useState([]);
+const [admins, setAdmins] = useState([]);
+const [newUserId, setNewUserId] = useState('');
+const [newAdminId, setNewAdminId] = useState('');
 
-  const safeLogs = Array.isArray(logs) ? logs : []
+const toggleUserAccess = (id) => {
+setUsers((current) =>
+current.map((user) =>
+user.id === id ? { ...user, enabled: !user.enabled } : user
+)
+);
+};
 
-  const filteredLogs = safeLogs.filter(log => {
-    const matchesType = filterType === 'All' || log.event === filterType || log.result === filterType
-    const matchesSearch = log.id ? log.id.toLowerCase().includes(searchQuery.toLowerCase().trim()) : false
-    return matchesType && matchesSearch
-  })
+const togglePermission = (id, permission) => {
+setAdmins((current) =>
+current.map((admin) =>
+admin.id === id
+? {
+...admin,
+permissions: {
+...admin.permissions,
+[permission]: !admin.permissions[permission],
+},
+}
+: admin
+)
+);
+};
 
-  return (
-    <div className="auth-logs-container">
-      <h5 className="fw-bold text-white mb-3">Authentication Audit Logs</h5>
+const addUser = (event) => {
+event.preventDefault();
+const id = newUserId.trim();
+if (!id || users.some((user) => user.id === id)) return;
 
-      <div className="row g-3 mb-4 align-items-center">
-        <div className="col-12 col-md-5">
-          <div className="input-group">
-            <span className="input-group-text border-end-0 auth-logs-search-icon">
-              <i className="bi bi-search"></i>
-            </span>
-            <input 
-              type="text" 
-              className="form-control border-start-0 auth-logs-input" 
-              placeholder="Search logs by User ID..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
+setUsers((current) => [...current, { id, enabled: true }]);
+setNewUserId('');
 
-        <div className="col-12 col-md-3">
-          <select 
-            className="form-select auth-logs-select" 
-            value={filterType} 
-            onChange={(e) => setFilterType(e.target.value)}
-          >
-            <option value="All">All Log Types</option>
-            <option value="User Login">User Login</option>
-            <option value="Access Requested">Access Requested</option>
-            <option value="Success">Success</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-      </div>
+};
 
-      <div className="auth-logs-table-wrapper">
-        <div className="table-responsive">
-          <table className="table table-dark align-middle mb-0 auth-logs-table">
-            <thead>
-              <tr>
-                <th className="fw-semibold">USER ID</th>
-                <th className="fw-semibold">EVENT</th>
-                <th className="fw-semibold">AUTH METHOD</th>
-                <th className="fw-semibold">DATE & TIME</th>
-                <th className="fw-semibold text-end">RESULT</th>
+const addAdmin = (event) => {
+event.preventDefault();
+const id = newAdminId.trim();
+if (!id || admins.some((admin) => admin.id === id)) return;
+
+setAdmins((current) => [
+  ...current,
+  {
+    id,
+    permissions: {
+      manageUsers: false,
+      managePermissions: false,
+      viewLogs: false,
+    },
+  },
+]);
+setNewAdminId('');
+
+};
+
+return (
+<main className="access-management">
+<header className="access-header">
+<h2>Access Management</h2>
+<p>Control account access and manage administrator permissions.</p>
+</header>
+
+  <section className="access-panel">
+    <h3>User Access Control</h3>
+    <p className="access-help">
+      Add a user ID to manage whether their account is allowed access.
+    </p>
+
+    <form className="access-add-form" onSubmit={addUser}>
+      <input
+        aria-label="User ID"
+        value={newUserId}
+        onChange={(event) => setNewUserId(event.target.value)}
+        placeholder="Enter user ID or email"
+        required
+      />
+      <button type="submit">Add User</button>
+    </form>
+
+    {users.length === 0 ? (
+      <p className="access-empty">No users added yet.</p>
+    ) : (
+      <div className="access-table-wrap">
+        <table className="access-table">
+          <thead>
+            <tr>
+              <th>User ID / Email</th>
+              <th>Access Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>
+                  <span
+                    className={`access-status ${
+                      user.enabled ? 'enabled' : 'disabled'
+                    }`}
+                  >
+                    {user.enabled ? 'Enabled' : 'Disabled'}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    className={user.enabled ? 'access-disable' : 'access-enable'}
+                    onClick={() => toggleUserAccess(user.id)}
+                  >
+                    {user.enabled ? 'Disable Access' : 'Enable Access'}
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {filteredLogs.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="text-center py-5 text-secondary">
-                    No authentication logs recorded yet.
-                  </td>
-                </tr>
-              ) : (
-                filteredLogs.map((log, index) => (
-                  <tr key={log.id || index}>
-                    <td className="fw-bold text-white">
-                      {log.id}
-                    </td>
-                    <td className="text-white-50">
-                      {log.event}
-                    </td>
-                    <td>
-                      <span className="badge bg-dark border text-white">{log.method}</span>
-                    </td>
-                    <td className="auth-logs-date">
-                      {log.dateTime}
-                    </td>
-                    <td className="text-end">
-                      <span className={`badge rounded-pill px-3 py-1 bg-${log.result === 'Success' ? 'success' : log.result === 'Pending' ? 'warning' : 'danger'}`}>
-                        {log.result}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </div>
-  )
+    )}
+  </section>
+
+  <section className="access-panel">
+    <h3>Administrator Permissions</h3>
+    <p className="access-help">
+      Add an administrator and select the permissions they should have.
+    </p>
+
+    <form className="access-add-form" onSubmit={addAdmin}>
+      <input
+        aria-label="Administrator ID"
+        value={newAdminId}
+        onChange={(event) => setNewAdminId(event.target.value)}
+        placeholder="Enter administrator ID or email"
+        required
+      />
+      <button type="submit">Add Administrator</button>
+    </form>
+
+    {admins.length === 0 ? (
+      <p className="access-empty">No administrators added yet.</p>
+    ) : (
+      <div className="access-table-wrap">
+        <table className="access-table">
+          <thead>
+            <tr>
+              <th>Administrator</th>
+              <th>Manage Users</th>
+              <th>Manage Permissions</th>
+              <th>View Logs</th>
+            </tr>
+          </thead>
+          <tbody>
+            {admins.map((admin) => (
+              <tr key={admin.id}>
+                <td>{admin.id}</td>
+                {Object.entries(admin.permissions).map(([permission, allowed]) => (
+                  <td key={permission}>
+                    <label className="access-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={allowed}
+                        onChange={() => togglePermission(admin.id, permission)}
+                      />
+                      {allowed ? 'Allowed' : 'Not allowed'}
+                    </label>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </section>
+
+  <p className="access-note">
+    Note: These changes are currently stored in this page's temporary state.
+    Connect the backend and enforce permissions on the server before using
+    this page for real account security.
+  </p>
+</main>
+
+);
 }

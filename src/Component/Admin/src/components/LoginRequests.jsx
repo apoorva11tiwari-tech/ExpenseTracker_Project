@@ -1,159 +1,280 @@
-import React, { useState } from 'react'
 
-export default function LoginRequests({ requestsData = null, onApprove, onDeny }) {
-  const [filter, setFilter] = useState('All')
+import React, { useCallback, useEffect, useState } from "react";
 
-  // Default empty state (Removed dummy data)
-  const initialRequests = requestsData || []
+const API_URL = "http://localhost:5000/api/admin/login-requests";
 
-  const [requests, setRequests] = useState(initialRequests)
+export default function LoginRequests() {
+  const [filter, setFilter] = useState("All");
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState(null);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleApprove = (id) => {
-    setRequests(prev => prev.filter(req => req.id !== id))
-    if (onApprove) onApprove(id)
-  }
+  const fetchRequests = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-  const handleDeny = (id) => {
-    setRequests(prev => prev.filter(req => req.id !== id))
-    if (onDeny) onDeny(id)
-  }
+    try {
+      const token = sessionStorage.getItem("adminToken");
 
-  const filteredRequests = requests.filter(req => {
-    if (filter === 'Google') return req.method === 'Google'
-    if (filter === 'Email') return req.method === 'Email'
-    return true
-  })
+      if (!token) {
+        throw new Error("Admin session missing. Please log in again.");
+      }
+
+      const response = await fetch(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Failed to load login requests.");
+      }
+
+      setRequests(data.requests || []);
+    } catch (err) {
+      setError(err.message || "Unable to connect to the backend.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
+
+  const updateRequest = async (requestId, status) => {
+    const action = status === "Approved" ? "approve" : "deny";
+
+    if (
+      !window.confirm(`Are you sure you want to ${action} this request?`)
+    ) {
+      return;
+    }
+
+    setBusyId(requestId);
+    setError("");
+    setMessage("");
+
+    try {
+      const token = sessionStorage.getItem("adminToken");
+
+      if (!token) {
+        throw new Error("Admin session missing. Please log in again.");
+      }
+
+      const response = await fetch(`${API_URL}/${requestId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      const responseText = await response.text();
+
+console.log("Login Requests HTTP Status:", response.status);
+console.log("Login Requests Response:", responseText);
+
+let data;
+try {
+  data = JSON.parse(responseText);
+} catch {
+  throw new Error(
+    "Backend returned HTML instead of JSON. Check the backend URL and routes."
+  );
+}
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || `Could not ${action} request.`);
+      }
+
+      setRequests((previous) =>
+        previous.filter((request) => request._id !== requestId)
+      );
+
+      setMessage(`Request ${action}d successfully.`);
+    } catch (err) {
+      setError(err.message || "Action failed.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const filteredRequests = requests.filter((request) => {
+    if (filter === "Google") return request.method === "Google";
+    if (filter === "Email") return request.method === "Email";
+    return true;
+  });
+
+  const buttonStyle = (active) => ({
+    backgroundColor: active ? "#2563eb" : "transparent",
+    color: active ? "#fff" : "#94a3b8",
+    border: "none",
+    borderRadius: "8px",
+    padding: "7px 14px",
+    fontWeight: 600,
+  });
 
   return (
-    <div style={{ backgroundColor: '#090d16', minHeight: '85vh', color: '#fff' }} className="p-3 d-flex flex-column justify-content-between">
-      <div>
-        {/* Header & Filter Row */}
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <h3 className="fw-bold mb-1" style={{ fontSize: '1.5rem' }}>Login Requests</h3>
-            <span style={{ color: '#60a5fa', fontSize: '0.9rem' }}>
-              {requests.length} pending approval
-            </span>
-          </div>
-
-          {/* Filter Pills */}
-          <div className="d-flex gap-1 bg-dark-subtle p-1 rounded-3" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <button
-              type="button"
-              className={`btn btn-sm px-3 border-0 rounded-2 fw-semibold ${filter === 'All' ? 'btn-primary text-white' : 'text-secondary'}`}
-              style={{ fontSize: '0.8rem', backgroundColor: filter === 'All' ? '#2563eb' : 'transparent' }}
-              onClick={() => setFilter('All')}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              className={`btn btn-sm px-3 border-0 rounded-2 fw-semibold ${filter === 'Google' ? 'btn-primary text-white' : 'text-secondary'}`}
-              style={{ fontSize: '0.8rem', backgroundColor: filter === 'Google' ? '#2563eb' : 'transparent' }}
-              onClick={() => setFilter('Google')}
-            >
-              Google
-            </button>
-            <button
-              type="button"
-              className={`btn btn-sm px-3 border-0 rounded-2 fw-semibold ${filter === 'Email' ? 'btn-primary text-white' : 'text-secondary'}`}
-              style={{ fontSize: '0.8rem', backgroundColor: filter === 'Email' ? '#2563eb' : 'transparent' }}
-              onClick={() => setFilter('Email')}
-            >
-              Email
-            </button>
-          </div>
+    <div
+      className="p-3"
+      style={{
+        backgroundColor: "#090d16",
+        minHeight: "85vh",
+        color: "#fff",
+        borderRadius: "16px",
+      }}
+    >
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+          <h3 className="fw-bold mb-1">Login Requests</h3>
+          <span style={{ color: "#60a5fa" }}>
+            {requests.length} pending approval
+          </span>
         </div>
 
-        {/* Table Container */}
-        <div className="rounded-4 overflow-hidden" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-          <div className="table-responsive">
-            <table className="table table-dark align-middle mb-0" style={{ backgroundColor: 'transparent' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #1a2235' }}>
-                  <th className="py-3 px-4 text-secondary fw-semibold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em', backgroundColor: '#0f1523' }}>USER ID</th>
-                  <th className="py-3 px-4 text-secondary fw-semibold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em', backgroundColor: '#0f1523' }}>AUTH METHOD</th>
-                  <th className="py-3 px-4 text-secondary fw-semibold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em', backgroundColor: '#0f1523' }}>REQUEST DATE</th>
-                  <th className="py-3 px-4 text-secondary fw-semibold" style={{ fontSize: '0.75rem', letterSpacing: '0.05em', backgroundColor: '#0f1523' }}>STATUS</th>
-                  <th className="py-3 px-4 text-secondary fw-semibold text-center" style={{ fontSize: '0.75rem', letterSpacing: '0.05em', backgroundColor: '#0f1523' }}>ACTIONS</th>
+        <button
+          type="button"
+          className="btn btn-outline-light btn-sm"
+          onClick={fetchRequests}
+          disabled={loading || busyId !== null}
+        >
+          {loading ? "Loading..." : "↻ Refresh"}
+        </button>
+      </div>
+
+      <div
+        className="d-flex gap-1 p-1 rounded-3 mb-3"
+        style={{
+          width: "fit-content",
+          backgroundColor: "#0f1523",
+          border: "1px solid #1a2235",
+        }}
+      >
+        {["All", "Google", "Email"].map((option) => (
+          <button
+            key={option}
+            type="button"
+            style={buttonStyle(filter === option)}
+            onClick={() => setFilter(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+
+      {message && (
+        <div className="alert alert-success" role="status">
+          {message}
+        </div>
+      )}
+
+      <div
+        className="rounded-4 overflow-hidden"
+        style={{
+          backgroundColor: "#0f1523",
+          border: "1px solid #1a2235",
+        }}
+      >
+        <div className="table-responsive">
+          <table className="table table-dark align-middle mb-0">
+            <thead>
+              <tr>
+                <th className="p-3">REQUEST ID</th>
+                <th className="p-3">AUTH METHOD</th>
+                <th className="p-3">REQUEST DATE</th>
+                <th className="p-3">STATUS</th>
+                <th className="p-3 text-center">ACTIONS</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-5">
+                    Loading requests from database...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredRequests.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center py-5 text-secondary" style={{ backgroundColor: '#0f1523' }}>
-                      No pending login requests found.
+              ) : filteredRequests.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-center py-5 text-secondary"
+                  >
+                    No pending login requests found.
+                  </td>
+                </tr>
+              ) : (
+                filteredRequests.map((request) => (
+                  <tr key={request._id}>
+                    <td className="p-3">
+                      <code>{request._id}</code>
+                    </td>
+
+                    <td className="p-3">
+                      {request.method || "Email"}
+                    </td>
+
+                    <td className="p-3 text-secondary">
+                      {request.createdAt
+                        ? new Date(request.createdAt).toLocaleString()
+                        : "—"}
+                    </td>
+
+                    <td className="p-3">
+                      <span className="badge bg-warning text-dark">
+                        {request.status}
+                      </span>
+                    </td>
+
+                    <td className="p-3">
+                      <div className="d-flex justify-content-center gap-2">
+                        <button
+                          type="button"
+                          className="btn btn-success btn-sm"
+                          disabled={busyId !== null}
+                          onClick={() =>
+                            updateRequest(request._id, "Approved")
+                          }
+                        >
+                          {busyId === request._id ? "Saving..." : "Approve"}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          disabled={busyId !== null}
+                          onClick={() =>
+                            updateRequest(request._id, "Denied")
+                          }
+                        >
+                          {busyId === request._id ? "Saving..." : "Deny"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                ) : (
-                  filteredRequests.map((req) => (
-                    <tr key={req.id} style={{ borderBottom: '1px solid #1a2235' }}>
-                      <td className="py-3 px-4 fw-bold text-white" style={{ backgroundColor: '#0f1523' }}>
-                        {req.id}
-                      </td>
-                      <td className="py-3 px-4" style={{ backgroundColor: '#0f1523' }}>
-                        <span 
-                          className="badge rounded-pill px-3 py-2 fw-normal d-inline-flex align-items-center gap-1"
-                          style={{ backgroundColor: '#1e293b', color: '#60a5fa', fontSize: '0.8rem', border: '1px solid #334155' }}
-                        >
-                          {req.method === 'Google' ? (
-                            <>
-                              <i className="bi bi-google me-1" style={{ fontSize: '0.75rem', color: '#38bdf8' }}></i>
-                              <span style={{ color: '#38bdf8' }}>Google</span>
-                            </>
-                          ) : (
-                            <>
-                              <i className="bi bi-envelope me-1" style={{ fontSize: '0.75rem', color: '#c084fc' }}></i>
-                              <span style={{ color: '#c084fc' }}>Email</span>
-                            </>
-                          )}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-secondary" style={{ backgroundColor: '#0f1523', fontSize: '0.9rem' }}>
-                        {req.date}
-                      </td>
-                      <td className="py-3 px-4" style={{ backgroundColor: '#0f1523' }}>
-                        <span 
-                          className="badge rounded-pill px-3 py-1 fw-semibold"
-                          style={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', fontSize: '0.75rem', border: '1px solid rgba(245, 158, 11, 0.3)' }}
-                        >
-                          {req.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center" style={{ backgroundColor: '#0f1523' }}>
-                        <div className="d-flex justify-content-center gap-2">
-                          <button
-                            type="button"
-                            className="btn btn-sm px-3 rounded-2 fw-semibold border-0"
-                            style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', fontSize: '0.8rem' }}
-                            onClick={() => handleApprove(req.id)}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-sm px-3 rounded-2 fw-semibold border-0"
-                            style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', fontSize: '0.8rem' }}
-                            onClick={() => handleDeny(req.id)}
-                          >
-                            Deny
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <div className="d-flex justify-content-between align-items-center text-secondary small pt-4" style={{ fontSize: '0.75rem' }}>
-        <div>🔒 No personal user data is accessible from this console.</div>
+      <div className="d-flex justify-content-between flex-wrap gap-2 text-secondary small pt-4">
+        <div>🔒 Personal expense information is not displayed.</div>
         <div>Expense Tracker Admin · 2026</div>
       </div>
     </div>
-  )
+  );
 }

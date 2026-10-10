@@ -1,5 +1,6 @@
-import React from 'react'
-import { Line } from 'react-chartjs-2'
+
+import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,8 +10,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
-} from 'chart.js'
+  Filler,
+} from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -21,171 +22,304 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler
-)
+);
 
-export default function DashboardView({ statsData = null, activityData = null }) {
-  const stats = statsData || {
-    totalUsers: 0,
-    pendingRequests: 0,
-    googleLoginUsers: 0,
-    emailLoginUsers: 0,
-    activeSessions: 0,
-    blockedAccounts: 0,
-    approvedAccounts: 0,
-    deniedAccounts: 0
-  }
+export default function DashboardView({
+  statsData = null,
+  activityData = null,
+}) {
+  const [liveStats, setLiveStats] = useState(statsData);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const token = sessionStorage.getItem("adminToken");
+
+      if (!token) {
+        setError("Admin session missing. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/admin/stats",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.message || "Unable to load dashboard statistics."
+          );
+        }
+
+        setLiveStats(data.stats || {});
+        setError("");
+      } catch (err) {
+        setError(
+          err.message || "Unable to connect to the backend."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const stats = {
+    totalUsers: liveStats?.totalUsers ?? 0,
+    pendingRequests: liveStats?.pendingRequests ?? 0,
+    googleLoginUsers: liveStats?.googleLoginUsers ?? 0,
+    emailLoginUsers: liveStats?.emailLoginUsers ?? 0,
+    activeSessions: liveStats?.activeSessions ?? 0,
+    blockedAccounts: liveStats?.blockedAccounts ?? 0,
+    approvedAccounts: liveStats?.approvedAccounts ?? 0,
+    deniedAccounts: liveStats?.deniedAccounts ?? 0,
+  };
+
+  const labels = activityData?.labels || [
+    "06:00",
+    "08:00",
+    "10:00",
+    "12:00",
+    "14:00",
+    "16:00",
+    "18:00",
+    "20:00",
+  ];
 
   const chartData = {
-    labels: activityData?.labels || ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
+    labels,
     datasets: [
       {
-        label: 'Access Requests',
-        data: activityData?.accessRequests || [0, 0, 0, 0, 0, 0, 0, 0],
-        borderColor: '#f59e0b',
-        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        label: "Access Requests",
+        data: activityData?.accessRequests || labels.map(() => 0),
+        borderColor: "#f59e0b",
+        backgroundColor: "rgba(245, 158, 11, 0.1)",
         tension: 0.4,
         borderWidth: 2,
-        pointRadius: 0
+        pointRadius: 3,
       },
       {
-        label: 'Failed Logins',
-        data: activityData?.failedLogins || [0, 0, 0, 0, 0, 0, 0, 0],
-        borderColor: '#ef4444',
-        backgroundColor: 'transparent',
+        label: "Failed Logins",
+        data: activityData?.failedLogins || labels.map(() => 0),
+        borderColor: "#ef4444",
+        backgroundColor: "transparent",
         tension: 0.4,
         borderWidth: 2,
-        pointRadius: 0
+        pointRadius: 3,
       },
       {
-        label: 'Logouts',
-        data: activityData?.logouts || [0, 0, 0, 0, 0, 0, 0, 0],
-        borderColor: '#10b981',
-        backgroundColor: 'transparent',
+        label: "Logouts",
+        data: activityData?.logouts || labels.map(() => 0),
+        borderColor: "#10b981",
+        backgroundColor: "transparent",
         tension: 0.4,
         borderWidth: 2,
-        pointRadius: 0
+        pointRadius: 3,
       },
       {
-        label: 'Successful Logins',
-        data: activityData?.successfulLogins || [0, 0, 0, 0, 0, 0, 0, 0],
-        borderColor: '#8b5cf6',
-        backgroundColor: 'transparent',
+        label: "Successful Logins",
+        data: activityData?.successfulLogins || labels.map(() => 0),
+        borderColor: "#8b5cf6",
+        backgroundColor: "transparent",
         tension: 0.4,
         borderWidth: 2,
-        pointRadius: 0
-      }
-    ]
-  }
+        pointRadius: 3,
+      },
+    ],
+  };
 
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: "bottom",
         labels: {
-          color: '#94a3b8',
+          color: "#94a3b8",
           usePointStyle: true,
           boxWidth: 8,
-          padding: 20
-        }
+          padding: 20,
+        },
       },
       tooltip: {
-        backgroundColor: '#0f172a',
-        borderColor: '#1e293b',
-        borderWidth: 1
-      }
+        backgroundColor: "#0f172a",
+        borderColor: "#1e293b",
+        borderWidth: 1,
+      },
     },
     scales: {
       x: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: '#64748b' }
+        grid: {
+          color: "rgba(255, 255, 255, 0.05)",
+        },
+        ticks: {
+          color: "#64748b",
+        },
       },
       y: {
-        min: 0,
-        max: 100,
-        ticks: { stepSize: 25, color: '#64748b' },
-        grid: { color: 'rgba(255, 255, 255, 0.05)' }
-      }
-    }
-  }
+        beginAtZero: true,
+        suggestedMax: 10,
+        ticks: {
+          precision: 0,
+          color: "#64748b",
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 0.05)",
+        },
+      },
+    },
+  };
+
+  const cardStyle = {
+    backgroundColor: "#0f1523",
+    border: "1px solid #1a2235",
+  };
+
+  const statCards = [
+    { label: "Total Users", value: stats.totalUsers, icon: "👥" },
+    {
+      label: "Pending Requests",
+      value: stats.pendingRequests,
+      icon: "🔐",
+    },
+    {
+      label: "Google Login Users",
+      value: stats.googleLoginUsers,
+      icon: "🔵",
+    },
+    {
+      label: "Email Login Users",
+      value: stats.emailLoginUsers,
+      icon: "✉️",
+    },
+    {
+      label: "Active Sessions",
+      value: stats.activeSessions,
+      icon: "🟢",
+    },
+    {
+      label: "Blocked Accounts",
+      value: stats.blockedAccounts,
+      icon: "🚫",
+    },
+    {
+      label: "Approved Accounts",
+      value: stats.approvedAccounts,
+      icon: "✅",
+    },
+    {
+      label: "Denied Accounts",
+      value: stats.deniedAccounts,
+      icon: "❌",
+    },
+  ];
 
   return (
-    <div style={{ backgroundColor: '#090d16', color: '#fff' }} className="p-3">
-      {/* Top 4 Stat Cards */}
-      <div className="row g-3 mb-3">
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <h2 className="fw-bold mb-1">{stats.totalUsers}</h2>
-            <div className="text-secondary small">Total Users</div>
-          </div>
+    <div
+      className="p-3"
+      style={{
+        backgroundColor: "#090d16",
+        color: "#fff",
+        borderRadius: "16px",
+        minHeight: "400px",
+      }}
+    >
+      {loading && (
+        <div className="alert alert-info">
+          Loading dashboard data from backend...
         </div>
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <h2 className="fw-bold mb-1">{stats.pendingRequests}</h2>
-            <div className="text-secondary small">Pending Requests</div>
-          </div>
+      )}
+
+      {error && (
+        <div className="alert alert-danger">
+          <strong>Dashboard Error:</strong> {error}
         </div>
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <h2 className="fw-bold mb-1">{stats.googleLoginUsers}</h2>
-            <div className="text-secondary small">Google Login Users</div>
-          </div>
+      )}
+
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 className="fw-bold mb-1">Dashboard Overview</h4>
+          <small className="text-secondary">
+            Live information from your backend
+          </small>
         </div>
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <h2 className="fw-bold mb-1">{stats.emailLoginUsers}</h2>
-            <div className="text-secondary small">Email Login Users</div>
-          </div>
-        </div>
+
+        <button
+          type="button"
+          className="btn btn-outline-light btn-sm"
+          onClick={() => window.location.reload()}
+        >
+          ↻ Refresh
+        </button>
       </div>
 
-      {/* Bottom 4 Stat Cards */}
       <div className="row g-3 mb-4">
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <div className="mb-2" style={{ color: '#22c55e' }}>●</div>
-            <h2 className="fw-bold mb-1">{stats.activeSessions}</h2>
-            <div className="text-secondary small">Active Sessions</div>
+        {statCards.map((card) => (
+          <div
+            className="col-12 col-sm-6 col-md-3"
+            key={card.label}
+          >
+            <div
+              className="p-3 rounded-4 h-100"
+              style={cardStyle}
+            >
+              <div className="mb-2">{card.icon}</div>
+              <h2 className="fw-bold mb-1">
+                {loading ? "..." : card.value}
+              </h2>
+              <div className="text-secondary small">
+                {card.label}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <div className="mb-2" style={{ color: '#ef4444' }}>🚫</div>
-            <h2 className="fw-bold mb-1">{stats.blockedAccounts}</h2>
-            <div className="text-secondary small">Blocked Accounts</div>
-          </div>
-        </div>
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <div className="mb-2" style={{ color: '#22c55e' }}>✅</div>
-            <h2 className="fw-bold mb-1">{stats.approvedAccounts}</h2>
-            <div className="text-secondary small">Approved Accounts</div>
-          </div>
-        </div>
-        <div className="col-12 col-sm-6 col-md-3">
-          <div className="p-3 rounded-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-            <div className="mb-2" style={{ color: '#ef4444' }}>❌</div>
-            <h2 className="fw-bold mb-1">{stats.deniedAccounts}</h2>
-            <div className="text-secondary small">Denied Accounts</div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Graph Area */}
-      <div className="p-4 rounded-4 mb-4" style={{ backgroundColor: '#0f1523', border: '1px solid #1a2235' }}>
-        <h6 className="fw-bold mb-0">Authentication Activity</h6>
-        <small className="text-secondary d-block mb-3" style={{ fontSize: '0.8rem' }}>Today · No personal data displayed</small>
-        <div style={{ height: '300px' }}>
+      <div
+        className="p-4 rounded-4 mb-4"
+        style={cardStyle}
+      >
+        <h6 className="fw-bold mb-1">
+          Authentication Activity
+        </h6>
+
+        <small
+          className="text-secondary d-block mb-3"
+          style={{ fontSize: "0.8rem" }}
+        >
+          Activity chart · No personal financial data displayed
+        </small>
+
+        <div style={{ height: "300px" }}>
           <Line data={chartData} options={chartOptions} />
         </div>
+
+        <small className="text-secondary d-block mt-3">
+          Authentication activity will populate when login, logout,
+          and access-request events are recorded by the backend.
+        </small>
       </div>
 
-      {/* Footer */}
-      <div className="d-flex justify-content-between align-items-center text-secondary small pt-2" style={{ fontSize: '0.75rem' }}>
-        <div>🔒 No personal user data is accessible from this console.</div>
+      <div
+        className="d-flex justify-content-between align-items-center flex-wrap gap-2 text-secondary small pt-2"
+        style={{ fontSize: "0.75rem" }}
+      >
+        <div>
+          🔒 Admin console — personal expense records are not displayed.
+        </div>
         <div>Expense Tracker Admin · 2026</div>
       </div>
     </div>
-  )
+  );
 }

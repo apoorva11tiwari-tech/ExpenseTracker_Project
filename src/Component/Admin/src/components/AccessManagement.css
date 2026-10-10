@@ -1,58 +1,152 @@
-.auth-logs-container {
-  padding: 1rem;
-  background-color: #090d16;
-  min-height: 85vh;
+.access-management {
+  padding: 24px;
+  color: var(--text-primary, #172033);
+}
+
+.access-header {
+  margin-bottom: 24px;
+}
+
+.access-header h2 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.access-header p,
+.access-help {
+  color: var(--text-secondary, #64748b);
+  margin: 0 0 18px;
+}
+
+.access-panel {
+  padding: 22px;
+  margin-bottom: 24px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+}
+
+.access-panel h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.access-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.access-add-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 11px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline-offset: 2px;
+}
+
+.access-add-form button,
+.access-disable,
+.access-enable {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.access-add-form button {
   color: #ffffff;
+  background: #1d4ed8;
 }
 
-.auth-logs-search-icon {
-  background-color: #0f1523;
-  border-color: #1a2235;
-  color: #64748b;
+.access-disable {
+  color: #b91c1c;
+  background: #fee2e2;
 }
 
-.auth-logs-input,
-.auth-logs-select {
-  background-color: #0f1523;
-  border-color: #1a2235;
-  color: #ffffff;
+.access-enable {
+  color: #166534;
+  background: #dcfce7;
 }
 
-.auth-logs-input:focus,
-.auth-logs-select:focus {
-  background-color: #0f1523;
-  border-color: #1e40af;
-  color: #ffffff;
-  box-shadow: none;
+.access-table-wrap {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.auth-logs-table-wrapper {
-  border-radius: 1rem;
-  overflow: hidden;
-  background-color: #0f1523;
-  border: 1px solid #1a2235;
+.access-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.auth-logs-table {
-  background-color: transparent;
+.access-table th,
+.access-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  text-align: left;
+  vertical-align: middle;
 }
 
-.auth-logs-table th {
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  background-color: #0f1523;
-  color: #94a3b8;
-  border-bottom: 1px solid #1a2235;
-  padding: 0.75rem 1rem;
+.access-table th {
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
 }
 
-.auth-logs-table td {
-  background-color: #0f1523;
-  border-bottom: 1px solid #1a2235;
-  padding: 0.75rem 1rem;
+.access-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.auth-logs-date {
-  font-size: 0.85rem;
-  color: #94a3b8;
+.access-status.enabled {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.access-status.disabled {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.access-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.access-empty {
+  padding: 16px 0;
+  color: var(--text-secondary, #64748b);
+}
+
+.access-note {
+  color: var(--text-secondary, #64748b);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .access-management {
+    padding: 14px;
+  }
+
+  .access-panel {
+    padding: 15px;
+  }
+
+  .access-add-form {
+    flex-direction: column;
+  }
+
+  .access-add-form button {
+    width: 100%;
+  }
 }

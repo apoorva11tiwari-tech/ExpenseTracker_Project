@@ -1,13 +1,45 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+
 const { getAllUsers, getAdminStats, adminLogin } = require('../controllers/adminController');
-const { protect, isAdmin } = require('../middleware/authMiddleware');
+const { protect, isAdmin } = require('../middleware/authmiddleware');
 
-// Login Route
-router.post('/login', adminLogin);
 
-// Admin routes
-router.get('/users', protect, isAdmin, getAllUsers);
-router.get('/stats', protect, isAdmin, getAdminStats);
+const adminController = require("../controllers/adminController");
+const loginRequestController = require("../controllers/loginRequest");
+const authMiddleware = require("../middleware/authmiddleware");
+
+router.post("/login", adminController.adminLogin);
+
+router.get(
+  "/users",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  adminController.getAllUsers
+);
+
+router.get(
+  "/stats",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  adminController.getAdminStats
+);
+
+router.get(
+  "/login-requests",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  loginRequestController.getLoginRequests
+);
+
+router.patch(
+  "/login-requests/:id",
+  authMiddleware.protect,
+  authMiddleware.isAdmin,
+  loginRequestController.updateLoginRequest
+);
+router.get("/test-route", (req, res) => {
+  res.status(200).json({ message: "Admin route is working" });
+});
 
 module.exports = router;

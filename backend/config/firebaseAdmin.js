@@ -1,13 +1,15 @@
-
-const { initializeApp, applicationDefault, getApps } = require("firebase-admin/app");
+const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
 
-const app = getApps().length
+const serviceAccount = require("./cashmate-6d10a-399bb-firebase-adminsdk-fbsvc-4e535a818a.json");
+
+const app =
+  getApps().length > 0
     ? getApps()[0]
     : initializeApp({
-        credential: applicationDefault()
-    });
+        credential: cert(serviceAccount),
+      });
 
 module.exports = {
-    auth: () => getAuth(app)
+  auth: () => getAuth(app),
 };

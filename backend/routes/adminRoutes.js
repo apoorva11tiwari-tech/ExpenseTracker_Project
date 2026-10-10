@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { getAllUsers, getAdminStats, adminLogin } = require('../controllers/adminController');
-const { protect, isAdmin } = require('../middleware/authMiddleware');
+const { protect, isAdmin } = require('../middleware/authmiddleware');
 
 
 const adminController = require("../controllers/adminController");
@@ -38,5 +38,8 @@ router.patch(
   authMiddleware.isAdmin,
   loginRequestController.updateLoginRequest
 );
+router.get("/test-route", (req, res) => {
+  res.status(200).json({ message: "Admin route is working" });
+});
 
 module.exports = router;

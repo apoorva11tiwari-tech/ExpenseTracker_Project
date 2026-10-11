@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 :root {
   --bg-alt: #f8fafc;
   --card: #ffffff;
@@ -134,7 +133,7 @@
   pointer-events: none;
 /* =====================================================
    VIBRANT PURPLE / PINK / INDIGO SAVINGS GOALS THEME
-===================================================== *
+===================================================== */
 /* =========================================================
    CASHMATE — SAVINGS GOALS
    Clean • Colorful • Modern • Consistent
@@ -1229,5 +1228,5 @@
   .goal-progress-bar .progress-bar {
     transition: none !important;
   }
->>>>>>> 511aa50d49fb4d8edb5a1a66d49a703763d5dcda
+
 }

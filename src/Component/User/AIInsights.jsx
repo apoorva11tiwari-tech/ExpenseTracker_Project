@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API_URL from "../../config/api";
+import apiFetch from "../../config/apiFetch";
 
 import {
   AreaChart,
@@ -164,19 +164,17 @@ export default function AIInsights() {
            AI BUDGET RECOMMENDATIONS
         ------------------------------------------------ */
 
-        const aiRes = await fetch(
-          `${API_URL}/api/ai/recommendations`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              monthlyIncome: Number(income),
-              financialGoal: "Save More Money"
-            })
-          }
-        );
+       
+
+const aiRes = await apiFetch("/api/ai/recommendations", {
+  method: "POST",
+  body: JSON.stringify({
+    monthlyIncome: Number(income),
+    financialGoal: "Save More Money"
+  })
+});
+
+
 
         const aiData = await aiRes.json();
 
@@ -206,9 +204,9 @@ export default function AIInsights() {
            EXPENSE DATA
         ------------------------------------------------ */
 
-        const expRes = await fetch(
-          `${API_URL}/api/expenses`
-        );
+        
+const expRes = await apiFetch("/api/expenses");
+
 
         const expData = await expRes.json();
 

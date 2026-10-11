@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import apiFetch from "../../config/apiFetch";
-import { useFadeIn } from "../../hooks/useCountUp";
+import { useFadeIn } from "../../Hooks/useCountUp.jsx";
 import { getAIBudgetRecommendations } from "./aiService";
 import "./Budget.css";
 

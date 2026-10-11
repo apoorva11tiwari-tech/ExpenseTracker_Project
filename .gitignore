@@ -1,11 +1,79 @@
-# Firebase credentials
-backend/config/*firebase-adminsdk*.json
-backend/config/firebase-service-account.json
-src/Component/src/firebase.js
-src/Component/src/config/
+# ==============================
+# Logs
+# ==============================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Environment secrets
+# ==============================
+# Dependencies
+# ==============================
+node_modules/
+**/node_modules/
+
+# ==============================
+# Build files
+# ==============================
+dist/
+dist-ssr/
+build/
+coverage/
+
+# ==============================
+# Environment variables and secrets
+# ==============================
 .env
 .env.*
 !.env.example
-node_modules
+
+# ==============================
+# Firebase service account credentials
+# ==============================
+*firebase-adminsdk*.json
+firebase-admin.json
+firebase-service-account.json
+serviceAccountKey.json
+service-account.json
+*service-account*.json
+
+# ==============================
+# Local secret folders
+# ==============================
+CashMateSecrets/
+cashmatesecrets/
+secrets/
+
+# ==============================
+# ZIP archives and backups
+# ==============================
+*.zip
+*.backup
+*.bak
+
+# ==============================
+# Local configuration
+# ==============================
+*.local
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Editors and IDEs
+# ==============================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==============================
+# Git
+# ==============================
+.git/

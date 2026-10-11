@@ -1,5 +1,5 @@
 
-const Reminder = require("../models/Reminder");
+const Reminder = require("../models/reminder");
 
 // Get reminders belonging to the logged-in user
 const getReminders = async (req, res) => {

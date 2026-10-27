@@ -74,7 +74,7 @@ function Expenses() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Load expenses for the authenticated user.
+  // Load expenses
   useEffect(() => {
     let cancelled = false;
 
@@ -83,19 +83,19 @@ function Expenses() {
         setLoading(true);
         setError("");
 
-        const response = await apiFetch("/api/expenses");
-
-        if (!response.ok) {
-          const result = await response.json().catch(() => ({}));
-          throw new Error(
-            result.message || "Failed to load expenses."
-          );
-        }
-
-        const result = await response.json();
+        // apiFetch already returns parsed JSON.
+        const result = await apiFetch("/api/expenses");
 
         if (!cancelled) {
-          setData(Array.isArray(result) ? result : []);
+          const expenses = Array.isArray(result)
+            ? result
+            : Array.isArray(result?.expenses)
+              ? result.expenses
+              : Array.isArray(result?.data)
+                ? result.data
+                : [];
+
+          setData(expenses);
         }
       } catch (err) {
         if (!cancelled) {
@@ -117,7 +117,7 @@ function Expenses() {
     };
   }, []);
 
-  // Filter and sort transactions.
+  // Filter and sort transactions
   const filtered = [...data]
     .filter((transaction) => {
       const searchText = search.toLowerCase();
@@ -143,7 +143,7 @@ function Expenses() {
       return new Date(b.date) - new Date(a.date);
     });
 
-  // Delete an expense.
+  // Delete an expense
   const deleteItem = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this expense?"
@@ -152,17 +152,9 @@ function Expenses() {
     if (!confirmDelete) return;
 
     try {
-      const response = await apiFetch(`/api/expenses/${id}`, {
+      await apiFetch(`/api/expenses/${id}`, {
         method: "DELETE",
       });
-
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          result.message || "Failed to delete expense."
-        );
-      }
 
       setData((currentData) =>
         currentData.filter((transaction) => transaction._id !== id)
@@ -177,7 +169,7 @@ function Expenses() {
     }
   };
 
-  // Update an expense.
+  // Update an expense
   const saveChanges = async () => {
     if (!editingExpense) return;
 
@@ -198,7 +190,7 @@ function Expenses() {
         ? new Date(editingExpense.date).toISOString()
         : new Date().toISOString();
 
-      const response = await apiFetch(
+      const result = await apiFetch(
         `/api/expenses/${editingExpense._id}`,
         {
           method: "PUT",
@@ -213,17 +205,7 @@ function Expenses() {
         }
       );
 
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          result.message || "Failed to update expense."
-        );
-      }
-
-      // Supports APIs returning either { expense: ... } or the
-      // updated expense document directly.
-      const updatedExpense = result.expense || result;
+      const updatedExpense = result?.expense || result;
 
       setData((currentData) =>
         currentData.map((item) =>
@@ -241,20 +223,17 @@ function Expenses() {
 
   return (
     <div className="transactions-page">
-      {/* Header */}
       <div className="transactions-header">
         <div>
           <h1 className="transactions-title">
             Expense History <span>📋</span>
           </h1>
-
           <p className="transactions-subtitle">
             All your income and expense records
           </p>
         </div>
       </div>
 
-      {/* Loading and error messages */}
       {loading && (
         <div className="transactions-empty">
           <p>Loading your transactions...</p>
@@ -274,7 +253,6 @@ function Expenses() {
         </div>
       )}
 
-      {/* Edit form */}
       {editingExpense && (
         <div className="card p-4 mb-4">
           <h4 className="mb-3">Edit Expense ✏️</h4>
@@ -391,10 +369,7 @@ function Expenses() {
             </div>
 
             <div className="col-12">
-              <label
-                className="form-label"
-                htmlFor="edit-description"
-              >
+              <label className="form-label" htmlFor="edit-description">
                 Description
               </label>
               <textarea
@@ -432,13 +407,9 @@ function Expenses() {
         </div>
       )}
 
-      {/* Filters */}
       <div className="transactions-filter-card">
         <div className="transaction-search">
-          <Search
-            size={16}
-            className="transaction-search-icon"
-          />
+          <Search size={16} className="transaction-search-icon" />
           <input
             type="text"
             value={search}
@@ -484,7 +455,6 @@ function Expenses() {
         </select>
       </div>
 
-      {/* Expense table */}
       <div className="transactions-table-card">
         <div className="table-responsive">
           <table className="table transactions-table mb-0">
@@ -532,13 +502,14 @@ function Expenses() {
                     <td>
                       <span className="transaction-secondary">
                         {transaction.date
-                          ? new Date(
-                              transaction.date
-                            ).toLocaleDateString("en-IN", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })
+                          ? new Date(transaction.date).toLocaleDateString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )
                           : "—"}
                       </span>
                     </td>
@@ -565,9 +536,7 @@ function Expenses() {
                           className="transaction-action-btn edit-action"
                           title="Edit transaction"
                           aria-label={`Edit ${transaction.title}`}
-                          onClick={() =>
-                            setEditingExpense(transaction)
-                          }
+                          onClick={() => setEditingExpense(transaction)}
                         >
                           <Edit2 size={14} />
                         </button>
@@ -597,7 +566,6 @@ function Expenses() {
           )}
         </div>
 
-        {/* Footer */}
         <div className="transactions-footer">
           <p>
             {filtered.length}{" "}

@@ -1,6 +1,6 @@
 import { auth } from "../firebase";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://cashmate-backend-t0by.onrender.com";
 
 async function apiFetch(endpoint, options = {}) {
   const user = auth.currentUser;

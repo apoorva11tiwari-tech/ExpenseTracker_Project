@@ -43,111 +43,53 @@ export default function Dashboard() {
   const [budgets, setBudgets] = useState([]);
   const [goals, setGoals] = useState([]);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const [
-  expenseResponse,
-  incomeResponse,
-  budgetResponse,
-  goalResponse,
-] = await Promise.all([
-  apiFetch("/api/expenses"),
-  apiFetch("/api/income"),
-  apiFetch("/api/budgets"),
-  apiFetch("/api/goals"),
-]);
+  
+useEffect(() => {
+  const fetchDashboardData = async () => {
+    const requests = [
+      {
+        name: "expenses",
+        endpoint: "/api/expenses",
+        keys: ["expenses", "data"],
+        setter: setExpenses,
+      },
+      {
+        name: "income",
+        endpoint: "/api/income",
+        keys: ["income", "incomes", "data"],
+        setter: setIncomes,
+      },
+      {
+        name: "budgets",
+        endpoint: "/api/budgets",
+        keys: ["budgets", "budget", "data"],
+        setter: setBudgets,
+      },
+      {
+        name: "goals",
+        endpoint: "/api/goals",
+        keys: ["goals", "goal", "data"],
+        setter: setGoals,
+      },
+    ];
 
-        if (expenseResponse.ok) {
-          const data = await expenseResponse.json();
+    await Promise.all(
+      requests.map(async ({ name, endpoint, keys, setter }) => {
+        try {
+          // apiFetch already returns parsed JSON data.
+          const data = await apiFetch(endpoint);
 
-          setExpenses(
-            getArrayFromResponse(data, [
-              "expenses",
-              "data",
-            ])
-          );
-        } else {
-          console.error(
-            "Failed to fetch expenses:",
-            expenseResponse.status
-          );
-
-          setExpenses([]);
+          setter(getArrayFromResponse(data, keys));
+        } catch (error) {
+          console.error(`Error fetching ${name}:`, error);
+          setter([]);
         }
+      })
+    );
+  };
 
-        if (incomeResponse.ok) {
-          const data = await incomeResponse.json();
-
-          setIncomes(
-            getArrayFromResponse(data, [
-              "income",
-              "incomes",
-              "data",
-            ])
-          );
-        } else {
-          console.error(
-            "Failed to fetch income:",
-            incomeResponse.status
-          );
-
-          setIncomes([]);
-        }
-
-        if (budgetResponse.ok) {
-          const data = await budgetResponse.json();
-
-          const budgetArray = getArrayFromResponse(
-            data,
-            [
-              "budgets",
-              "budget",
-              "data",
-            ]
-          );
-
-          setBudgets(budgetArray);
-        } else {
-          console.error(
-            "Failed to fetch budgets:",
-            budgetResponse.status
-          );
-
-          setBudgets([]);
-        }
-
-        if (goalResponse.ok) {
-          const data = await goalResponse.json();
-
-          const goalArray = getArrayFromResponse(
-            data,
-            [
-              "goals",
-              "goal",
-              "data",
-            ]
-          );
-
-          setGoals(goalArray);
-        } else {
-          console.error(
-            "Failed to fetch goals:",
-            goalResponse.status
-          );
-
-          setGoals([]);
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching dashboard data:",
-          error
-        );
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
+  fetchDashboardData();
+}, []);
 
   const totalIncome = incomes.reduce(
     (sum, item) =>
